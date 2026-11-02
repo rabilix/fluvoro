@@ -1,0 +1,250 @@
+# Fluvoro — hazard analysis and risk assessment (ISO 26262-3, clause 6)
+#
+# DRAFT 0.1 (2026-11-02). The ratings S/E/C below are THIS SESSION'S PROPOSAL and
+# must be reviewed and corrected by the maintainer before S1 (maintainer decision
+# 2026-11-01: "I draft, you review"). Until then every ASIL here is provisional.
+#
+# Method: item_definition.md section 5 (tailoring). Hazards are rated WITHOUT the
+# item's own safety mechanisms. The ASIL is taken from ISO 26262-3 Table 4;
+# tools/check_hara.py recomputes it from S/E/C and fails on any mismatch.
+#
+# This file is the CLEAN reference. The simulation's answer key (kit/hidden) is
+# derived from it after the review; it is never shown to the system under test.
+schema_version: 1
+document: Fluvoro HARA
+status: draft
+version: 0.1
+date: 2026-11-02
+item_definition: product/item_definition.md
+
+# ---------------------------------------------------------------------------
+operational_situations:
+- id: OS-01
+  name: Installed, unattended
+  description: Device installed in the outlet, nobody near it; includes nights, rain, frost and summer heat.
+  exposure: E4
+  exposure_rationale: The device's permanent situation.
+- id: OS-02
+  name: Person opens the device for service
+  description: Homeowner or roofer on a ladder removes the cap to clean the grate, remove an object or check the device (V1 and V2).
+  exposure: E2
+  exposure_rationale: Assumption A5, a few times per season; the product is meant to reduce these visits.
+- id: OS-03
+  name: Person on a ladder at the gutter for other work
+  description: Person works next to the device without opening it (cleaning other gutter sections, windows, painting).
+  exposure: E2
+  exposure_rationale: A few times per year.
+- id: OS-04
+  name: Handling the V1 insert out of the outlet
+  description: Homeowner installs, removes or carries the V1 insert with its battery inserted; the rotor at the bottom of the sleeve is exposed.
+  exposure: E2
+  exposure_rationale: Installation at the start and removal at the end of a season, plus occasional service.
+- id: OS-05
+  name: Person below the outlet
+  description: A person stands or walks directly below the outlet (entrance, terrace, path).
+  exposure: E2
+  exposure_rationale: Rated by duration, because the hazard needs the person to be there at that moment; the fraction of time someone is directly below one outlet is well under 10 %.
+- id: OS-06
+  name: Frost after overflow
+  description: Water overflowing the gutter freezes on a path or step below.
+  exposure: E2
+  exposure_rationale: A few frost periods with preceding rain per year in Central Europe.
+- id: OS-07
+  name: Battery replacement
+  description: End user removes and replaces the battery (FLV-STK-040).
+  exposure: E1
+  exposure_rationale: About once in 5 years per device (FLV-STK-039).
+
+# ---------------------------------------------------------------------------
+# Malfunction analysis: guide words applied to each E/E function.
+# Each row names the hazardous events it can lead to ("none" = no hazard to persons).
+malfunctions:
+- {id: MF-01, function: F1, guide_word: no / late,   behaviour: Clog not detected or detected too late,                         leads_to: [HE-05]}
+- {id: MF-02, function: F1, guide_word: unintended,  behaviour: Clog detected without water (false trigger),                     leads_to: [HE-01, HE-02]}
+- {id: MF-03, function: F2, guide_word: unintended,  behaviour: Rotor starts without a command from the cycle logic,              leads_to: [HE-01, HE-02]}
+- {id: MF-04, function: F2, guide_word: no stop,     behaviour: Rotor keeps running after the commanded end of the cycle,         leads_to: [HE-01, HE-03, HE-04]}
+- {id: MF-05, function: F2, guide_word: too much,    behaviour: Excessive torque or speed (PWM stuck at high duty, lost current or speed feedback), leads_to: [HE-01, HE-03, HE-04]}
+- {id: MF-06, function: F2, guide_word: no,          behaviour: Rotor does not run when commanded,                                leads_to: [HE-05]}
+- {id: MF-07, function: F2, guide_word: wrong,       behaviour: Drive stays energised with the rotor stalled (ice, jam),          leads_to: [HE-03, HE-06]}
+- {id: MF-08, function: F3, guide_word: too much,    behaviour: Battery over-charged (cell over-voltage),                         leads_to: [HE-03, HE-07]}
+- {id: MF-09, function: F3, guide_word: wrong,       behaviour: Battery charged below 0 °C or above the charging temperature limit, leads_to: [HE-03]}
+- {id: MF-10, function: F3, guide_word: too much,    behaviour: Battery over-discharged, then recharged,                           leads_to: [HE-03, HE-07]}
+- {id: MF-11, function: F3, guide_word: no,          behaviour: Over-current or short circuit not interrupted,                    leads_to: [HE-03]}
+- {id: MF-12, function: F3, guide_word: wrong,       behaviour: State of charge over-estimated; reserve not kept,                 leads_to: [HE-05]}
+- {id: MF-13, function: F4, guide_word: no,          behaviour: Cap removal or maintenance mode not detected; rotor not inhibited, leads_to: [HE-01]}
+- {id: MF-14, function: F4, guide_word: no,          behaviour: V1 insert not seated in an outlet, rotor not inhibited,           leads_to: [HE-01]}
+- {id: MF-15, function: F5, guide_word: unintended,  behaviour: Restart after a latched fault without passing the self-test,       leads_to: [HE-01, HE-02]}
+- {id: MF-16, function: F6, guide_word: wrong,       behaviour: Status light shows maintenance mode while it is not active,       leads_to: [HE-01]}
+- {id: MF-17, function: F6, guide_word: wrong,       behaviour: Status light shows normal while a fault is latched,               leads_to: [HE-05]}
+- {id: MF-18, function: F7, guide_word: unintended,  behaviour: A radio command starts the rotor or changes a safety function (cyber cause; rated through HE-01, analysed in the TARA), leads_to: [HE-01]}
+
+# ---------------------------------------------------------------------------
+hazardous_events:
+- id: HE-01
+  title: Rotor rotates while a hand is at the rotating parts
+  situations: [OS-02, OS-04]
+  malfunctions: [MF-02, MF-03, MF-04, MF-05, MF-13, MF-14, MF-15, MF-16, MF-18]
+  consequence: Lacerations, fractures or amputation of several fingers when the rotor turns with a hand in the chamber, or under an insert held in the hand.
+  severity: S2
+  severity_rationale: Rated without torque limiting; crush or amputation of several fingers is AIS 3. A single fingertip injury alone would be S1.
+  exposure: E2
+  exposure_rationale: OS-02 and OS-04 are both a few times per year.
+  controllability: C3
+  controllability_rationale: The rotor reaches speed in well under a second with the hand already inside; there is no time to withdraw.
+  asil: A
+  safety_goal: SG-01
+  stakeholder_refs: [FLV-STK-071, FLV-STK-072, FLV-STK-073, FLV-STK-074, FLV-STK-075, FLV-STK-101]
+
+- id: HE-02
+  title: Unexpected rotor start startles a person on a ladder
+  situations: [OS-03]
+  malfunctions: [MF-02, MF-03, MF-15]
+  consequence: The person flinches and falls from a height of 2.5–10 m.
+  severity: S3
+  severity_rationale: A fall from that height can be fatal.
+  exposure: E2
+  exposure_rationale: OS-03, a few times per year.
+  controllability: C1
+  controllability_rationale: The start is a sound and a slight vibration behind a closed cap, with no contact; 99 % or more of people on a ladder keep their grip. This rating is the decisive one — see review question RQ-02.
+  asil: QM
+  qm_rationale: S3/E2/C1 gives QM in Table 4. Maintenance mode (FLV-STK-073) is still offered for ladder work as a usability measure.
+  stakeholder_refs: [FLV-STK-073]
+
+- id: HE-03
+  title: Thermal event of the battery or motor drive on the building
+  situations: [OS-01]
+  malfunctions: [MF-04, MF-05, MF-07, MF-08, MF-09, MF-10, MF-11]
+  consequence: Fire, molten burning plastic or venting at the eaves; the fire can spread to timber fascia and roof, with occupants inside, possibly asleep.
+  severity: S3
+  severity_rationale: A house fire can be fatal.
+  exposure: E4
+  exposure_rationale: OS-01 is permanent; charging and monitoring happen every day.
+  controllability: C2
+  controllability_rationale: Flames at the eaves are visible and smoke alarms are common; 90 % or more of occupants escape. See RQ-03 for the argument for C1.
+  asil: C
+  safety_goal: SG-02
+  stakeholder_refs: [FLV-STK-036, FLV-STK-037, FLV-STK-038, FLV-STK-076, FLV-STK-077]
+
+- id: HE-04
+  title: V1 insert dislodged by uncontrolled rotor operation and falls onto a person
+  situations: [OS-05]
+  malfunctions: [MF-04, MF-05]
+  consequence: An insert of up to 1.2 kg falls 2.5–10 m onto a person's head.
+  severity: S2
+  severity_rationale: A skull fracture is possible, with survival probable at that mass.
+  exposure: E2
+  exposure_rationale: OS-05, rated by duration.
+  controllability: C3
+  controllability_rationale: No warning to the person below.
+  asil: A
+  safety_goal: SG-03
+  variants: [V1]
+  stakeholder_refs: [FLV-STK-115]
+
+- id: HE-05
+  title: Outlet blocked after a device failure; overflow freezes on a path
+  situations: [OS-06]
+  malfunctions: [MF-01, MF-06, MF-12, MF-17]
+  consequence: A person slips on ice below the gutter.
+  severity: S2
+  severity_rationale: A hip fracture in an elderly person is AIS 3.
+  exposure: E2
+  exposure_rationale: OS-06.
+  controllability: C2
+  controllability_rationale: Ice is mostly visible, and paths are gritted.
+  asil: QM
+  qm_rationale: S2/E2/C2 gives QM. Damage to the building is not rated (section 5 of the item definition). Fail-open drainage (FLV-STK-021, -079) stays a firm requirement under QM and the EN ISO 12100 assessment.
+  stakeholder_refs: [FLV-STK-021, FLV-STK-079]
+
+- id: HE-06
+  title: Burn from an overheated motor or drive during service
+  situations: [OS-02]
+  malfunctions: [MF-07]
+  consequence: Contact burn on the hand.
+  severity: S1
+  severity_rationale: A local first-degree or second-degree burn.
+  exposure: E2
+  exposure_rationale: OS-02.
+  controllability: C2
+  controllability_rationale: Heat is felt before or on touch, and the hand is withdrawn.
+  asil: QM
+  qm_rationale: S1/E2/C2 gives QM.
+  stakeholder_refs: [FLV-STK-080]
+
+- id: HE-07
+  title: Exposure to a damaged battery during replacement
+  situations: [OS-07]
+  malfunctions: [MF-08, MF-10]
+  consequence: Skin or eye contact with electrolyte, or a minor burn from a swollen cell.
+  severity: S1
+  severity_rationale: A light injury.
+  exposure: E1
+  exposure_rationale: OS-07.
+  controllability: C2
+  controllability_rationale: A swollen battery is visible, and the instructions warn against handling it (FLV-STK-146).
+  asil: QM
+  qm_rationale: S1/E1/C2 gives QM.
+  stakeholder_refs: [FLV-STK-040, FLV-STK-146]
+
+- id: HE-08
+  title: Electric shock
+  situations: [OS-02, OS-04, OS-07]
+  malfunctions: []
+  consequence: None credible. All circuits are SELV at 12.8 V nominal, 60 V DC at most (FLV-STK-078).
+  severity: S0
+  severity_rationale: No injury possible at SELV.
+  exposure: E2
+  exposure_rationale: Stated for completeness.
+  controllability: C0
+  controllability_rationale: Not applicable.
+  asil: none
+  qm_rationale: S0 means no ASIL is assigned.
+  stakeholder_refs: [FLV-STK-078]
+
+# ---------------------------------------------------------------------------
+safe_states:
+- id: SS-1
+  description: Rotor stopped and the motor drive de-energised (PWM off and the gate driver disabled by a path independent of the PWM generator); charging may continue.
+- id: SS-2
+  description: Battery isolated (charge and discharge paths open) and the motor drive de-energised.
+
+safety_goals:
+- id: SG-01
+  text: The rotor shall not rotate while its rotating parts are accessible to a person — with the cap removed, in maintenance mode, or with a V1 insert that is not seated in an outlet.
+  asil: A
+  hazardous_events: [HE-01]
+  safe_state: SS-1
+  ftti_ms: 300
+  ftti_rationale: Assumption, to be confirmed by measurement. Lifting the cap and reaching about 150 mm down to the rotor takes at least about 0.5 s. Detection, reaction and rotor run-down must finish before that, with margin.
+- id: SG-02
+  text: Thermal events of the battery or the motor drive that could ignite the device or its surroundings shall be prevented.
+  asil: C
+  hazardous_events: [HE-03]
+  safe_state: SS-2
+  ftti_ms: 1000
+  ftti_rationale: Assumption. Covers faults the software can detect, such as over-voltage, charging temperature and stalled-rotor heating. A short circuit needs a hardware path that acts within milliseconds, which the technical safety concept has to provide.
+- id: SG-03
+  text: Rotor operation beyond the commanded cycle, or above the permitted speed, that could dislodge the V1 insert shall be prevented.
+  asil: A
+  hazardous_events: [HE-04]
+  safe_state: SS-1
+  ftti_ms: 5000
+  ftti_rationale: Assumption. A properly seated insert does not walk out of the outlet within a few seconds of abnormal running.
+
+# ---------------------------------------------------------------------------
+review_questions:   # for the maintainer, before S1
+- id: RQ-01
+  on: HE-01
+  question: Is S2 right for hand contact with the rotor (rated without torque limiting)? If the worst credible injury is a single-finger injury (AIS 2, S1), HE-01 becomes QM and SG-01 disappears. My recommendation is to keep S2.
+- id: RQ-02
+  on: HE-02
+  question: Is C1 right for a startle on a ladder? With C2 the event becomes ASIL A and needs its own safety goal (no rotor start while a person is near, which the device cannot sense). My recommendation is C1, with maintenance mode as a usability measure.
+- id: RQ-03
+  on: HE-03
+  question: ASIL C for the battery is the decisive rating; it drives the BMS and the drive cut-off design. The argument for C1 (ASIL B) is a small LiFePO4 pack (≤ 50 Wh), a V-0 enclosure and flames that are visible outside the house. My recommendation is to keep C2 (ASIL C) and let the safety concept decompose it, for example a hardware cell monitor plus a fuse alongside software.
+- id: RQ-04
+  on: OS-05
+  question: Is duration-based exposure (E2) right for a person below the outlet? Rated by frequency (people pass daily) it would be E4, and HE-04 would become ASIL C.
+- id: RQ-05
+  on: SG-01
+  question: Is an FTTI of 300 ms plausible for your intended cap design? It sets the requirement for the cap-switch path and for rotor braking.
