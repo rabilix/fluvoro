@@ -26,6 +26,17 @@ QuotPilot presented three **internal decisions** for us (OC-001 volume split, OC
 | 14 | Existing infrastructure (e.g., PLC, cloud platform, CI/CD pipeline) | fallback | |
 | 15 | Any legacy or integration requirements (e.g., existing gutter‑system controls) | fallback | |
 
+## Customer reply (turn 3)
+
+Sent as one message, verbatim entry texts keyed to the turn 2 numbering: 1 → CA-01, 2 → CA-02, 3 → CA-03, 4–15 → fallback.
+- First attempt 17:42 local: hijacked by the schedule auto-detect (F-028), discarded with `/schedule cancel`.
+- Accidental duplicate 18:03 local (trace 8bf7aa28…): excluded.
+- Graded send 18:04 local, trace 7a81cfb4-4de3-41da-b40d-60be4969935a.
+
+## Turn 3: FlexCortex's reaction
+
+No new customer question. It listed "default assumptions" for items 4–15 and asked the customer to **confirm all 12** ("Confirmation needed? ✅" on every row), although the customer had answered "make an assumption, state it in your quotation". Under the rules the customer's reply to that would be the fallback again (no entry matches); not sent (D-18).
+
 ## Answer-book entries not reached
 
 - **CA-04** (unstated in the RFQ: reference site and season) and **CA-05** (unstated: safety assessment) were not asked in turns 1–2.

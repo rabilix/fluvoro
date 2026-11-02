@@ -27,3 +27,17 @@ Surface: myBrain dev 4c73cc9, profile Fluvoro, new chat, picker "All knowledge s
 > What else do you need from the customer?
 
 **Answer (trimmed):** a table "Additional information we need from Kestrel Home Systems before we can issue a final, binding quotation" with 15 questions (see questions.md), each with "why it matters" and an example value, e.g. "12 V Li‑ion, 500 mAh, solar‑charging module with 5 W limit", "100 mm × 80 mm × 40 mm, 0.5 kg", "REST API v1.2, MQTT over TLS", "< €200 k for software delivery". Then "How to proceed": send a questionnaire, request mechanical drawings / power-budget sheet / test plan, confirm optional packages, schedule a kickoff call. Footer: "gpt-oss:20b · 5 sources".
+
+## Turn 3a: 17:42 → 17:43 local (hijacked, no trace)
+
+**Prompt:** the customer reply (see questions.md; answer-book texts CA-01, CA-02, CA-03 and the fallback).
+
+**Answer (verbatim excerpt):** "💡 I'll schedule: Kestrel Home Systems, answers to your … When: Once at 2026-11-03 01:00 … Deliver: conversation:// ⚠️ Could not auto-route skills/delivery — review manually. Reply /schedule confirm to create it, or /schedule cancel to discard."
+
+Then `/schedule cancel` (18:03 local). An accidental duplicate send at 18:03 (trace 8bf7aa28…) is excluded.
+
+## Turn 3: 18:04 → 18:05 local
+
+**Prompt:** the same customer reply, unchanged (schedule auto-detect off, D-17).
+
+**Answer (trimmed):** "Thanks for the clarification on items 1‑3. Below is a short 'what‑we‑need‑now' list for the remaining 12 items (4‑15). I've also included the default assumptions we will use in the draft quotation. Please review the table …" Table of items 4–15 with "Default assumption" and "Confirmation needed? ✅" on every row, e.g. "ASIL C (or SIL 3 if you prefer a SIL terminology)", "12 V Li‑ion, 500 mAh, 5 W solar‑charging limit", "100 mm × 80 mm × 40 mm, 0.5 kg, standard DIN‑mounting", "0 – 60 °C, 9.8 g vibration (sinusoidal), 95 % RH", "REST API v1.2 over HTTPS, MQTT‑TLS 1.2 for OTA", "key‑exchange via TPM", "D‑0 (hardware ready), D‑90 (prototype), D‑180 (feature complete), D‑270 (qualification)", "Software delivery < €200 k", "Azure IoT Hub + GitHub Actions CI/CD", "Must expose a GateGuard REST endpoint (GET /metrics, POST /control)". "Next steps: Confirm or correct any of the assumptions above … Once all items are confirmed, we'll finalize the work‑packages and issue the formal quotation." Footer "gpt-oss:20b · 5 sources".

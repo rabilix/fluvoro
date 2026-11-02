@@ -1,6 +1,7 @@
 run: 2026-11-02-phase1
 phase: 1 (RFQ analysis)
-status: paused after turn 2, waiting for the maintainer's blind quote estimate before the customer reply (D-14)
+status: ended after turn 3 (D-18); FlexCortex asked the customer to confirm its own assumptions, the analysis had reached its end
+end: "2026-11-02T17:05:20Z"     # turn 3 request.complete
 start: "2026-11-02T15:19:32Z"   # turn 1 request.start
 surface: myBrain dev 4c73cc9, profile Fluvoro, new chat, knowledge picker "All knowledge sources", Auto, Decisions default (off)
 
@@ -14,12 +15,21 @@ pinned_at_start:
   principal: {user: fluvoro-operator, tenant: siimplex}
   project: fluvoro (dept engineering)
   collection: fluvoro (101 CRS requirements + 5 RFQ chunks)
-pinned_at_end: pending             # fill when the phase ends; differing commits make the phase infra-mixed
+pinned_at_end:
+  served_commit: c63de2a6          # core restarted 16:47:46Z for D-17
+  facade: {pid: 46781, code: c63de2a6, started: "2026-11-02 17:37:57 local", contract: 75}
+  mybrain: 4c73cc9
+  qpmt_backend: mock
+  autonomous_loop: off
+  nl_schedule_autodetect: off      # D-17
+  verdict: infra-mixed             # turns 1–2 on 3d67ba1a, turn 3 on c63de2a6
 commit_changes_during_phase:       # infra-mixed from turn 3 on
   - {ts: "2026-11-02T15:48:21Z", what: "files-only deploy 393f5968 (probe script, db migrate fix)", served: 3d67ba1a}
   - {ts: "2026-11-02T16:01:54Z", what: "deploy + restart 58600ee2 (work-item E6, FlexCortex session)", served: 58600ee2}
   - {ts: "2026-11-02T16:14:05Z", what: "deploy + restart 07072708 (RE081 listing header, RE082 listing records + outcome attribution)", served: 07072708}
   - note: "chat path diff 3d67ba1a..07072708: runtime.py +4, flexrag/retrieval/enumerate.py, scripts/routers/chat.py; quotpilot, prompt composer and facade unchanged"
+  - {ts: "2026-11-02T16:37:57Z", what: "facade restart onto c63de2a6 (RE083 handshake audit, RE084 pool wait), Platform audit", served_core: 07072708}
+  - {ts: "2026-11-02T16:47:46Z", what: "core restart onto c63de2a6 by this session (D-17, NL_SCHEDULE_AUTODETECT=false)", served: c63de2a6}
 
 turns:
   - n: 1
@@ -36,9 +46,27 @@ turns:
     duration_s: 18.2
     skillpack: none (knowledge.retrieve_context + model)
     history_sent: 2 messages
+  - n: "3a (hijacked)"
+    local: "17:42–17:43"
+    trace_id: none                  # schedule auto-detect short-circuits before request.start (F-028)
+    status: "answered as a schedule proposal ('Once at 2026-11-03 01:00'); discarded with /schedule cancel"
+    cancel_trace: 9f92f949-42a8-4e4d-8323-c0edbedb99e8   # suggestions.dismiss, 17:03:02Z
+  - n: "3 (duplicate, excluded)"
+    local: "18:03"
+    trace_id: 8bf7aa28-e247-4280-a2f2-3647cb31e97f
+    note: the customer reply sent twice by mistake (maintainer); not graded
+  - n: 3
+    local: "18:04–18:05"
+    trace_id: 7a81cfb4-4de3-41da-b40d-60be4969935a
+    status: success
+    duration_s: 68.9
+    tokens: 296
+    skillpack: none (knowledge.retrieve_context + model)
+    history_sent: 6 messages
+    attribution: "audit and outcomes carry siimplex / fluvoro-operator (RE082 live PASS)"
 
-customer_questions_asked: 15      # turn 2; turn 1 asked the customer nothing (it asked us for 3 decisions)
-customer_answers_given: none yet  # D-14
+customer_questions_asked: 15      # turn 2; turn 1 asked the customer nothing (it asked us for 3 decisions); turn 3 asked to confirm 12 own assumptions (unanswered, phase ended)
+customer_answers_given: "turn 3: CA-01, CA-02, CA-03 and the fallback for 4–15, verbatim (see questions.md)"
 
 decisions:
   - id: D-14
@@ -52,8 +80,21 @@ decisions:
     rules_out: a maintainer-written blind estimate for this run
     note: two assumptions in the example match hidden answers CA-02 and CA-03 (Claude had read the answer book); the quote phase is graded with that caveat or without a blind estimate
     date: 2026-11-02
+  - id: D-17
+    question: the answer-book reply trips the schedule auto-detect (F-028)
+    chosen: NL_SCHEDULE_AUTODETECT=false for the run (flexcortex.conf:137), core restart (announced); revert after the run
+    rules_out: splitting the reply into two messages; pausing for the fix
+    date: 2026-11-02
+  - id: D-18
+    question: FlexCortex asks the customer to confirm its own 12 assumptions — continue?
+    chosen: end Phase 1 and hand back; step 6 (team and board) next
+    rules_out: sending the fallback again; "Please continue"
+    date: 2026-11-02
   - id: D-15
     question: how to continue after turn 1 (quotpilot asked us for OC-001..003 and "Go")
     chosen: neutral follow-up "What else do you need from the customer?"
     rules_out: answering the three decisions + Go; ending Phase 1 after turn 1
     date: 2026-11-02
+
+revert_after_run:                  # in addition to the setup list (QPMT_BACKEND, AUTONOMOUS_LOOP_ENABLED)
+  - {what: "remove NL_SCHEDULE_AUTODETECT=false (D-17)", where: "~/Sandbox/flexcortex.conf:136-137", condition: "after F-028 is fixed and deployed", then: "flx runtime restart, announced"}
