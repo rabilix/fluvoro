@@ -1,0 +1,66 @@
+run: 2026-11-02-phase1-rerun
+phase: 1 rerun (RFQ analysis) after the cluster A fix (RE087)
+status: complete, 3 turns, on one commit (deploy freeze held)
+start: "2026-11-02T21:11:08Z"   # turn 1 request.start
+end: "2026-11-02T21:22:31Z"     # turn 3 request.complete
+surface: myBrain dev 4c73cc9, profile Fluvoro, new chat, knowledge picker "All knowledge sources", Auto, Decisions default (off)
+protocol: same prompt as Phase 1 turn 1, same neutral follow-up, same customer rules (answer-book text verbatim or fallback, only for questions asked)
+
+pinned_at_start:
+  served_commit: ce3a4d47          # RE087 cluster A + RE086; core restart 2026-11-02T20:56:19Z
+  facade: {pid: 3213, contract: 75, code_unchanged_since: 7eaf89f7}
+  mybrain: 4c73cc9
+  provider_model: ollama / gpt-oss:20b
+  qpmt_backend: mock
+  autonomous_loop: off
+  nl_schedule_autodetect: off
+  principal: {user: fluvoro-operator, tenant: siimplex}
+pinned_at_end:
+  served_commit: ce3a4d47          # verified 2026-11-02T21:25:29Z; no deploy receipt during the rerun
+  verdict: single-commit
+
+freeze:
+  on: "2026-11-02T21:10Z"          # announced to and acknowledged by Platform audit
+  off: "2026-11-02T21:26Z"         # "freeze lifted" sent after the rerun
+
+turns:
+  - n: 1
+    local: "22:11–22:12"
+    trace_id: 6f8f9b40-009f-4a62-817d-8017798b03b9
+    status: partial
+    duration_s: 105.7
+    skillpack: quotpilot
+    quotpilot_run: f6832713e45e49e9973b56bf9912d939   # draft copied to work_products/
+    received: "rfq.md (43 'requirements', line-split) + reqif:fluvoro/fluvoro_crs_v1.reqif (101); 144 total"
+  - n: 2
+    local: "22:19–22:20"
+    trace_id: c4b738ed-b130-49b0-8018-6fdbef80d5f8
+    status: success
+    duration_s: 26.6
+    skillpack: none (knowledge.retrieve_context + model)
+  - n: 3
+    local: "22:21–22:22"
+    trace_id: 95173335-e7ca-4188-8619-4265af6c9e19
+    status: success
+    duration_s: 52.4
+    skillpack: none (knowledge.retrieve_context + model)
+
+customer_questions_asked: "turn 1: none (4 internal decisions OC-001..004); turn 2: 10; turn 3: 9 (asks to confirm assumptions)"
+customer_answers_given: "turn 3 prompt: CA-01, CA-02, CA-03 and the fallback for 4–10, verbatim"
+
+decisions:
+  - id: D-22
+    question: the catalogue/mapping defect (F-033) surfaced mid-rerun — finish on ce3a4d47 or stop and wait for the fix?
+    chosen: finish the rerun on ce3a4d47 to measure cluster A alone; a third run after the catalogue fix
+    rules_out: stopping after turn 1
+    date: 2026-11-02
+  - id: D-23
+    question: close the rerun
+    chosen: lift the freeze, hand back, commit and push
+    rules_out: keeping the freeze
+    date: 2026-11-02
+
+next:
+  catalogue_fix: "requested from Platform audit by the maintainer (domain-sensitive platform/package identification, extensible catalogue, no forced baseline packages, honest confidence/source, RFQ-type recognition, asil extractor); plan and ETA pending"
+  third_run: Phase 1 again after the catalogue fix, same protocol, under a freeze
+  then: step 6 (team and board) once work packages exist (D-12)

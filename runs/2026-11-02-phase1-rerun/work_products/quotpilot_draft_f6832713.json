@@ -1,0 +1,1478 @@
+{
+  "run_id": "f6832713e45e49e9973b56bf9912d939",
+  "project": {
+    "client": "Kestrel Home Systems",
+    "name": "Fluvoro"
+  },
+  "status": "DRAFT",
+  "platform": {
+    "value": "Classic AUTOSAR",
+    "confidence": "Medium",
+    "evidence": [
+      "FLV-STK-070",
+      "FLV-STK-092",
+      "FLV-STK-140"
+    ]
+  },
+  "packages": [
+    {
+      "package": "RTE",
+      "classification": "Mandatory",
+      "confidence": "High",
+      "source": "Explicit requirement",
+      "requirement_ids": [
+        "FLV-STK-070",
+        "FLV-STK-142"
+      ],
+      "rationale": "Functional safety framework and delivery of architecture.",
+      "confirmed_by_rules": false,
+      "llm_seen": true
+    },
+    {
+      "package": "OS",
+      "classification": "Mandatory",
+      "confidence": "High",
+      "source": "Explicit requirement",
+      "requirement_ids": [
+        "FLV-STK-070",
+        "FLV-STK-142"
+      ],
+      "rationale": "Real‑time scheduling of safety and control tasks.",
+      "confirmed_by_rules": false,
+      "llm_seen": true
+    },
+    {
+      "package": "MCAL",
+      "classification": "Mandatory",
+      "confidence": "High",
+      "source": "Explicit requirement",
+      "requirement_ids": [
+        "FLV-STK-015",
+        "FLV-STK-016"
+      ],
+      "rationale": "Direct hardware access for motor drive and self‑test.",
+      "confirmed_by_rules": false,
+      "llm_seen": true
+    },
+    {
+      "package": "COM stack",
+      "classification": "Mandatory",
+      "confidence": "High",
+      "source": "Explicit requirement",
+      "requirement_ids": [
+        "FLV-STK-015",
+        "FLV-STK-016"
+      ],
+      "rationale": "Sensor and motor interface over CAN/LIN/Ethernet.",
+      "confirmed_by_rules": false,
+      "llm_seen": true
+    },
+    {
+      "package": "DEM",
+      "classification": "Mandatory",
+      "confidence": "High",
+      "source": "Explicit requirement",
+      "requirement_ids": [
+        "FLV-STK-016",
+        "FLV-STK-066"
+      ],
+      "rationale": "Diagnostics event handling for self‑test and fault reporting.",
+      "confirmed_by_rules": false,
+      "llm_seen": true
+    },
+    {
+      "package": "DCM",
+      "classification": "Mandatory",
+      "confidence": "High",
+      "source": "Explicit requirement",
+      "requirement_ids": [
+        "FLV-STK-016"
+      ],
+      "rationale": "Diagnostic communication for self‑test and fault retrieval.",
+      "confirmed_by_rules": false,
+      "llm_seen": true
+    },
+    {
+      "package": "NvM",
+      "classification": "Mandatory",
+      "confidence": "High",
+      "source": "Explicit requirement",
+      "requirement_ids": [
+        "FLV-STK-065",
+        "FLV-STK-042"
+      ],
+      "rationale": "Persistent storage for event log and battery state.",
+      "confirmed_by_rules": true,
+      "llm_seen": true
+    },
+    {
+      "package": "WdgM",
+      "classification": "Mandatory",
+      "confidence": "High",
+      "source": "Explicit requirement",
+      "requirement_ids": [
+        "FLV-STK-015",
+        "FLV-STK-016"
+      ],
+      "rationale": "Watchdog for motor control and self‑test safety.",
+      "confirmed_by_rules": false,
+      "llm_seen": true
+    },
+    {
+      "package": "BswM",
+      "classification": "Mandatory",
+      "confidence": "High",
+      "source": "Explicit requirement",
+      "requirement_ids": [
+        "FLV-STK-070"
+      ],
+      "rationale": "BSW module management in a safety‑critical system.",
+      "confirmed_by_rules": false,
+      "llm_seen": true
+    },
+    {
+      "package": "EcuM",
+      "classification": "Mandatory",
+      "confidence": "High",
+      "source": "Explicit requirement",
+      "requirement_ids": [
+        "FLV-STK-070"
+      ],
+      "rationale": "ECU management for startup, shutdown and safety.",
+      "confirmed_by_rules": false,
+      "llm_seen": true
+    },
+    {
+      "package": "Functional Safety package",
+      "classification": "Mandatory",
+      "confidence": "High",
+      "source": "Explicit requirement",
+      "requirement_ids": [
+        "FLV-STK-070"
+      ],
+      "rationale": "ISO 26262 Parts 2‑9 implementation.",
+      "confirmed_by_rules": true,
+      "llm_seen": true
+    },
+    {
+      "package": "Flash Bootloader",
+      "classification": "Conditional",
+      "confidence": "Medium",
+      "source": "Derived from requirement",
+      "requirement_ids": [
+        "FLV-STK-133"
+      ],
+      "rationale": "Enables firmware update; mandatory if connectivity option is chosen.",
+      "confirmed_by_rules": false,
+      "llm_seen": true
+    },
+    {
+      "package": "OTA / Update Manager",
+      "classification": "Conditional",
+      "confidence": "Medium",
+      "source": "Derived from requirement",
+      "requirement_ids": [
+        "FLV-STK-133",
+        "FLV-STK-100"
+      ],
+      "rationale": "Field update of firmware; depends on connectivity option.",
+      "confirmed_by_rules": true,
+      "llm_seen": true
+    },
+    {
+      "package": "Crypto Stack",
+      "classification": "Conditional",
+      "confidence": "Medium",
+      "source": "Derived from requirement",
+      "requirement_ids": [
+        "FLV-STK-102"
+      ],
+      "rationale": "Cryptographic verification of firmware; needed for OTA.",
+      "confirmed_by_rules": false,
+      "llm_seen": true
+    },
+    {
+      "package": "Secure Boot",
+      "classification": "Conditional",
+      "confidence": "Medium",
+      "source": "Derived from requirement",
+      "requirement_ids": [
+        "FLV-STK-102"
+      ],
+      "rationale": "Boot-time integrity protection.",
+      "confirmed_by_rules": false,
+      "llm_seen": true
+    },
+    {
+      "package": "Cybersecurity / ISO 21434",
+      "classification": "Conditional",
+      "confidence": "Medium",
+      "source": "Derived from requirement",
+      "requirement_ids": [
+        "FLV-STK-100",
+        "FLV-STK-101",
+        "FLV-STK-103",
+        "FLV-STK-097"
+      ],
+      "rationale": "Security engineering for BLE radio.",
+      "confirmed_by_rules": true,
+      "llm_seen": true
+    },
+    {
+      "package": "XCP",
+      "classification": "Conditional",
+      "confidence": "Low",
+      "source": "Needs user decision",
+      "requirement_ids": [
+        "FLV-STK-132"
+      ],
+      "rationale": "Calibration of motor drive; optional for non‑critical variants.",
+      "confirmed_by_rules": false,
+      "llm_seen": true
+    },
+    {
+      "package": "BSW",
+      "classification": "Mandatory",
+      "confidence": "High",
+      "source": "Standard baseline assumption",
+      "requirement_ids": [],
+      "rationale": "Baseline for Classic AUTOSAR",
+      "confirmed_by_rules": false,
+      "llm_seen": false
+    },
+    {
+      "package": "UDS",
+      "classification": "Mandatory",
+      "confidence": "High",
+      "source": "Standard baseline assumption",
+      "requirement_ids": [],
+      "rationale": "Baseline for Classic AUTOSAR",
+      "confirmed_by_rules": false,
+      "llm_seen": false
+    },
+    {
+      "package": "Watchdog",
+      "classification": "Mandatory",
+      "confidence": "High",
+      "source": "Standard baseline assumption",
+      "requirement_ids": [],
+      "rationale": "Baseline for Classic AUTOSAR",
+      "confirmed_by_rules": false,
+      "llm_seen": false
+    }
+  ],
+  "interfaces": [
+    {
+      "name": "BLE",
+      "kind": "communication",
+      "requirement_ids": [
+        "FLV-STK-067"
+      ]
+    },
+    {
+      "name": "Diagnostics",
+      "kind": "diagnostics",
+      "requirement_ids": [
+        "FLV-STK-016",
+        "FLV-STK-066"
+      ]
+    },
+    {
+      "name": "EventLogStorage",
+      "kind": "storage",
+      "requirement_ids": [
+        "FLV-STK-065",
+        "FLV-STK-133"
+      ]
+    },
+    {
+      "name": "FirmwareUpdate",
+      "kind": "update",
+      "requirement_ids": [
+        "FLV-STK-133",
+        "FLV-STK-102"
+      ]
+    },
+    {
+      "name": "BatterySoC",
+      "kind": "diagnostics",
+      "requirement_ids": [
+        "FLV-STK-042"
+      ]
+    },
+    {
+      "name": "MotorControl",
+      "kind": "other",
+      "requirement_ids": [
+        "FLV-STK-015"
+      ]
+    },
+    {
+      "name": "SecurityKeyStorage",
+      "kind": "storage",
+      "requirement_ids": [
+        "FLV-STK-102"
+      ]
+    },
+    {
+      "name": "LightSignal",
+      "kind": "diagnostics",
+      "requirement_ids": [
+        "FLV-STK-060"
+      ]
+    }
+  ],
+  "open_decisions": [
+    {
+      "question": "When is the connectivity option (BLE) introduced in production?",
+      "options": [
+        "From launch (V1 and V2)",
+        "Added later (after V1 launch)"
+      ],
+      "recommended_default": "From launch (V1 and V2)",
+      "rationale": "Early inclusion simplifies architecture and supports customer expectations (FLV-STK-067).",
+      "requirement_ids": [
+        "FLV-STK-067"
+      ],
+      "id": "OC-001",
+      "answered": null
+    },
+    {
+      "question": "Volume split between variant V1 and V2 in the first two years.",
+      "options": [
+        "10% V1 / 90% V2",
+        "50% V1 / 50% V2"
+      ],
+      "recommended_default": "10% V1 / 90% V2",
+      "rationale": "V2 is the primary product for roofers; V1 is a retrofit niche (FLV-STK-110, FLV-STK-111).",
+      "requirement_ids": [
+        "FLV-STK-110",
+        "FLV-STK-111"
+      ],
+      "id": "OC-002",
+      "answered": null
+    },
+    {
+      "question": "Hardware partner decision.",
+      "options": [
+        "Supplier develops own electronics",
+        "Supplier uses a third‑party hardware partner"
+      ],
+      "recommended_default": "Supplier develops own electronics",
+      "rationale": "Full control over safety and integration, but increases effort (FLV-STK-140).",
+      "requirement_ids": [
+        "FLV-STK-140"
+      ],
+      "id": "OC-003",
+      "answered": null
+    },
+    {
+      "question": "Choice of OS platform.",
+      "options": [
+        "Classic AUTOSAR",
+        "Embedded non‑AUTOSAR"
+      ],
+      "recommended_default": "Classic AUTOSAR",
+      "rationale": "Classic AUTOSAR provides ISO 26262 compliant BSW, RTE, and safety modules (FLV-STK-070).",
+      "requirement_ids": [
+        "FLV-STK-070"
+      ],
+      "id": "OC-004",
+      "answered": null
+    }
+  ],
+  "constraints": [
+    {
+      "kind": "timing",
+      "name": "StartLatency",
+      "value": "30",
+      "unit": "s",
+      "requirement_ids": [
+        "FLV-STK-008"
+      ]
+    },
+    {
+      "kind": "resource",
+      "name": "StandbyConsumption",
+      "value": "2",
+      "unit": "mW",
+      "requirement_ids": [
+        "FLV-STK-041"
+      ]
+    },
+    {
+      "kind": "resource",
+      "name": "EnergyReserveCycles",
+      "value": "5",
+      "unit": "cycles",
+      "requirement_ids": [
+        "FLV-STK-033"
+      ]
+    },
+    {
+      "kind": "resource",
+      "name": "NoiseLevel",
+      "value": "65",
+      "unit": "dB(A) @ 1m",
+      "requirement_ids": [
+        "FLV-STK-063"
+      ]
+    },
+    {
+      "kind": "environment",
+      "name": "OperatingTemperature",
+      "value": "-20",
+      "unit": "°C",
+      "requirement_ids": [
+        "FLV-STK-050"
+      ]
+    },
+    {
+      "kind": "environment",
+      "name": "ExtremeTemperature",
+      "value": "-30",
+      "unit": "°C",
+      "requirement_ids": [
+        "FLV-STK-050"
+      ]
+    },
+    {
+      "kind": "resource",
+      "name": "BatteryLife",
+      "value": "70",
+      "unit": "% capacity after 5 years",
+      "requirement_ids": [
+        "FLV-STK-039"
+      ]
+    },
+    {
+      "kind": "aspice_process",
+      "name": "",
+      "value": "SWE.1",
+      "unit": "",
+      "requirement_ids": [
+        "QP-016"
+      ]
+    },
+    {
+      "kind": "aspice_process",
+      "name": "",
+      "value": "SWE.6",
+      "unit": "",
+      "requirement_ids": [
+        "QP-016"
+      ]
+    },
+    {
+      "kind": "asil",
+      "name": "",
+      "value": "d",
+      "unit": "",
+      "requirement_ids": [
+        "QP-017"
+      ]
+    },
+    {
+      "kind": "timing",
+      "name": "",
+      "value": "120",
+      "unit": "s",
+      "requirement_ids": [
+        "FLV-STK-005"
+      ]
+    },
+    {
+      "kind": "aspice_process",
+      "name": "",
+      "value": "SWE.1",
+      "unit": "",
+      "requirement_ids": [
+        "FLV-STK-140"
+      ]
+    },
+    {
+      "kind": "aspice_process",
+      "name": "",
+      "value": "SWE.6",
+      "unit": "",
+      "requirement_ids": [
+        "FLV-STK-140"
+      ]
+    }
+  ],
+  "findings": [],
+  "llm_assist": true,
+  "requirements": [
+    {
+      "id": "QP-001",
+      "text": "# Request for Quotation RFQ-FLV-2026-01: Fluvoro gutter-outlet leaf shredder",
+      "source": "pasted",
+      "categories": [
+        "Unknown/unclear"
+      ],
+      "status": "Confirmed",
+      "needs_user_decision": false
+    },
+    {
+      "id": "QP-002",
+      "text": "**From:** Kestrel Home Systems GmbH, Product Management (fictional customer, synthetic project)",
+      "source": "pasted",
+      "categories": [
+        "Unknown/unclear"
+      ],
+      "status": "Confirmed",
+      "needs_user_decision": false
+    },
+    {
+      "id": "QP-003",
+      "text": "**Date:** 2 November 2026",
+      "source": "pasted",
+      "categories": [
+        "Unknown/unclear"
+      ],
+      "status": "Confirmed",
+      "needs_user_decision": false
+    },
+    {
+      "id": "QP-004",
+      "text": "**Quotation due:** 30 November 2026",
+      "source": "pasted",
+      "categories": [
+        "Unknown/unclear"
+      ],
+      "status": "Confirmed",
+      "needs_user_decision": false
+    },
+    {
+      "id": "QP-005",
+      "text": "**Questions until:** 20 November 2026 (in writing; answers are shared with all bidders)",
+      "source": "pasted",
+      "categories": [
+        "Unknown/unclear"
+      ],
+      "status": "Confirmed",
+      "needs_user_decision": false
+    },
+    {
+      "id": "QP-006",
+      "text": "Kestrel Home Systems plans to launch **Fluvoro**, a battery-powered, solar-charged",
+      "source": "pasted",
+      "categories": [
+        "Unknown/unclear"
+      ],
+      "status": "Confirmed",
+      "needs_user_decision": false
+    },
+    {
+      "id": "QP-007",
+      "text": "leaf shredder that sits in the gutter outlet and keeps it from clogging. We ask you",
+      "source": "pasted",
+      "categories": [
+        "Unknown/unclear"
+      ],
+      "status": "Confirmed",
+      "needs_user_decision": false
+    },
+    {
+      "id": "QP-008",
+      "text": "to quote the **system and software development** of Fluvoro, from requirements",
+      "source": "pasted",
+      "categories": [
+        "Unknown/unclear"
+      ],
+      "status": "Confirmed",
+      "needs_user_decision": false
+    },
+    {
+      "id": "QP-009",
+      "text": "through qualified software, including the functional-safety work.",
+      "source": "pasted",
+      "categories": [
+        "Unknown/unclear"
+      ],
+      "status": "Confirmed",
+      "needs_user_decision": false
+    },
+    {
+      "id": "QP-010",
+      "text": "The attached **Customer Requirements Specification (CRS) v1**,",
+      "source": "pasted",
+      "categories": [
+        "Unknown/unclear"
+      ],
+      "status": "Confirmed",
+      "needs_user_decision": false
+    },
+    {
+      "id": "QP-011",
+      "text": "`fluvoro_crs_v1.reqif`, with 101 requirements, is the binding technical basis of",
+      "source": "pasted",
+      "categories": [
+        "Unknown/unclear"
+      ],
+      "status": "Confirmed",
+      "needs_user_decision": false
+    },
+    {
+      "id": "QP-012",
+      "text": "## 2. Scope of the quotation",
+      "source": "pasted",
+      "categories": [
+        "Unknown/unclear"
+      ],
+      "status": "Confirmed",
+      "needs_user_decision": false
+    },
+    {
+      "id": "QP-013",
+      "text": "| Variants | **V1 insert** (retrofit, homeowner-installed) and **V2 replacement outlet** (roofer-installed), first size NW 333 / DN 87–100 |",
+      "source": "pasted",
+      "categories": [
+        "Unknown/unclear"
+      ],
+      "status": "Confirmed",
+      "needs_user_decision": false
+    },
+    {
+      "id": "QP-014",
+      "text": "| Option | **Connectivity option** (Bluetooth Low Energy app), quoted as a separate item |",
+      "source": "pasted",
+      "categories": [
+        "Unknown/unclear"
+      ],
+      "status": "Confirmed",
+      "needs_user_decision": false
+    },
+    {
+      "id": "QP-015",
+      "text": "| System engineering | SYS.1–SYS.5 to Automotive SPICE 4.0: requirements analysis, system architecture, integration and qualification |",
+      "source": "pasted",
+      "categories": [
+        "Unknown/unclear"
+      ],
+      "status": "Confirmed",
+      "needs_user_decision": false
+    },
+    {
+      "id": "QP-016",
+      "text": "| Software engineering | SWE.1–SWE.6: software requirements, architecture, detailed design and implementation (C), unit verification, integration and qualification |",
+      "source": "pasted",
+      "categories": [
+        "ASPICE/process"
+      ],
+      "status": "Confirmed",
+      "needs_user_decision": false
+    },
+    {
+      "id": "QP-017",
+      "text": "| Functional safety | Development to ISO 26262:2018, tailored to the item (CRS chapter 6): item definition, HARA with ASIL determination, functional and technical safety concepts, safety case |",
+      "source": "pasted",
+      "categories": [
+        "Functional safety"
+      ],
+      "status": "Confirmed",
+      "needs_user_decision": false
+    },
+    {
+      "id": "QP-018",
+      "text": "| Project and support | MAN.3, SUP.1, SUP.8, SUP.9, SUP.10 |",
+      "source": "pasted",
+      "categories": [
+        "Unknown/unclear"
+      ],
+      "status": "Confirmed",
+      "needs_user_decision": false
+    },
+    {
+      "id": "QP-019",
+      "text": "**Not in scope:** industrial design, tooling and series production, the smartphone",
+      "source": "pasted",
+      "categories": [
+        "Unknown/unclear"
+      ],
+      "status": "Confirmed",
+      "needs_user_decision": false
+    },
+    {
+      "id": "QP-020",
+      "text": "app itself (only the device side of the BLE interface), and certification fees.",
+      "source": "pasted",
+      "categories": [
+        "Unknown/unclear"
+      ],
+      "status": "Confirmed",
+      "needs_user_decision": false
+    },
+    {
+      "id": "QP-021",
+      "text": "Hardware and mechanical design appear only as far as the system architecture and",
+      "source": "pasted",
+      "categories": [
+        "Unknown/unclear"
+      ],
+      "status": "Confirmed",
+      "needs_user_decision": false
+    },
+    {
+      "id": "QP-022",
+      "text": "the hardware–software interface need them.",
+      "source": "pasted",
+      "categories": [
+        "Unknown/unclear"
+      ],
+      "status": "Confirmed",
+      "needs_user_decision": false
+    },
+    {
+      "id": "QP-023",
+      "text": "## 3. What we ask you to quote",
+      "source": "pasted",
+      "categories": [
+        "Unknown/unclear"
+      ],
+      "status": "Confirmed",
+      "needs_user_decision": false
+    },
+    {
+      "id": "QP-024",
+      "text": "1. **Effort per work package**, in person-days by role, for the scope above, with",
+      "source": "pasted",
+      "categories": [
+        "Unknown/unclear"
+      ],
+      "status": "Confirmed",
+      "needs_user_decision": false
+    },
+    {
+      "id": "QP-025",
+      "text": "the connectivity option shown separately.",
+      "source": "pasted",
+      "categories": [
+        "Unknown/unclear"
+      ],
+      "status": "Confirmed",
+      "needs_user_decision": false
+    },
+    {
+      "id": "QP-026",
+      "text": "2. **Project plan**, with the milestones B-sample software (feature complete) and",
+      "source": "pasted",
+      "categories": [
+        "Unknown/unclear"
+      ],
+      "status": "Confirmed",
+      "needs_user_decision": false
+    },
+    {
+      "id": "QP-027",
+      "text": "C-sample software (qualified, safety case complete).",
+      "source": "pasted",
+      "categories": [
+        "Unknown/unclear"
+      ],
+      "status": "Confirmed",
+      "needs_user_decision": false
+    },
+    {
+      "id": "QP-028",
+      "text": "3. **Your assumptions and the open points** you need us to clarify.",
+      "source": "pasted",
+      "categories": [
+        "Unknown/unclear"
+      ],
+      "status": "Confirmed",
+      "needs_user_decision": false
+    },
+    {
+      "id": "QP-029",
+      "text": "4. **Deliverables list**, cross-checked against CRS FLV-STK-142.",
+      "source": "pasted",
+      "categories": [
+        "Unknown/unclear"
+      ],
+      "status": "Confirmed",
+      "needs_user_decision": false
+    },
+    {
+      "id": "QP-030",
+      "text": "## 4. Schedule we are aiming for",
+      "source": "pasted",
+      "categories": [
+        "Unknown/unclear"
+      ],
+      "status": "Confirmed",
+      "needs_user_decision": false
+    },
+    {
+      "id": "QP-031",
+      "text": "| Milestone | Date |",
+      "source": "pasted",
+      "categories": [
+        "Unknown/unclear"
+      ],
+      "status": "Confirmed",
+      "needs_user_decision": false
+    },
+    {
+      "id": "QP-032",
+      "text": "| Kick-off | February 2027 |",
+      "source": "pasted",
+      "categories": [
+        "Unknown/unclear"
+      ],
+      "status": "Confirmed",
+      "needs_user_decision": false
+    },
+    {
+      "id": "QP-033",
+      "text": "| B-sample software | October 2027 |",
+      "source": "pasted",
+      "categories": [
+        "Unknown/unclear"
+      ],
+      "status": "Confirmed",
+      "needs_user_decision": false
+    },
+    {
+      "id": "QP-034",
+      "text": "| C-sample software | April 2028 |",
+      "source": "pasted",
+      "categories": [
+        "Unknown/unclear"
+      ],
+      "status": "Confirmed",
+      "needs_user_decision": false
+    },
+    {
+      "id": "QP-035",
+      "text": "| Start of production | September 2028 (before the autumn season) |",
+      "source": "pasted",
+      "categories": [
+        "Unknown/unclear"
+      ],
+      "status": "Confirmed",
+      "needs_user_decision": false
+    },
+    {
+      "id": "QP-036",
+      "text": "## 5. Points still open on our side",
+      "source": "pasted",
+      "categories": [
+        "Unknown/unclear"
+      ],
+      "status": "Confirmed",
+      "needs_user_decision": false
+    },
+    {
+      "id": "QP-037",
+      "text": "Please state your assumption for each. We will answer questions in writing.",
+      "source": "pasted",
+      "categories": [
+        "Unknown/unclear"
+      ],
+      "status": "Confirmed",
+      "needs_user_decision": false
+    },
+    {
+      "id": "QP-038",
+      "text": "1. **Volume split** between V1 and V2 in the first two years.",
+      "source": "pasted",
+      "categories": [
+        "Unknown/unclear"
+      ],
+      "status": "Confirmed",
+      "needs_user_decision": false
+    },
+    {
+      "id": "QP-039",
+      "text": "2. **Whether the connectivity option** will be offered from start of production or added later.",
+      "source": "pasted",
+      "categories": [
+        "Unknown/unclear"
+      ],
+      "status": "Confirmed",
+      "needs_user_decision": false
+    },
+    {
+      "id": "QP-040",
+      "text": "3. **Hardware partner:** whether you also propose the electronics hardware design, or",
+      "source": "pasted",
+      "categories": [
+        "Unknown/unclear"
+      ],
+      "status": "Confirmed",
+      "needs_user_decision": false
+    },
+    {
+      "id": "QP-041",
+      "text": "only the system and software with a hardware partner we name.",
+      "source": "pasted",
+      "categories": [
+        "Unknown/unclear"
+      ],
+      "status": "Confirmed",
+      "needs_user_decision": false
+    },
+    {
+      "id": "QP-042",
+      "text": "- `fluvoro_crs_v1.reqif`: Customer Requirements Specification v1 (101 requirements)",
+      "source": "pasted",
+      "categories": [
+        "Unknown/unclear"
+      ],
+      "status": "Confirmed",
+      "needs_user_decision": false
+    },
+    {
+      "id": "QP-043",
+      "text": "Kestrel Home Systems GmbH, Product Management",
+      "source": "pasted",
+      "categories": [
+        "Unknown/unclear"
+      ],
+      "status": "Confirmed",
+      "needs_user_decision": false
+    },
+    {
+      "id": "FLV-STK-001",
+      "text": "Keep the outlet free — The device shall prevent the gutter outlet from becoming blocked by leaves, conifer needles and small twigs during rainfall.\n\n**Variant:** V1 and V2\n**Verification:** test\n**Rationale:** The product's purpose.",
+      "source": "reqif:fluvoro/fluvoro_crs_v1.reqif"
+    },
+    {
+      "id": "FLV-STK-002",
+      "text": "Automatic operation — The device shall detect a clog condition and clear it without any action by a person.\n\n**Variant:** V1 and V2\n**Verification:** test\n**Rationale:** Removing the ladder visit is the value proposition.",
+      "source": "reqif:fluvoro/fluvoro_crs_v1.reqif"
+    },
+    {
+      "id": "FLV-STK-003",
+      "text": "Shredded particle size — The device shall reduce reference debris to particles whose largest dimension does not exceed 15 mm for at least 95 % of the shredded mass.\n\n**Variant:** V1 and V2\n**Verification:** test\n**Rationale:** Particles must pass the downpipe bends and a DN 87 downpipe without building a new blockage further down.",
+      "source": "reqif:fluvoro/fluvoro_crs_v1.reqif"
+    },
+    {
+      "id": "FLV-STK-004",
+      "text": "Shredding throughput — The device shall shred reference debris at a rate of at least 60 g wet mass per minute while running.\n\n**Variant:** V1 and V2\n**Verification:** test\n**Rationale:** A heavy autumn day can bring several hundred grams of wet leaves to one outlet; the device must keep up within a few short cycles.",
+      "source": "reqif:fluvoro/fluvoro_crs_v1.reqif"
+    },
+    {
+      "id": "FLV-STK-005",
+      "text": "Restore flow after a clog — After a clog condition is detected, the device shall restore the outlet's free discharge within 120 s in at least 95 % of clog events caused by reference debris.\n\n**Variant:** V1 and V2\n**Verification:** test\n**Rationale:** Bounds how long water can back up and overflow during heavy rain.",
+      "source": "reqif:fluvoro/fluvoro_crs_v1.reqif"
+    },
+    {
+      "id": "FLV-STK-006",
+      "text": "Clog detection level — The device shall treat water standing in the outlet neck at or above a level of 30 mm above the rotor plane as a potential clog.\n\n**Variant:** V1 and V2\n**Verification:** test\n**Rationale:** Water that rises into the funnel means the outlet cannot pass the inflow; 30 mm leaves margin before the gutter overflows.",
+      "source": "reqif:fluvoro/fluvoro_crs_v1.reqif"
+    },
+    {
+      "id": "FLV-STK-007",
+      "text": "Distinguish clog from heavy rain — The device shall start a shred cycle only when the clog level of FLV-STK-006 persists for at least 10 s or rises continuously over that period, so that short surges from heavy rain alone do not start the rotor.\n\n**Variant:** V1 and V2\n**Verification:** test\n**Rationale:** Unneeded cycles waste energy, add wear and noise.",
+      "source": "reqif:fluvoro/fluvoro_crs_v1.reqif"
+    },
+    {
+      "id": "FLV-STK-008",
+      "text": "Start latency — The device shall start shredding within 30 s after a clog condition has been established.\n\n**Variant:** V1 and V2\n**Verification:** test\n**Rationale:** Together with FLV-STK-005 this bounds the time water backs up.",
+      "source": "reqif:fluvoro/fluvoro_crs_v1.reqif"
+    },
+    {
+      "id": "FLV-STK-009",
+      "text": "Unneeded cycles — Over a reference autumn season (FLV-STK-030), no more than 10 % of shred cycles shall be started without debris being present.\n\n**Variant:** V1 and V2\n**Verification:** analysis\n**Rationale:** Keeps the energy budget and wear within limits.",
+      "source": "reqif:fluvoro/fluvoro_crs_v1.reqif"
+    },
+    {
+      "id": "FLV-STK-010",
+      "text": "Verify the result of a cycle — After each shred cycle the device shall check whether the water level has fallen below the clog level and shall start a further cycle or report a persistent clog if it has not.\n\n**Variant:** V1 and V2\n**Verification:** test\n**Rationale:** The device must not assume success; a remaining clog needs a person.",
+      "source": "reqif:fluvoro/fluvoro_crs_v1.reqif"
+    },
+    {
+      "id": "FLV-STK-011",
+      "text": "Persistent clog — If the clog condition persists after 3 consecutive shred cycles, the device shall stop shredding for that event and signal \"service needed\" (FLV-STK-061).\n\n**Variant:** V1 and V2\n**Verification:** test\n**Rationale:** Avoids draining the battery on a clog the device cannot clear.",
+      "source": "reqif:fluvoro/fluvoro_crs_v1.reqif"
+    },
+    {
+      "id": "FLV-STK-012",
+      "text": "Non-shreddable objects — When a non-shreddable object (for example a stone, a ball, a plastic bag) blocks the rotor, the device shall stop the rotor, make at most 3 attempts to clear it by reversing, and then signal \"service needed\" without damage to the device.\n\n**Variant:** V1 and V2\n**Verification:** test\n**Rationale:** Gutters collect more than leaves; the device must protect itself and say so.",
+      "source": "reqif:fluvoro/fluvoro_crs_v1.reqif"
+    },
+    {
+      "id": "FLV-STK-013",
+      "text": "Operation at night and in rain — The device shall perform all its functions independently of daylight.\n\n**Variant:** V1 and V2\n**Verification:** test\n**Rationale:** Clogs happen during rain, often at night and with no sun.",
+      "source": "reqif:fluvoro/fluvoro_crs_v1.reqif"
+    },
+    {
+      "id": "FLV-STK-014",
+      "text": "Dry running — The device shall not run the rotor for longer than 5 s when the level sensor indicates no water and no clog condition, except during the self-test of FLV-STK-016.\n\n**Variant:** V1 and V2\n**Verification:** test\n**Rationale:** Dry running adds wear and noise without benefit.",
+      "source": "reqif:fluvoro/fluvoro_crs_v1.reqif"
+    },
+    {
+      "id": "FLV-STK-015",
+      "text": "Motor speed and torque control — The device shall control rotor speed and torque so that it can soft-start, limit torque, detect a jam from motor current and speed, and reverse direction.\n\n**Variant:** V1 and V2\n**Verification:** test\n**Rationale:** The motor is PWM-driven; controlled torque protects the drive, the rotor and the user.",
+      "source": "reqif:fluvoro/fluvoro_crs_v1.reqif"
+    },
+    {
+      "id": "FLV-STK-016",
+      "text": "Self-test — The device shall test its level sensor, motor drive and battery at least once every 24 h, run the rotor for no longer than 2 s during that test, and signal \"fault\" when a test fails.\n\n**Variant:** V1 and V2\n**Verification:** test\n**Rationale:** A failed sensor must be found before the next storm, not during it.",
+      "source": "reqif:fluvoro/fluvoro_crs_v1.reqif"
+    },
+    {
+      "id": "FLV-STK-017",
+      "text": "Quiet hours — Between 22:00 and 06:00 local time the device shall start a shred cycle only when the water level reaches 50 mm above the rotor plane.\n\n**Variant:** V1 and V2\n**Verification:** test\n**Rationale:** Neighbours; at night only a near-overflow justifies the noise.",
+      "source": "reqif:fluvoro/fluvoro_crs_v1.reqif"
+    },
+    {
+      "id": "FLV-STK-018",
+      "text": "Local time without a network — The device shall keep local time with an error of no more than 10 min per month without any network connection, and shall keep it through a battery replacement.\n\n**Variant:** V1 and V2\n**Verification:** test\n**Rationale:** Needed by FLV-STK-017 on devices without the BLE option.",
+      "source": "reqif:fluvoro/fluvoro_crs_v1.reqif"
+    },
+    {
+      "id": "FLV-STK-020",
+      "text": "Discharge with the rotor stopped — With the device installed, a clean grate and the rotor stopped, the outlet shall discharge at least 80 % of the flow the same outlet discharges without the device, measured at the same water head.\n\n**Variant:** V1 and V2\n**Verification:** test\n**Rationale:** The device must not create the overflow it is meant to prevent.",
+      "source": "reqif:fluvoro/fluvoro_crs_v1.reqif"
+    },
+    {
+      "id": "FLV-STK-021",
+      "text": "Fail-open drainage — With the grate and rotor completely blocked, or with the device unpowered, the device shall still drain at least 50 % of the flow of the same outlet without the device, through an overflow path that cannot be closed by debris retained by the grate.\n\n**Variant:** V1 and V2\n**Verification:** test\n**Rationale:** No failure of the device may turn a partly blocked outlet into a fully blocked one; water on the façade is a hazard to the building.",
+      "source": "reqif:fluvoro/fluvoro_crs_v1.reqif"
+    },
+    {
+      "id": "FLV-STK-022",
+      "text": "Design rainfall — The device shall meet FLV-STK-020 and FLV-STK-021 for the design rainfall intensity of EN 12056-3 for the connected roof area of an NW 333 gutter outlet.\n\n**Variant:** V1 and V2\n**Verification:** analysis\n**Rationale:** Ties the hydraulic requirements to the standard used to size roof drainage.",
+      "source": "reqif:fluvoro/fluvoro_crs_v1.reqif"
+    },
+    {
+      "id": "FLV-STK-030",
+      "text": "Reference autumn season — The device shall operate for a reference autumn season of 1 September to 31 December at the reference site without external charging, performing up to 4 shred cycles per day on up to 20 days and up to 1 shred cycle per day on the other days.\n\n**Variant:** V1 and V2\n**Verification:** analysis\n**Rationale:** The autumn leaf season is when the product must work; external charging defeats its purpose.",
+      "source": "reqif:fluvoro/fluvoro_crs_v1.reqif"
+    },
+    {
+      "id": "FLV-STK-031",
+      "text": "Autonomy without sun — Starting from a fully charged battery, the device shall perform at least 30 shred cycles spread over 14 days with no solar input, and keep its monitoring functions running for those 14 days.\n\n**Variant:** V1 and V2\n**Verification:** test\n**Rationale:** Two weeks of dark, wet weather in November is normal in Central Europe.",
+      "source": "reqif:fluvoro/fluvoro_crs_v1.reqif"
+    },
+    {
+      "id": "FLV-STK-032",
+      "text": "Shading and soiling — The device shall meet FLV-STK-030 with 50 % of the solar cell area shaded or covered by debris on every day of the season.\n\n**Variant:** V1 and V2\n**Verification:** analysis\n**Rationale:** The cap sits inside a gutter, under trees, where leaves land on it.",
+      "source": "reqif:fluvoro/fluvoro_crs_v1.reqif"
+    },
+    {
+      "id": "FLV-STK-033",
+      "text": "Energy reserve — The device shall keep an energy reserve sufficient for at least 5 shred cycles; when only the reserve remains it shall stop non-essential functions, keep clog clearing available, and signal \"low battery\".\n\n**Variant:** V1 and V2\n**Verification:** test\n**Rationale:** Clearing clogs is the last function the device should give up.",
+      "source": "reqif:fluvoro/fluvoro_crs_v1.reqif"
+    },
+    {
+      "id": "FLV-STK-034",
+      "text": "Solar charging — The device shall charge its battery from solar cells integrated in the device and shall need no mains connection and no separate panel.\n\n**Variant:** V1 and V2\n**Verification:** inspection\n**Rationale:** No cables on the roof; installation by a homeowner (V1).",
+      "source": "reqif:fluvoro/fluvoro_crs_v1.reqif"
+    },
+    {
+      "id": "FLV-STK-035",
+      "text": "Recovery from full discharge — After its battery has been fully discharged, the device shall resume normal operation automatically once solar charging has restored sufficient energy, without passing through an unsafe state and without user action.\n\n**Variant:** V1 and V2\n**Verification:** test\n**Rationale:** A device left dark for weeks must come back by itself.",
+      "source": "reqif:fluvoro/fluvoro_crs_v1.reqif"
+    },
+    {
+      "id": "FLV-STK-036",
+      "text": "Battery protection — The device shall protect its battery against over-voltage, under-voltage, over-current, short circuit and operation outside the battery manufacturer's temperature limits for charging and for discharging.\n\n**Variant:** V1 and V2\n**Verification:** test\n**Rationale:** Battery safety; a damaged lithium battery on a house is a fire hazard.",
+      "source": "reqif:fluvoro/fluvoro_crs_v1.reqif"
+    },
+    {
+      "id": "FLV-STK-037",
+      "text": "No charging below freezing — The device shall not charge its battery at a cell temperature below 0 °C or above the manufacturer's charging limit.\n\n**Variant:** V1 and V2\n**Verification:** test\n**Rationale:** Charging lithium cells below 0 °C causes lithium plating and lasting damage.",
+      "source": "reqif:fluvoro/fluvoro_crs_v1.reqif"
+    },
+    {
+      "id": "FLV-STK-038",
+      "text": "Battery chemistry — The device shall use a battery chemistry and construction whose thermal stability is at least that of lithium iron phosphate (LiFePO4).\n\n**Variant:** V1 and V2\n**Verification:** inspection\n**Rationale:** Mounted on a roof edge, unattended, often above wooden structures.",
+      "source": "reqif:fluvoro/fluvoro_crs_v1.reqif"
+    },
+    {
+      "id": "FLV-STK-039",
+      "text": "Battery life — The battery shall keep at least 70 % of its rated capacity after 5 years of use at the reference site.\n\n**Variant:** V1 and V2\n**Verification:** analysis\n**Rationale:** Matches the replacement interval a homeowner accepts.",
+      "source": "reqif:fluvoro/fluvoro_crs_v1.reqif"
+    },
+    {
+      "id": "FLV-STK-040",
+      "text": "Battery replaceable by the user — The battery shall be removable and replaceable by the end user with no tools, or with commercially available tools only, and without damage to the device or the battery.\n\n**Variant:** V1 and V2\n**Verification:** demonstration\n**Rationale:** Battery Regulation (EU) 2023/1542, Article 11 (portable batteries in appliances).",
+      "source": "reqif:fluvoro/fluvoro_crs_v1.reqif"
+    },
+    {
+      "id": "FLV-STK-041",
+      "text": "Standby consumption — The device's average power consumption while monitoring with no shred cycle shall not exceed 2 mW.\n\n**Variant:** V1 and V2\n**Verification:** test\n**Rationale:** Standby dominates the energy budget on most days of the year.",
+      "source": "reqif:fluvoro/fluvoro_crs_v1.reqif"
+    },
+    {
+      "id": "FLV-STK-042",
+      "text": "State of charge reporting — The device shall estimate its battery state of charge with an error of no more than 10 percentage points and report it through its interfaces (FLV-STK-061, FLV-STK-067).\n\n**Variant:** V1 and V2\n**Verification:** test\n**Rationale:** Needed for the reserve logic and to warn the user before the battery is empty.",
+      "source": "reqif:fluvoro/fluvoro_crs_v1.reqif"
+    },
+    {
+      "id": "FLV-STK-043",
+      "text": "Off-season storage — The device shall survive 8 months installed without debris, with only solar charging, without damage to the battery from deep discharge or over-charge.\n\n**Variant:** V1 and V2\n**Verification:** test\n**Rationale:** Spring and summer are mostly idle; the battery must not die from neglect.",
+      "source": "reqif:fluvoro/fluvoro_crs_v1.reqif"
+    },
+    {
+      "id": "FLV-STK-050",
+      "text": "Operating temperature — The device shall operate at ambient temperatures from -20 °C to +50 °C, and shall withstand -30 °C to +80 °C without operating (surface temperature of a dark cap in summer sun).\n\n**Variant:** V1 and V2\n**Verification:** test\n**Rationale:** Roof-edge climate in Central Europe, including sun-heated surfaces.",
+      "source": "reqif:fluvoro/fluvoro_crs_v1.reqif"
+    },
+    {
+      "id": "FLV-STK-051",
+      "text": "Ice and frost — The device shall not be damaged by water freezing inside it, shall not run the rotor while the rotor is held by ice, and shall resume normal operation after thawing without user action.\n\n**Variant:** V1 and V2\n**Verification:** test\n**Rationale:** Water stands in outlets in winter; trying to shred ice damages the drive and drains the battery.",
+      "source": "reqif:fluvoro/fluvoro_crs_v1.reqif"
+    },
+    {
+      "id": "FLV-STK-052",
+      "text": "Ingress protection of the electronics — The compartment holding electronics, battery and motor shall meet IP67 to IEC 60529.\n\n**Variant:** V1 and V2\n**Verification:** test\n**Rationale:** The compartment can be submerged briefly when the gutter overflows.",
+      "source": "reqif:fluvoro/fluvoro_crs_v1.reqif"
+    },
+    {
+      "id": "FLV-STK-053",
+      "text": "UV resistance — All external plastic parts shall keep their function and at least 80 % of their tensile strength after artificial weathering equivalent to 10 years of outdoor exposure in Central Europe.\n\n**Variant:** V1 and V2\n**Verification:** test\n**Rationale:** Permanent sun exposure on the roof edge.",
+      "source": "reqif:fluvoro/fluvoro_crs_v1.reqif"
+    },
+    {
+      "id": "FLV-STK-054",
+      "text": "Gutter materials — The device shall cause no galvanic or chemical corrosion of titanium zinc, copper, aluminium or coated steel gutters and outlets it is in contact with, and shall not itself corrode in contact with them.\n\n**Variant:** V1 and V2\n**Verification:** analysis\n**Rationale:** Metal gutters fail quickly at contact points with incompatible metals; copper run-off attacks zinc and aluminium.",
+      "source": "reqif:fluvoro/fluvoro_crs_v1.reqif"
+    },
+    {
+      "id": "FLV-STK-055",
+      "text": "Hail and impact — The solar cap shall withstand mechanical impact of IK08 to IEC 62262 without loss of function or watertightness.\n\n**Variant:** V1 and V2\n**Verification:** test\n**Rationale:** Hail and falling branches.",
+      "source": "reqif:fluvoro/fluvoro_crs_v1.reqif"
+    },
+    {
+      "id": "FLV-STK-056",
+      "text": "Snow and walking load — The device shall withstand a static load of 300 N on the cap without damage.\n\n**Variant:** V1 and V2\n**Verification:** test\n**Rationale:** Snow load and a person leaning on the gutter during other roof work.",
+      "source": "reqif:fluvoro/fluvoro_crs_v1.reqif"
+    },
+    {
+      "id": "FLV-STK-057",
+      "text": "Service life — The device, excluding battery and wear parts, shall have a service life of at least 10 years at the reference site.\n\n**Variant:** V1 and V2\n**Verification:** analysis\n**Rationale:** Expected life of a roof drainage accessory.",
+      "source": "reqif:fluvoro/fluvoro_crs_v1.reqif"
+    },
+    {
+      "id": "FLV-STK-060",
+      "text": "Status visible from the ground — The device shall show its state (normal, low battery, service needed, fault, maintenance mode) by a light signal that a person can recognise in daylight from the ground at a distance of 6 m.\n\n**Variant:** V1 and V2\n**Verification:** test\n**Rationale:** The user must be able to check the device without a ladder.",
+      "source": "reqif:fluvoro/fluvoro_crs_v1.reqif"
+    },
+    {
+      "id": "FLV-STK-061",
+      "text": "Service needed — The device shall signal \"service needed\" for a persistent clog, a non-shreddable object, worn cutting parts or a failed self-test, and keep signalling until the cause is removed.\n\n**Variant:** V1 and V2\n**Verification:** test\n**Rationale:** The device must say when it needs a person.",
+      "source": "reqif:fluvoro/fluvoro_crs_v1.reqif"
+    },
+    {
+      "id": "FLV-STK-062",
+      "text": "Signalling energy — The light signal of FLV-STK-060 shall not use more than 10 % of the standby energy budget of FLV-STK-041.\n\n**Variant:** V1 and V2\n**Verification:** analysis\n**Rationale:** Signalling must not drain the battery it reports on.",
+      "source": "reqif:fluvoro/fluvoro_crs_v1.reqif"
+    },
+    {
+      "id": "FLV-STK-063",
+      "text": "Noise during shredding — The A-weighted sound pressure level during shredding shall not exceed 65 dB(A) at 1 m from the device.\n\n**Variant:** V1 and V2\n**Verification:** test\n**Rationale:** Residential area; the device is near windows.",
+      "source": "reqif:fluvoro/fluvoro_crs_v1.reqif"
+    },
+    {
+      "id": "FLV-STK-064",
+      "text": "No noise at rest — The device shall produce no audible sound while monitoring.\n\n**Variant:** V1 and V2\n**Verification:** test\n**Rationale:** Residential area.",
+      "source": "reqif:fluvoro/fluvoro_crs_v1.reqif"
+    },
+    {
+      "id": "FLV-STK-065",
+      "text": "Event log — The device shall record at least the last 200 events (shred cycles with start, duration and result, jams, faults, low battery, maintenance mode) with their local time, and keep them through a battery replacement.\n\n**Variant:** V1 and V2\n**Verification:** test\n**Rationale:** Service diagnosis and evidence of operation.",
+      "source": "reqif:fluvoro/fluvoro_crs_v1.reqif"
+    },
+    {
+      "id": "FLV-STK-066",
+      "text": "Service access to the log — A service technician shall be able to read the event log, the hardware and software versions and the serial number on site without opening the sealed compartment.\n\n**Variant:** V1 and V2\n**Verification:** demonstration\n**Rationale:** Diagnosis without breaking the IP67 seal.",
+      "source": "reqif:fluvoro/fluvoro_crs_v1.reqif"
+    },
+    {
+      "id": "FLV-STK-067",
+      "text": "Smartphone app (option) — With the connectivity option, the device shall provide its state, state of charge, event log and notifications of \"service needed\" and \"fault\" to a smartphone app over Bluetooth Low Energy.\n\n**Variant:** Connectivity option (V1 and V2)\n**Verification:** demonstration\n**Rationale:** Convenience for users who want notifications.",
+      "source": "reqif:fluvoro/fluvoro_crs_v1.reqif"
+    },
+    {
+      "id": "FLV-STK-070",
+      "text": "Functional safety frame — The supplier shall develop the device in accordance with ISO 26262:2018 Parts 2 to 9, tailored to the item, including an item definition, a hazard analysis and risk assessment that determines the ASIL of each safety goal, a functional and a technical safety concept, and a safety case.\n\n**Variant:** V1 and V2\n**Verification:** inspection\n**Rationale:** Contractual development frame required by the customer. ASILs are to be determined by the supplier, not given here.",
+      "source": "reqif:fluvoro/fluvoro_crs_v1.reqif"
+    },
+    {
+      "id": "FLV-STK-071",
+      "text": "Protection of a person's hand — The rotor shall not start or run while the cap is removed, while the device is in maintenance mode, or in any other situation in which a person's hand can reach the rotor.\n\n**Variant:** V1 and V2\n**Verification:** test\n**Rationale:** Gutter cleaning by hand is the most likely contact with the device.",
+      "source": "reqif:fluvoro/fluvoro_crs_v1.reqif"
+    },
+    {
+      "id": "FLV-STK-072",
+      "text": "Inaccessible rotating parts — When the device is installed and closed, the rotating parts shall not be reachable by the upper limb, using the safety distances of EN ISO 13857.\n\n**Variant:** V1 and V2\n**Verification:** inspection\n**Rationale:** Machinery safety for rotating cutting parts.",
+      "source": "reqif:fluvoro/fluvoro_crs_v1.reqif"
+    },
+    {
+      "id": "FLV-STK-073",
+      "text": "Maintenance mode — A person shall be able to put the device into a maintenance mode that disables the rotor, by a means operable without tools at the device, and the device shall confirm the mode by its light signal before the person reaches into it.\n\n**Variant:** V1 and V2\n**Verification:** demonstration\n**Rationale:** Safe cleaning of the grate and removal of objects.",
+      "source": "reqif:fluvoro/fluvoro_crs_v1.reqif"
+    },
+    {
+      "id": "FLV-STK-074",
+      "text": "No unintended start after a fault — After a fault that stopped the rotor for safety reasons, the rotor shall not start again until the fault has been cleared and the device has passed its self-test.\n\n**Variant:** V1 and V2\n**Verification:** test\n**Rationale:** An unexpected restart is the most dangerous moment for a person removing a blockage.",
+      "source": "reqif:fluvoro/fluvoro_crs_v1.reqif"
+    },
+    {
+      "id": "FLV-STK-075",
+      "text": "Limited force at the rotor — The force and energy the rotor can exert shall be limited such that contact with the rotating parts while the device runs causes no more than a minor, reversible injury to a finger.\n\n**Variant:** V1 and V2\n**Verification:** test\n**Rationale:** Defence in depth behind FLV-STK-071 and FLV-STK-072; relies on controlled torque (FLV-STK-015).",
+      "source": "reqif:fluvoro/fluvoro_crs_v1.reqif"
+    },
+    {
+      "id": "FLV-STK-076",
+      "text": "No fire on the building — No single fault of the device, including a battery cell fault, shall cause flames or molten material to leave the device enclosure.\n\n**Variant:** V1 and V2\n**Verification:** test\n**Rationale:** The device sits on a roof edge, often above timber.",
+      "source": "reqif:fluvoro/fluvoro_crs_v1.reqif"
+    },
+    {
+      "id": "FLV-STK-077",
+      "text": "Enclosure flammability — Plastic parts enclosing the battery and electronics shall be rated V-0 to UL 94 / IEC 60695-11-10 at the wall thickness used.\n\n**Variant:** V1 and V2\n**Verification:** inspection\n**Rationale:** Containment of an internal fire.",
+      "source": "reqif:fluvoro/fluvoro_crs_v1.reqif"
+    },
+    {
+      "id": "FLV-STK-078",
+      "text": "Safety extra-low voltage — All accessible circuits shall be safety extra-low voltage, with no voltage above 60 V DC anywhere in the device.\n\n**Variant:** V1 and V2\n**Verification:** inspection\n**Rationale:** Electrical safety for a device handled by homeowners on a ladder.",
+      "source": "reqif:fluvoro/fluvoro_crs_v1.reqif"
+    },
+    {
+      "id": "FLV-STK-079",
+      "text": "No overflow caused by the device — No failure of the device shall reduce the outlet's discharge below the fail-open drainage of FLV-STK-021.\n\n**Variant:** V1 and V2\n**Verification:** analysis\n**Rationale:** Water overflowing onto the façade damages the building and freezes on walkways.",
+      "source": "reqif:fluvoro/fluvoro_crs_v1.reqif"
+    },
+    {
+      "id": "FLV-STK-080",
+      "text": "Safe state — On detecting a fault that affects safe operation, the device shall stop the rotor and keep it stopped, keep the fail-open drainage of FLV-STK-021, and signal \"fault\".\n\n**Variant:** V1 and V2\n**Verification:** test\n**Rationale:** Stopping the rotor is safe for people; drainage remains through the overflow path.",
+      "source": "reqif:fluvoro/fluvoro_crs_v1.reqif"
+    },
+    {
+      "id": "FLV-STK-090",
+      "text": "CE marking — The device shall comply with, and be CE marked under, the Machinery Regulation (EU) 2023/1230, the EMC Directive 2014/30/EU and the RoHS Directive 2011/65/EU.\n\n**Variant:** V1 and V2\n**Verification:** inspection\n**Rationale:** Legal market access in the EU.",
+      "source": "reqif:fluvoro/fluvoro_crs_v1.reqif"
+    },
+    {
+      "id": "FLV-STK-091",
+      "text": "Machinery risk assessment — The supplier shall perform and document a risk assessment and risk reduction to EN ISO 12100.\n\n**Variant:** V1 and V2\n**Verification:** inspection\n**Rationale:** Required for the Machinery Regulation conformity assessment; separate from the ISO 26262 HARA.",
+      "source": "reqif:fluvoro/fluvoro_crs_v1.reqif"
+    },
+    {
+      "id": "FLV-STK-092",
+      "text": "Control software safety class — Software that performs a protective function shall meet the requirements for Class B control functions of IEC 60730-1 Annex H, in addition to FLV-STK-070.\n\n**Variant:** V1 and V2\n**Verification:** inspection\n**Rationale:** Product-compliance view of the protective software functions; kept apart from the functional-safety lifecycle.",
+      "source": "reqif:fluvoro/fluvoro_crs_v1.reqif"
+    },
+    {
+      "id": "FLV-STK-093",
+      "text": "Electromagnetic compatibility — The device shall meet emission limits of CISPR 14-1 and immunity requirements of CISPR 14-2.\n\n**Variant:** V1 and V2\n**Verification:** test\n**Rationale:** Household appliance EMC standards for a motor-driven device.",
+      "source": "reqif:fluvoro/fluvoro_crs_v1.reqif"
+    },
+    {
+      "id": "FLV-STK-094",
+      "text": "Battery Regulation — The device and its battery shall comply with the Battery Regulation (EU) 2023/1542, including labelling, information and take-back obligations.\n\n**Variant:** V1 and V2\n**Verification:** inspection\n**Rationale:** Legal market access for products containing batteries.",
+      "source": "reqif:fluvoro/fluvoro_crs_v1.reqif"
+    },
+    {
+      "id": "FLV-STK-095",
+      "text": "WEEE — The device shall comply with the WEEE Directive 2012/19/EU, including the crossed-out wheelie bin marking.\n\n**Variant:** V1 and V2\n**Verification:** inspection\n**Rationale:** End-of-life obligations.",
+      "source": "reqif:fluvoro/fluvoro_crs_v1.reqif"
+    },
+    {
+      "id": "FLV-STK-096",
+      "text": "General product safety — The device shall comply with the General Product Safety Regulation (EU) 2023/988, including traceability information on the product.\n\n**Variant:** V1 and V2\n**Verification:** inspection\n**Rationale:** Applies to consumer products placed on the EU market.",
+      "source": "reqif:fluvoro/fluvoro_crs_v1.reqif"
+    },
+    {
+      "id": "FLV-STK-097",
+      "text": "Radio equipment (option) — With the connectivity option, the device shall comply with the Radio Equipment Directive 2014/53/EU, including the cybersecurity requirements of Delegated Regulation (EU) 2022/30 as given in EN 18031-1, and with the Cyber Resilience Act (EU) 2024/2847 from its date of application.\n\n**Variant:** Connectivity option (V1 and V2)\n**Verification:** inspection\n**Rationale:** A radio interface brings radio and cybersecurity law.",
+      "source": "reqif:fluvoro/fluvoro_crs_v1.reqif"
+    },
+    {
+      "id": "FLV-STK-098",
+      "text": "Material marking — Plastic parts heavier than 10 g shall be marked with their material to ISO 11469.\n\n**Variant:** V1 and V2\n**Verification:** inspection\n**Rationale:** Recycling at end of life.",
+      "source": "reqif:fluvoro/fluvoro_crs_v1.reqif"
+    },
+    {
+      "id": "FLV-STK-100",
+      "text": "Cybersecurity engineering (option) — With the connectivity option, the supplier shall perform cybersecurity engineering to ISO/SAE 21434, including a threat analysis and risk assessment of the radio interface and the firmware update path.\n\n**Variant:** Connectivity option (V1 and V2)\n**Verification:** inspection\n**Rationale:** The radio interface is the only remote attack surface; a malicious command could start the rotor.",
+      "source": "reqif:fluvoro/fluvoro_crs_v1.reqif"
+    },
+    {
+      "id": "FLV-STK-101",
+      "text": "No remote rotor start (option) — No command received over the radio interface shall be able to start the rotor or override a safety function.\n\n**Variant:** Connectivity option (V1 and V2)\n**Verification:** test\n**Rationale:** Keeps every safety function local; the app may observe, not actuate.",
+      "source": "reqif:fluvoro/fluvoro_crs_v1.reqif"
+    },
+    {
+      "id": "FLV-STK-102",
+      "text": "Authenticated firmware (option) — With the connectivity option, the device shall accept only firmware that is cryptographically signed by the manufacturer, and shall keep running its previous firmware if an update fails.\n\n**Variant:** Connectivity option (V1 and V2)\n**Verification:** test\n**Rationale:** EN 18031-1 and the Cyber Resilience Act; a failed update must not brick the device in the middle of a season.",
+      "source": "reqif:fluvoro/fluvoro_crs_v1.reqif"
+    },
+    {
+      "id": "FLV-STK-103",
+      "text": "Pairing (option) — Pairing with a smartphone shall require physical presence at the device.\n\n**Variant:** Connectivity option (V1 and V2)\n**Verification:** demonstration\n**Rationale:** Prevents a neighbour's or passer-by's phone from taking over the device.",
+      "source": "reqif:fluvoro/fluvoro_crs_v1.reqif"
+    },
+    {
+      "id": "FLV-STK-110",
+      "text": "V1 fit — The V1 insert shall fit gutter outlets for NW 333 gutters with DN 87 and DN 100 downpipes made to EN 612.\n\n**Variant:** V1 insert\n**Verification:** test\n**Rationale:** Most common residential size in Germany; other sizes are a later variant.",
+      "source": "reqif:fluvoro/fluvoro_crs_v1.reqif"
+    },
+    {
+      "id": "FLV-STK-111",
+      "text": "V1 installation without tools — One person on a ladder shall be able to install or remove the V1 insert without tools within 5 min.\n\n**Variant:** V1 insert\n**Verification:** demonstration\n**Rationale:** Retrofit by the homeowner.",
+      "source": "reqif:fluvoro/fluvoro_crs_v1.reqif"
+    },
+    {
+      "id": "FLV-STK-112",
+      "text": "V1 no change to the gutter — Installing the V1 insert shall require no modification of the gutter, the outlet or the downpipe, and removing it shall leave them in their original state.\n\n**Variant:** V1 insert\n**Verification:** inspection\n**Rationale:** Retrofit, reversible.",
+      "source": "reqif:fluvoro/fluvoro_crs_v1.reqif"
+    },
+    {
+      "id": "FLV-STK-113",
+      "text": "V1 height — No part of the installed V1 insert shall rise above the gutter's front rim.\n\n**Variant:** V1 insert\n**Verification:** inspection\n**Rationale:** A part above the rim would deflect water over the edge and be visible from the street.",
+      "source": "reqif:fluvoro/fluvoro_crs_v1.reqif"
+    },
+    {
+      "id": "FLV-STK-114",
+      "text": "V1 clips and bead free — The V1 insert shall not rest on or load the outlet's clips or the gutter bead.\n\n**Variant:** V1 insert\n**Verification:** inspection\n**Rationale:** Loaded clips loosen and the outlet starts to leak.",
+      "source": "reqif:fluvoro/fluvoro_crs_v1.reqif"
+    },
+    {
+      "id": "FLV-STK-115",
+      "text": "V1 retention — The installed V1 insert shall stay in place at the maximum design flow, when ice forms around it, and under a lifting force of 50 N.\n\n**Variant:** V1 insert\n**Verification:** test\n**Rationale:** It must not float, be pushed out by ice or lifted by wind.",
+      "source": "reqif:fluvoro/fluvoro_crs_v1.reqif"
+    },
+    {
+      "id": "FLV-STK-116",
+      "text": "V1 mass — The V1 insert shall not weigh more than 1.2 kg including the battery.\n\n**Variant:** V1 insert\n**Verification:** inspection\n**Rationale:** Handling on a ladder; load on the gutter brackets.",
+      "source": "reqif:fluvoro/fluvoro_crs_v1.reqif"
+    },
+    {
+      "id": "FLV-STK-117",
+      "text": "V1 structure-borne noise — Shredding shall not transmit vibration to the gutter that causes audible rattling of the gutter or the downpipe brackets.\n\n**Variant:** V1 insert\n**Verification:** test\n**Rationale:** Metal gutters act as resonators.",
+      "source": "reqif:fluvoro/fluvoro_crs_v1.reqif"
+    },
+    {
+      "id": "FLV-STK-120",
+      "text": "V2 fit — The V2 replacement outlet shall replace an EN 612 outlet for NW 333 gutters, with variants for DN 87 and DN 100 downpipes.\n\n**Variant:** V2 replacement outlet\n**Verification:** inspection\n**Rationale:** Same first size as V1.",
+      "source": "reqif:fluvoro/fluvoro_crs_v1.reqif"
+    },
+    {
+      "id": "FLV-STK-121",
+      "text": "V2 materials — The V2 replacement outlet shall be available in titanium zinc, copper and aluminium, matching the gutter material.\n\n**Variant:** V2 replacement outlet\n**Verification:** inspection\n**Rationale:** Roofers do not mix gutter metals (see FLV-STK-054).",
+      "source": "reqif:fluvoro/fluvoro_crs_v1.reqif"
+    },
+    {
+      "id": "FLV-STK-122",
+      "text": "V2 installation by a roofer — A roofer shall be able to install the V2 replacement outlet with the joining methods used for standard outlets of the same material (soldering, riveting with sealant, or clip), within 20 min.\n\n**Variant:** V2 replacement outlet\n**Verification:** demonstration\n**Rationale:** No new skills or tools for the trade.",
+      "source": "reqif:fluvoro/fluvoro_crs_v1.reqif"
+    },
+    {
+      "id": "FLV-STK-123",
+      "text": "V2 service without removal — The cap, the battery and the cutting parts of V2 shall be removable for service without removing the outlet from the gutter.\n\n**Variant:** V2 replacement outlet\n**Verification:** demonstration\n**Rationale:** The outlet is a fixed part of the roof drainage.",
+      "source": "reqif:fluvoro/fluvoro_crs_v1.reqif"
+    },
+    {
+      "id": "FLV-STK-124",
+      "text": "V2 mass — The V2 replacement outlet shall not weigh more than 2.0 kg including the battery.\n\n**Variant:** V2 replacement outlet\n**Verification:** inspection\n**Rationale:** Load on the gutter at the outlet.",
+      "source": "reqif:fluvoro/fluvoro_crs_v1.reqif"
+    },
+    {
+      "id": "FLV-STK-130",
+      "text": "Maintenance — Apart from replacing the battery and wear parts and cleaning the grate, the device shall need no maintenance during its service life.\n\n**Variant:** V1 and V2\n**Verification:** analysis\n**Rationale:** The product exists to reduce maintenance.",
+      "source": "reqif:fluvoro/fluvoro_crs_v1.reqif"
+    },
+    {
+      "id": "FLV-STK-131",
+      "text": "Wear parts — The cutting parts shall last at least 5 autumn seasons at the reference load of FLV-STK-030 and shall be replaceable by the end user without tools.\n\n**Variant:** V1 and V2\n**Verification:** test\n**Rationale:** Cutting edges wear; the rest of the device should not be scrapped for it.",
+      "source": "reqif:fluvoro/fluvoro_crs_v1.reqif"
+    },
+    {
+      "id": "FLV-STK-132",
+      "text": "Worn cutting parts — The device shall detect when its cutting performance has fallen below the throughput of FLV-STK-004 and signal \"service needed\".\n\n**Variant:** V1 and V2\n**Verification:** test\n**Rationale:** The user cannot see the blades.",
+      "source": "reqif:fluvoro/fluvoro_crs_v1.reqif"
+    },
+    {
+      "id": "FLV-STK-133",
+      "text": "Firmware update — The device firmware shall be updatable in the field by a service technician without opening the sealed compartment.\n\n**Variant:** V1 and V2\n**Verification:** demonstration\n**Rationale:** Field fixes without replacing devices.",
+      "source": "reqif:fluvoro/fluvoro_crs_v1.reqif"
+    },
+    {
+      "id": "FLV-STK-134",
+      "text": "Spare parts — Battery, cap and cutting parts shall be available as spare parts for at least 7 years after the last unit of a variant is placed on the market.\n\n**Variant:** V1 and V2\n**Verification:** inspection\n**Rationale:** Repairability; customer expectation for a 10-year product.",
+      "source": "reqif:fluvoro/fluvoro_crs_v1.reqif"
+    },
+    {
+      "id": "FLV-STK-135",
+      "text": "Identification — Each device shall carry a unique serial number readable on the device and through the service interface, and shall report its hardware and software versions.\n\n**Variant:** V1 and V2\n**Verification:** inspection\n**Rationale:** Traceability (GPSR) and field service.",
+      "source": "reqif:fluvoro/fluvoro_crs_v1.reqif"
+    },
+    {
+      "id": "FLV-STK-140",
+      "text": "Process capability — The supplier shall perform the system and software engineering processes to Automotive SPICE 4.0 capability level 2 for SYS.1 to SYS.5, SWE.1 to SWE.6, MAN.3, SUP.1, SUP.8, SUP.9 and SUP.10.\n\n**Variant:** V1 and V2\n**Verification:** inspection\n**Rationale:** Customer's process frame.",
+      "source": "reqif:fluvoro/fluvoro_crs_v1.reqif"
+    },
+    {
+      "id": "FLV-STK-141",
+      "text": "Bidirectional traceability — The supplier shall maintain bidirectional traceability from each stakeholder requirement to system requirements, software requirements, architecture elements, code and test cases.\n\n**Variant:** V1 and V2\n**Verification:** inspection\n**Rationale:** Required by ASPICE and ISO 26262; makes change impact analysable.",
+      "source": "reqif:fluvoro/fluvoro_crs_v1.reqif"
+    },
+    {
+      "id": "FLV-STK-142",
+      "text": "Deliverables — The supplier shall deliver the system and software requirements, the system and software architecture, the safety work products of FLV-STK-070, the source code, the test specifications and test reports, and the traceability report.\n\n**Variant:** V1 and V2\n**Verification:** inspection\n**Rationale:** Defines what the customer receives.",
+      "source": "reqif:fluvoro/fluvoro_crs_v1.reqif"
+    },
+    {
+      "id": "FLV-STK-143",
+      "text": "Change management — The supplier shall assess the impact of every change to these requirements on all affected work products before implementing it, and shall record the assessment.\n\n**Variant:** V1 and V2\n**Verification:** inspection\n**Rationale:** SUP.10; changes during development are expected.",
+      "source": "reqif:fluvoro/fluvoro_crs_v1.reqif"
+    },
+    {
+      "id": "FLV-STK-144",
+      "text": "Product cost — The bill of materials and assembly cost at 50 000 units per year shall not exceed EUR 45 for V1 and EUR 70 for V2, excluding the connectivity option.\n\n**Variant:** V1 and V2\n**Verification:** analysis\n**Rationale:** Consumer price point for a gutter accessory; to be confirmed by a market check.",
+      "source": "reqif:fluvoro/fluvoro_crs_v1.reqif"
+    },
+    {
+      "id": "FLV-STK-145",
+      "text": "End-of-line test — Every produced device shall pass an end-of-line test of level sensing, motor drive and rotor direction, battery management and light signal before shipping.\n\n**Variant:** V1 and V2\n**Verification:** inspection\n**Rationale:** Production quality; supports the safety case.",
+      "source": "reqif:fluvoro/fluvoro_crs_v1.reqif"
+    },
+    {
+      "id": "FLV-STK-146",
+      "text": "User documentation — The device shall be supplied with installation, operating, safety and battery-replacement instructions in the official languages of the EU member states where it is sold.\n\n**Variant:** V1 and V2\n**Verification:** inspection\n**Rationale:** Machinery Regulation and GPSR information obligations.",
+      "source": "reqif:fluvoro/fluvoro_crs_v1.reqif"
+    }
+  ],
+  "input_sources": [
+    {
+      "name": "rfq.md",
+      "kind": "md",
+      "requirements_found": 43
+    },
+    {
+      "name": "reqif:fluvoro/fluvoro_crs_v1.reqif",
+      "kind": "reqif",
+      "requirements_found": 101
+    }
+  ],
+  "created_at": "2026-11-02T21:12:22.384635+00:00",
+  "updated_at": "2026-11-02T21:12:22.384635+00:00",
+  "owner": {
+    "tenant_id": "siimplex",
+    "principal_id": "fluvoro-operator",
+    "mode": "principal"
+  },
+  "index_manifest": {
+    "files": [
+      {
+        "path": "/Users/rabilix/Sandbox/knowledge_base/fluvoro/rfq.md",
+        "size": 3197,
+        "sha256": "e0ea2d51f2d6eb1e1a72c5fcd19f85c14b39822ba53e7b52435a45b2d2673b99",
+        "outside_allowed_root": false
+      }
+    ],
+    "items": 144,
+    "text_mb": 0.032,
+    "outside_root": [],
+    "embed_endpoint": "http://localhost:11434",
+    "embed_is_local": true,
+    "expires_at": "2026-11-03T05:12:22.387889+00:00",
+    "digest": "facef88a02e08eea59d828d98ac16575d606f7349fde73e99cb4b9fb24d65dea"
+  }
+}
