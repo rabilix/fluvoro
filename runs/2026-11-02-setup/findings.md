@@ -31,6 +31,56 @@ Evidence tiers: **live** = observed on the running installation; **source** = re
 - **Expected:** either reject `--path` with a named collection or document the override.
 - **Tier:** source. **Demo-blocker:** no.
 
+## F-005: retrieval ACL is inactive; the Fluvoro principal can read every collection
+
+- **What happened:** `FLEXRAG_ACL_ENABLED` and `FLEXRAG_TENANT_IN_FILTER` both default to `false` (scripts/conf.py:279, :284) and neither is set in flexcortex.conf or ragstack.conf. The `--dept engineering --project fluvoro` stamps on the 106 fluvoro chunks therefore restrict nothing; `flexrag/db/acl_filter.py` is dormant.
+- **Consequence:** nothing in the ACL filter stops the Fluvoro principal from retrieving `oem-*-reqs` and `compliance` (not yet observed live); isolation of `kit/hidden/` and `product/` rests only on them never having been ingested.
+- **Expected:** the ingest help text calls the stamps an "ACL scope"; either the scope applies, or ingest/doctor says it is dormant.
+- **Tier:** source + config. Confirm live in Phase 1 with one read-only chat question as the Fluvoro profile that names an `oem-1-reqs` requirement id. **Family:** F4. **Demo-blocker:** no.
+
+## F-006: `create_principal` silently overwrites an existing user
+
+- **What happened:** `fc.principals` is keyed by `user_id` across tenants, and `flexcore/db/rbac.py:create_principal` does `INSERT … ON CONFLICT (user_id) DO UPDATE` (tenant_id, dept_id, email, display_name). Re-creating an existing user silently replaces those fields, e.g. `flx principal create rabih siimplex engineering` would change the maintainer's dept from none to `engineering` without a warning.
+- **Correction (review):** a cross-tenant move such as `flx principal create rabih fluvoro` is refused before the upsert by the `ADMIN_TENANT_IDS=siimplex` guard in `flx` (ragstack.conf:34). A tenant move is only possible between tenants listed there; today only `siimplex` is, so the live risk is the silent field overwrite within `siimplex`.
+- **Expected:** refuse (or ask) when the user already exists.
+- **Avoided by:** a new user `fluvoro-operator`. **Tier:** source. **Family:** F4/F1. **Demo-blocker:** no.
+
+## F-007: provider wizard had no API key field ("Add a key below" with nothing below)
+
+- **What the person saw:** myBrain dev → Add Provider Profile → Local FlexCortex → Test Connection: "The FlexCortex backend requires an API key, but this profile doesn't have one. Add a key below to connect." No key field anywhere in the wizard; only Back / Retry; Save only after a passing test.
+- **Cause (source, myBrain cb9a818):** message from `src/process/platform/HttpFlexCortexClient.ts:254`; no key input in `ProviderWizard/*.tsx`; the field exists only in the Profiles detail view and BootFailureOverlay (existing profiles only).
+- **Status:** fixed by the Platform audit session in myBrain `e070a8b` (develop `4c73cc9`): optional key field in the wizard, stored via the secret store; 401 text changed.
+- **Tier:** live (maintainer screenshot) + source. **Demo-blocker:** yes (fixed).
+
+## F-008: nothing records which principal connected to the facade
+
+- **What happened:** after the Fluvoro profile connected, the facade access log (`~/Sandbox/logs/facade.log`) shows only `127.0.0.1 "GET … HTTP/1.1" 200` lines with no principal or key prefix, and the audit log has no entry after 09:00Z (handshakes and polling are not audited). The connecting principal could only be inferred from `fc.api_keys.last_used` (fluvoro-operator 12:56:02Z; a rabih key 12:55:16Z, consistent with the app starting on the everyday profile).
+- **Expected:** the handshake (at least) is attributable to a principal in a log or the audit trail.
+- **Tier:** live (absence) + store timestamps. **Demo-blocker:** no.
+
+## F-009: the facade drops the caller's identity; every myBrain turn runs as tenant `default`
+
+- **What happened:** the listing turn (trace `d8b23ded-c9db-4fbe-933a-a0a1dafc24d7`) reached the core through the facade, but the core's audit records it as `tenant_id: default` with no principal, and `outcomes.db` has `tenant_id default`, empty `actor_id`.
+- **Why the caller was fluvoro-operator:** no static `FACADE_API_KEY` is set in either conf, so the facade accepts only RBAC keys; the only key used after 12:56Z was `fluvoro-operator`'s (`last_used` 13:11:14Z; every `rabih` key last used ≤ 12:55:16Z). `last_used` alone does not pin a single request.
+- **Cause (source, confirmed by the Platform audit session):** `scripts/facade_server.py` `_rag_request` calls the core's `/api/v2/chat` with the facade's own server key (`_rag_server_api_key()`) and sends neither user nor tenant; the authenticated principal is used only for facade-side session ownership (`owner=`). Proposed fix (Platform audit): forward the caller's own bearer when the facade resolved it as an RBAC principal, so the core authenticates it and binds tenant/user/dept from the key.
+- **Consequence:** per-user/tenant audit, ACL, memory and outcome attribution cannot work for any myBrain turn, not only this run. (F-008, the missing principal in the facade's own access log, is a separate gap.)
+- **Tier:** live (audit + outcomes) + source. **Family:** F4. **Demo-blocker:** no (but blocks per-user grading).
+
+## F-010: key authentication hit an exhausted PG connection pool
+
+- **What happened:** `facade.log` at 2026-11-02 14:10:51 local (13:10:51Z), 7 s before the listing turn: `PG authenticate_api_key failed: connection pool exhausted`. Earlier occurrences in the same log (lines ~12894–12934, including "server closed the connection unexpectedly" and "Connection refused").
+- **Behaviour:** fail-closed as designed (`auth_unreachable` → 503; the only other accept path, a static `FACADE_API_KEY`, is not configured), and the next request authenticated. The pool exhaustion itself is the defect.
+- **Tier:** live (log). **Demo-blocker:** no (intermittent).
+
+## F-011: "list all requirements" returns 3 of 101 and presents it as the full list
+
+- **What the person saw (myBrain, Fluvoro profile, 2:10 PM local):** prompt "List all requirements in the fluvoro collection: every requirement ID with its title, nothing else." Answer: `FLV-STK-135: Identification FLV-STK-095: WEEE FLV-STK-092: Control software safety class`, footer "gpt-oss:20b · 5 sources". Knowledge scope selector: "All knowledge sources".
+- **What the records say:** trace `d8b23ded-c9db-4fbe-933a-a0a1dafc24d7`: one `knowledge.retrieve_context` (0.46 s), then `chat_turn` ollama/gpt-oss:20b, 124 tokens, 15.2 s, status success.
+- **Check:** the three ids and titles match the CRS exactly (no fabrication); 98 are missing; the answer gives no sign that it is partial. The collection holds all 101 (verified in qdrant).
+- **Cause (Platform audit session, source):** the I161 listing path exists only on `/v1/chat/completions` with a `rag-<collection>` model (`scripts/routers/chat.py:276`); myBrain uses `/api/v2/chat` and never reaches it, so "list all" falls through to top-k retrieval. The listing cap `MAX_ROWS=100` is also below the 101 requirements.
+- **Expected:** an enumeration request is served by a listing path (all 101), or the answer states that it shows a top-k subset.
+- **Tier:** live. **Family:** I161 path (top-k presented as complete). **Demo-blocker:** yes.
+
 ## Isolation check (step 3)
 
 The repository is at `~/Documents/GitHub/fluvoro`, outside `FILES_ALLOWED_ROOT=~/Sandbox`; the session workspace grants table is empty. `kit/hidden/` and `product/` are not reachable by file capabilities. The ingest uses a copy of `kit/shown/` only, at `~/Sandbox/knowledge_base/fluvoro`.

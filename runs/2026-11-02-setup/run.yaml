@@ -53,7 +53,21 @@ ingest_verification:
   points: 106                    # 101 from fluvoro_crs_v1.reqif + 5 from rfq.md
   req_id_distinct: 101           # FLV-STK-001..146, exact set match with the reqif: missing 0, extra 0
   acl_stamps: {fc_dept_id: engineering, fc_project_id: fluvoro, points: 106}
-  pending: chat check "list all requirements in fluvoro" (needs facade)
+  chat_listing_check:
+    prompt: "List all requirements in the fluvoro collection: every requirement ID with its title, nothing else."
+    surface: myBrain dev 4c73cc9, profile Fluvoro, scope "All knowledge sources"
+    trace_id: d8b23ded-c9db-4fbe-933a-a0a1dafc24d7
+    model: ollama/gpt-oss:20b     # confirmed from outcomes.db
+    capability: knowledge.retrieve_context (1 call)
+    tokens: 124
+    ids_returned: 3 of 101          # FLV-STK-135, -095, -092; all correct; presented as complete (F-011)
+    audit_tenant: default           # F-009
+  deployment_check_14h:            # maintainer asked "are all packages deployed and up to date"
+    core: "eefbbeb8 served = deployed; FlexCortex origin/develop 6f5d5455 differs only in tests/scenarios/window_lift/phase4_crew.py"
+    facade: "facade_server.py identical to repo, contract v75"
+    deps: unchanged (deploy receipt)
+    skillpacks: "45 bundled + 3 user, all loaded; capability packs installed"
+    mybrain: "4c73cc9 = origin/develop, clean"
 
 runtime_after_restart:
   served_commit: eefbbeb8        # changed from 8fbb1980; not by this session
@@ -91,8 +105,45 @@ decisions:                     # maintainer, 2026-11-02
     question: which of the remaining proposals to prepare next
     chosen: facade + myBrain profile "Fluvoro"; tenant "fluvoro" + API key
     rules_out: step 6 (team and board) for now
+  - id: D-08
+    question: which of the cloud session's follow-up requests to carry out
+    chosen: add F-005..F-008 and the operator / correction / myBrain notes
+    rules_out: (for now) messaging Platform audit to announce deploys; per-phase commit pinning
+  - id: D-09
+    question: how to set up the Fluvoro operator after ADMIN_TENANT_IDS refused tenant fluvoro
+    chosen: new user fluvoro-operator in tenant siimplex, dept engineering; key issued by the maintainer
+    rules_out: adding fluvoro to ADMIN_TENANT_IDS; reusing rabih/siimplex
+  - id: D-10
+    question: after F-009 and F-011, carry on or fix first
+    chosen: pause the run; ask Platform audit to fix F-009 and F-011 before Phase 1
+    rules_out: step 6 plan now; Phase 1 on the current behaviour
+    consequence: the fixes are deploys mid-run, so Phase 1 must record served_commit at start and end
+
+operator_setup:
+  principal: {user_id: fluvoro-operator, tenant_id: siimplex, dept_id: engineering, created: "2026-11-02T12:25:18Z"}
+  project_member: {project: fluvoro, user: fluvoro-operator, role: member}
+  api_key: {owner: fluvoro-operator, created: "2026-11-02T12:29:03Z", issued_by: maintainer in own terminal, secret: never in transcript or files}
+  first_attempt_refused: "flx principal create fluvoro-operator fluvoro engineering -> ADMIN_TENANT_IDS guard (nothing written); project add-member failed on FK"
+  facade: {started_by: this session, pid: 25539, port: 8788, contract_version: 75, started: "2026-11-02 13:24 local"}
+
+corrections:
+  - claim: "ADMIN_TENANT_IDS is not set, so a key can be issued for any tenant"
+    correct: "ADMIN_TENANT_IDS=siimplex is set in ~/Sandbox/ragstack.conf:34; only flexcortex.conf had been checked. The guard exists and refused tenant fluvoro."
+  - claim: "the myBrain dev build keeps its data in ~/Library/Application Support/myBrain-Dev (fresh)"
+    correct: "the dev build (npm run dev) uses the everyday ~/Library/Application Support/myBrain; myBrain-Dev is unused. The Fluvoro profile sits beside 'Local FlexCortex' and 'Demo' and shares mybrain.db with normal use."
+
+mybrain:
+  repo: ~/Documents/GitHub/myBrain
+  commit: 4c73cc9                # develop, merge of the F-007 fix e070a8b
+  run_as: npm run dev (electron-vite dev)
+  profile: {id: 081e2a51-db46-416d-a88c-1f9c8d1c83a3, name: Fluvoro, mode: local, key_stored: true, runtime_model: null, active: true}
+  note: "runtime_model null: the core should fall back to gpt-oss:20b; confirm from the first turn's trace"
+  workspace_root: ~/Documents/GitHub/FlexCortex   # does not reach the fluvoro repo
 
 open:
   - confirm from the running process that the autonomous loop is off (no reporting surface found yet)
-  - approved to prepare (D-07): tenant "fluvoro" + API key, flx start (facade :8788), myBrain profile "Fluvoro"; each asked before writing
-  - step 6 (team and board), step 7 (Phase 1 via quotpilot)
+  - "done: facade started (D-07); operator fluvoro-operator in siimplex instead of tenant fluvoro (D-09); myBrain profile Fluvoro active"
+  - waiting on Platform audit fixes for F-009 and F-011 (D-10); the maintainer decides on its proposal in that session
+  - step 6 (team and board), step 7 (Phase 1 via quotpilot), after the fixes
+  - re-enable AUTONOMOUS_LOOP_ENABLED=true at the end of the run (D-06)
+  - live confirmation of F-005 (one oem-1-reqs question as the Fluvoro profile) in Phase 1
