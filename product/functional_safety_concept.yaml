@@ -1,0 +1,259 @@
+# Fluvoro — functional safety concept (ISO 26262-3, clause 7)
+#
+# DRAFT 0.1 (2026-11-02), derived from product/hara.yaml 0.2 (reviewed).
+# Functional safety requirements (FSR) refine the three safety goals, are allocated
+# to the elements of a PRELIMINARY architecture, and state the safe state, the
+# reaction time and the warning. SG-02 (ASIL C) is decomposed per ISO 26262-9
+# clause 5 into two independent channels.
+#
+# Numbers marked "assumption" must be confirmed by the maintainer (cell data
+# sheet, motor, measured reach time). tools/check_fsc.py checks traceability, ASIL
+# inheritance, valid decompositions and the independence of decomposed channels.
+schema_version: 1
+document: Fluvoro functional safety concept
+status: draft
+version: 0.1
+date: 2026-11-02
+hara: product/hara.yaml
+
+# ---------------------------------------------------------------------------
+# Preliminary architecture (functional level; the technical safety concept may change it)
+elements:
+- {id: E-MCU,   name: Main controller,                 description: Runs clog detection, cycle control, motor control, BMS supervision, self-test, signalling.}
+- {id: E-WDG,   name: External watchdog,               description: Independent windowed watchdog with its own clock; removes the drive enable and the charge enable when the MCU stops serving it.}
+- {id: E-ENA,   name: Hardware enable chain,           description: Series chain of the cap contact B, the seat contact (V1) and the watchdog output into the gate-driver enable input. It does not depend on software.}
+- {id: E-CAP,   name: Cap sensor,                      description: "Two contacts: contact A read by the MCU, contact B in the enable chain."}
+- {id: E-SEAT,  name: Seat sensor (V1),                description: "Detects that the V1 insert is seated in an outlet; two contacts as for E-CAP."}
+- {id: E-TCO,   name: Drive thermal cut-off,           description: "Thermal cut-off on the power stage that opens the drive's supply path; a separate part from the gate driver (added because an integrated thermal shutdown in E-GD would share the element with the software channel of D-04)."}
+- {id: E-GD,    name: Gate driver and inverter,        description: Three-phase BLDC bridge with an enable input, active short-circuit braking and integrated thermal shutdown.}
+- {id: E-MSNS,  name: Motor sensing,                   description: Phase-current sensing and Hall sensors for rotor position and speed.}
+- {id: E-AFE,   name: Battery front end,               description: Cell voltage and current measurement with short-circuit detection; drives the main charge and discharge switches; read by the MCU.}
+- {id: E-HWP,   name: Independent battery protector,   description: "Secondary protector IC with its own reference and fixed thresholds (cell over-voltage, under-voltage, over-temperature through its own NTC); opens the secondary switch."}
+- {id: E-SW1,   name: Main battery switches,           description: Charge and discharge MOSFETs controlled by E-AFE and the MCU.}
+- {id: E-SW2,   name: Secondary battery switch,        description: Series switch controlled only by E-HWP.}
+- {id: E-FUSE,  name: Pack fuse,                       description: Fuse in the battery path, sized to clear a short circuit.}
+- {id: E-NTC1,  name: Cell temperature sensor 1,       description: Read by E-AFE and the MCU.}
+- {id: E-NTC2,  name: Cell temperature sensor 2,       description: Read by E-HWP only.}
+- {id: E-MPPT,  name: Solar charger,                   description: Charges only while its enable input is driven both by the MCU and by E-WDG.}
+- {id: E-LED,   name: Status light,                    description: Status signalling.}
+- {id: E-BLE,   name: BLE module (option),             description: Radio; connected to the MCU by a read-only status and notification interface plus a firmware-update path.}
+
+# ---------------------------------------------------------------------------
+functional_safety_requirements:
+
+# ---- SG-01 (ASIL A): no rotation while the rotating parts are accessible
+- id: FSR-01
+  safety_goal: SG-01
+  asil: A
+  text: When the cap is removed, the item shall transition to SS-1 within 100 ms of the cap leaving its closed position.
+  allocated_to: [E-CAP, E-ENA, E-GD, E-MCU]
+  safe_state: SS-1
+  reaction_ms: 100
+  warning: Status light shows "maintenance" once the rotor is at standstill.
+  rationale: "The 300 ms FTTI is shared between detection and reaction (100 ms) and rotor run-down (FSR-06, 200 ms). Assumption, see RQ-05."
+- id: FSR-02
+  safety_goal: SG-01
+  asil: A
+  text: The V1 insert shall not energise the motor drive unless it is seated in an outlet; when it leaves the seated position the item shall transition to SS-1 within 100 ms.
+  allocated_to: [E-SEAT, E-ENA, E-GD, E-MCU]
+  safe_state: SS-1
+  reaction_ms: 100
+  variants: [V1]
+  rationale: "HE-01 in OS-04: when the insert is held in the hand, the rotor at the bottom of the sleeve is exposed."
+- id: FSR-03
+  safety_goal: SG-01
+  asil: A
+  text: While maintenance mode is active the item shall keep SS-1. The status light shall show "maintenance" only after the drive has been verified de-energised and the rotor verified at standstill.
+  allocated_to: [E-MCU, E-GD, E-MSNS, E-LED]
+  safe_state: SS-1
+  reaction_ms: 100
+  rationale: "MF-16: a person trusts the light before reaching in, so the light is part of the safety mechanism."
+- id: FSR-04
+  safety_goal: SG-01
+  asil: A
+  text: The item shall start the rotor only after it has verified, immediately before the start, that the cap is closed, the V1 insert is seated, maintenance mode is off, no safety fault is latched, and the last self-test passed.
+  allocated_to: [E-MCU, E-CAP, E-SEAT]
+  safe_state: SS-1
+  reaction_ms: 0
+  rationale: Covers MF-02, MF-03 and MF-15 at the one point where a start becomes possible.
+- id: FSR-05
+  safety_goal: SG-01
+  asil: A
+  text: Removing the cap or unseating the V1 insert shall de-energise the motor drive through the hardware enable chain, independently of the software and of the PWM generator.
+  allocated_to: [E-CAP, E-SEAT, E-ENA, E-GD]
+  safe_state: SS-1
+  reaction_ms: 10
+  rationale: A software or PWM fault (MF-05) must not defeat the interlock.
+- id: FSR-06
+  safety_goal: SG-01
+  asil: A
+  text: After entering SS-1 from rotation, the item shall bring the rotor to standstill within 200 ms by active braking.
+  allocated_to: [E-GD, E-MCU]
+  safe_state: SS-1
+  reaction_ms: 200
+  rationale: A de-energised rotor coasts; standstill, not de-energisation, protects the hand. Assumption — depends on rotor inertia.
+- id: FSR-07
+  safety_goal: SG-01
+  asil: A
+  text: After a safety fault that led to SS-1, the item shall keep SS-1 until the fault is no longer present and a complete self-test has passed.
+  allocated_to: [E-MCU]
+  safe_state: SS-1
+  reaction_ms: 0
+  rationale: "MF-15: an unexpected restart is the most dangerous moment."
+- id: FSR-08
+  safety_goal: SG-01
+  asil: A
+  text: No input received over the radio interface shall be able to start the rotor, leave SS-1 or change a safety parameter.
+  allocated_to: [E-MCU, E-BLE]
+  safe_state: SS-1
+  reaction_ms: 0
+  variants: [option_ble]
+  rationale: "MF-18; the cause is analysed in the TARA (FLV-STK-100), and the requirement is here because the hazardous event is HE-01."
+- id: FSR-09
+  safety_goal: SG-01
+  asil: A
+  text: When the controlling software stops executing correctly, the item shall reach SS-1 through the external watchdog within 100 ms.
+  allocated_to: [E-WDG, E-ENA, E-GD]
+  safe_state: SS-1
+  reaction_ms: 100
+  rationale: A hung controller must not leave the drive in its last state.
+
+# ---- SG-02 (ASIL C): no thermal event of battery or drive — decomposed B(C) + A(C)
+- id: FSR-10
+  safety_goal: SG-02
+  asil: B(C)
+  text: The item shall keep every cell between 2.50 V and 3.65 V by monitoring each cell voltage and opening the main battery switches within 1 s of a violation.
+  allocated_to: [E-AFE, E-MCU, E-SW1]
+  safe_state: SS-2
+  reaction_ms: 1000
+  decomposition: {group: D-01, channel: software}
+  rationale: "Software channel. LiFePO4 limits are an assumption to be taken from the cell data sheet."
+- id: FSR-11
+  safety_goal: SG-02
+  asil: A(C)
+  text: Independently of FSR-10, the item shall open the secondary battery switch within 2 s when any cell exceeds 3.80 V or falls below 2.20 V.
+  allocated_to: [E-HWP, E-SW2]
+  safe_state: SS-2
+  reaction_ms: 2000
+  decomposition: {group: D-01, channel: hardware}
+  rationale: Hardware channel with its own reference and thresholds outside the software channel's band, so the two do not fight in normal operation.
+- id: FSR-12
+  safety_goal: SG-02
+  asil: B(C)
+  text: The item shall not charge the battery when the cell temperature measured by E-NTC1 is below 0 °C or above 45 °C, and shall open the main battery switches when it exceeds 60 °C.
+  allocated_to: [E-NTC1, E-AFE, E-MCU, E-MPPT, E-SW1]
+  safe_state: SS-2
+  reaction_ms: 1000
+  decomposition: {group: D-02, channel: software}
+  rationale: "MF-09 (charging below 0 °C causes lithium plating). Limits are an assumption from the cell data sheet."
+- id: FSR-13
+  safety_goal: SG-02
+  asil: A(C)
+  text: Independently of FSR-12, the item shall open the secondary battery switch when the cell temperature measured by E-NTC2 is below -2 °C during charging or above 65 °C at any time.
+  allocated_to: [E-HWP, E-NTC2, E-SW2]
+  safe_state: SS-2
+  reaction_ms: 2000
+  decomposition: {group: D-02, channel: hardware}
+  rationale: Hardware channel with its own sensor; its thresholds sit outside the software channel's.
+- id: FSR-14
+  safety_goal: SG-02
+  asil: B(C)
+  text: The item shall interrupt a battery short circuit within 1 ms, and a discharge current above 10 A for longer than 1 s, by opening the main battery switches.
+  allocated_to: [E-AFE, E-SW1]
+  safe_state: SS-2
+  reaction_ms: 1
+  decomposition: {group: D-03, channel: software}
+  rationale: "MF-11. The nominal motor current is about 5 A (assumption A2)."
+- id: FSR-15
+  safety_goal: SG-02
+  asil: A(C)
+  text: Independently of FSR-14, the battery path shall be interrupted by a fuse that clears any short-circuit current the pack can deliver.
+  allocated_to: [E-FUSE]
+  safe_state: SS-2
+  reaction_ms: 100
+  decomposition: {group: D-03, channel: hardware}
+  rationale: Passive, independent element.
+- id: FSR-16
+  safety_goal: SG-02
+  asil: B(C)
+  text: The item shall de-energise the motor drive when the rotor has been stalled for 2 s with the drive energised, or when the drive temperature exceeds 100 °C.
+  allocated_to: [E-MCU, E-MSNS, E-GD]
+  safe_state: SS-1
+  reaction_ms: 2000
+  decomposition: {group: D-04, channel: software}
+  rationale: "MF-07 (ice, jam): a stalled, energised drive heats up. SS-1 is enough here, because the battery is not involved."
+- id: FSR-17
+  safety_goal: SG-02
+  asil: A(C)
+  text: Independently of FSR-16, the motor drive's supply shall be cut by a thermal cut-off when the power-stage temperature exceeds 130 °C.
+  allocated_to: [E-TCO]
+  safe_state: SS-1
+  reaction_ms: 100
+  decomposition: {group: D-04, channel: hardware}
+  rationale: A separate element (E-TCO). The gate driver's own thermal shutdown would sit inside E-GD, which the software channel also uses, so it would not be independent.
+- id: FSR-18
+  safety_goal: SG-02
+  asil: B(C)
+  text: The solar charger shall charge only while it is enabled both by the MCU and by the external watchdog, so that charging stops when the monitoring software stops executing.
+  allocated_to: [E-MPPT, E-WDG, E-MCU]
+  safe_state: SS-2
+  reaction_ms: 1000
+  decomposition: {group: D-02, channel: software}
+  rationale: "Supports FSR-10 and FSR-12: a hung controller must not keep charging unmonitored. FSR-11 and FSR-13 remain as the independent channel."
+- id: FSR-19
+  safety_goal: SG-02
+  asil: B(C)
+  text: When any cell has fallen below 2.00 V, the item shall permanently block charging and signal "service needed" until the battery is replaced. Above 2.00 V, recovery charging after a full discharge (FLV-STK-035) shall be limited to 0.05 C until every cell exceeds 2.80 V.
+  allocated_to: [E-AFE, E-MCU, E-MPPT]
+  safe_state: SS-2
+  reaction_ms: 1000
+  decomposition: {group: D-01, channel: software}
+  rationale: "MF-10: recharging a deeply discharged lithium cell risks an internal short. This resolves the conflict between automatic recovery (FLV-STK-035) and battery safety."
+- id: FSR-20
+  safety_goal: SG-02
+  asil: C
+  text: "The two channels of each decomposition (D-01 to D-04) shall be free of common-cause failures: separate voltage references, separate temperature sensors, separate switching elements, and no shared software or clock between E-HWP and E-TCO on one side and the MCU on the other."
+  allocated_to: [E-HWP, E-AFE, E-MCU, E-WDG, E-NTC1, E-NTC2, E-SW1, E-SW2, E-TCO]
+  safe_state: SS-2
+  reaction_ms: 0
+  rationale: "ISO 26262-9 clause 5: a decomposition is valid only with sufficient independence, and the dependent-failure analysis must confirm it."
+
+# ---- SG-03 (ASIL A): no uncontrolled rotation that could dislodge the V1 insert
+- id: FSR-21
+  safety_goal: SG-03
+  asil: A
+  text: The item shall limit one shred cycle to 60 s of rotation and the total rotation to 10 min in any 60 min, entering SS-1 when a limit is reached.
+  allocated_to: [E-MCU]
+  safe_state: SS-1
+  reaction_ms: 500
+  rationale: "MF-04 (no stop). The limits are an assumption above the longest normal cycle (FLV-STK-005: clearing within 120 s over up to 3 cycles)."
+- id: FSR-22
+  safety_goal: SG-03
+  asil: A
+  text: The item shall enter SS-1 within 500 ms when the rotor speed exceeds 3 300 rpm, or when the measured motor current and speed are implausible for the commanded PWM duty.
+  allocated_to: [E-MCU, E-MSNS, E-GD]
+  safe_state: SS-1
+  reaction_ms: 500
+  rationale: "MF-05 (PWM stuck high, lost feedback). The 3 300 rpm limit is 110 % of the assumed maximum speed (A2)."
+- id: FSR-23
+  safety_goal: SG-03
+  asil: A
+  text: When the controlling software stops executing correctly while the rotor turns, the item shall reach SS-1 through the external watchdog within 100 ms.
+  allocated_to: [E-WDG, E-ENA, E-GD]
+  safe_state: SS-1
+  reaction_ms: 100
+  rationale: Same mechanism as FSR-09, listed under SG-03 for traceability.
+
+# ---------------------------------------------------------------------------
+warning_and_degradation:
+- Entering SS-1 or SS-2 because of a fault latches "fault" on the status light (FLV-STK-060) and an event in the log (FLV-STK-065).
+- In SS-1 and SS-2 the passive overflow path keeps draining the outlet (FLV-STK-021). No safe state relies on the rotor turning.
+- The "maintenance" indication is safety-relevant (FSR-03). The other indications are QM.
+
+open_points:
+- id: OP-01
+  text: FTTI and run-down time (FSR-01, FSR-06) depend on the measured reach time (RQ-05) and on rotor inertia.
+- id: OP-02
+  text: All cell thresholds (FSR-10…FSR-13, FSR-19) must be taken from the chosen cell's data sheet.
+- id: OP-03
+  text: A dependent-failure analysis must confirm FSR-20 once the technical safety concept fixes the hardware.
