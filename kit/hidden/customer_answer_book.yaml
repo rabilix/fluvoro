@@ -1,0 +1,30 @@
+# Fluvoro — customer answer book (HIDDEN; never shown to the system under test)
+#
+# The simulated customer answers ONLY questions that were asked, and only from
+# this book. A question the book does not cover gets the fallback answer.
+# The run records which entries were asked for (measures the questions, not only
+# the decisions).
+schema_version: 1
+rfq: kit/shown/rfq.md
+fallback: "This is not specified by us. Please make an assumption, state it in your quotation, and we will confirm or correct it."
+answers:
+- id: CA-01
+  rfq_point: "5.1 Volume split V1/V2"
+  matches_questions_about: [volume, quantity, split, V1 share, V2 share, units per year]
+  answer: "Years 1 and 2: 80 % V1, 20 % V2, about 50 000 units per year in total (FLV-STK-144 assumes this volume)."
+- id: CA-02
+  rfq_point: "5.2 Connectivity option timing"
+  matches_questions_about: [connectivity, BLE, Bluetooth, app, option at SOP]
+  answer: "Not at start of production. The option follows 12 months later. The device design must already carry the interface (the radio isolation of FLV-STK-101 applies from day one), but the option's radio certification is not part of the first release."
+- id: CA-03
+  rfq_point: "5.3 Hardware partner"
+  matches_questions_about: [hardware, electronics, PCB, hardware partner, hardware design]
+  answer: "We will name a hardware partner. Your scope is system and software, including the hardware-software interface specification and the hardware safety requirements that come out of your technical safety concept. The hardware partner designs to them."
+- id: CA-04
+  rfq_point: "unstated: reference site and season"
+  matches_questions_about: [irradiation, location, climate, season, reference site]
+  answer: "Plan for Central Germany. The reference season and irradiation in the CRS definitions apply."
+- id: CA-05
+  rfq_point: "unstated: safety assessment"
+  matches_questions_about: [assessor, confirmation measures, functional safety assessment, independence]
+  answer: "We will commission an independent functional safety assessor. Quote the support effort for the assessment (reviews, audits), not the assessment itself."
