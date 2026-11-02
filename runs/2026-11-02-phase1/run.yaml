@@ -90,6 +90,16 @@ decisions:
     chosen: end Phase 1 and hand back; step 6 (team and board) next
     rules_out: sending the fallback again; "Please continue"
     date: 2026-11-02
+  - id: D-19
+    question: next steps after the FAIL grading (grading.md, e07b9a1)
+    chosen: ask Platform audit to fix cluster A (QuotPilot never receives the whole input; F-019, F-021, F-023); step 6 on hold (no work packages); no comparison run on a stronger model for now
+    rules_out: starting step 6 now; the model comparison run (for now)
+    date: 2026-11-02
+  - id: D-20
+    question: reference band for the quote phase, given the estimate is not blind (D-16) and the maintainer has seen the customer answers
+    chosen: a colleague writes a blind estimate from rfq.md + fluvoro_crs_v1.reqif only (no repo access), finished before any rerun output
+    rules_out: grading against the current estimate as the band; no band
+    date: 2026-11-02
   - id: D-15
     question: how to continue after turn 1 (quotpilot asked us for OC-001..003 and "Go")
     chosen: neutral follow-up "What else do you need from the customer?"
@@ -98,3 +108,17 @@ decisions:
 
 revert_after_run:                  # in addition to the setup list (QPMT_BACKEND, AUTONOMOUS_LOOP_ENABLED)
   - {what: "remove NL_SCHEDULE_AUTODETECT=false (D-17)", where: "~/Sandbox/flexcortex.conf:136-137", condition: "after F-028 is fixed and deployed", then: "flx runtime restart, announced"}
+
+next:                              # after D-19
+  cluster_a_fix:
+    owner: Platform audit (approved by the maintainer)
+    plan:
+      - the quotpilot prefetch never calls a capability whose required arguments it lacks; a skipped or failed call says why
+      - quotpilot.analyze takes a `collection`; it reads the collection's source files through the governed files door, a ReqIF arrives whole and in order via the RE080 listing reader
+      - the review names only the sources it received, with counts
+    status: "announced 2026-11-02, a few hours; deploy + core restart will be announced with the commit"
+  rerun:
+    what: Phase 1 again, same prompt (transcript.md turn 1), same customer rules, new chat
+    on: the single commit Platform audit confirms after the cluster A deploy
+    freeze: announced by this session before the first turn; Platform audit agreed not to deploy or restart during it
+    prerequisite: the colleague's blind estimate (D-20) written before any rerun output
