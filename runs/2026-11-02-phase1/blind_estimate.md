@@ -6,6 +6,7 @@ Author: Claude (local session), from the worked example it gave the maintainer; 
 **Provenance warning (for grading):** this is not the blind estimate the handover asks for. Claude had read `kit/hidden/customer_answer_book.yaml` before writing the example, and two assumptions below match hidden answers closely (connectivity after SOP ≈ CA-02; customer-named hardware partner with us delivering the HW/SW interface spec and hardware safety requirements ≈ CA-03). The volume split (70/30) does not match CA-01. Effort figures were not derived from `product/`. Grade the quote phase against this file only with that caveat, or treat the blind estimate as missing.
 
 Basis claimed: RFQ §2/§3 structure; numbers are the example's, not derived from the Fluvoro CRS.
+Revised by the maintainer before the customer reply (role figures for WP1, WP2, WP5, WP6 and the option); row totals and the total line recomputed from those figures by Claude, duplicate option row removed.
 
 ## Assumptions for the open points (RFQ §5)
 
@@ -18,16 +19,17 @@ Basis claimed: RFQ §2/§3 structure; numbers are the example's, not derived fro
 
 | Work package | Systems | SW | Safety | Test | PM/QA | Total |
 |---|---|---|---|---|---|---|
-| WP1 Requirements (SYS.1/SYS.2) | 40 | 5 | 10 | 5 | 5 | 65 |
-| WP2 System architecture (SYS.3) | 30 | 10 | 10 | 0 | 5 | 55 |
+| WP1 Requirements (SYS.1/SYS.2) | 60 | 15 | 20 | 5 | 5 | 105 |
+| WP2 System architecture (SYS.3) | 50 | 20 | 20 | 0 | 5 | 95 |
 | WP3 Functional safety (HARA, FSC, TSC, safety case) | 10 | 5 | 80 | 10 | 10 | 115 |
 | WP4 SW requirements + architecture (SWE.1/SWE.2) | 5 | 45 | 10 | 5 | 5 | 70 |
-| WP5 SW detailed design + implementation (SWE.3) | 0 | 120 | 10 | 10 | 5 | 145 |
-| WP6 SW verification (SWE.4–SWE.6) | 0 | 30 | 10 | 90 | 5 | 135 |
+| WP5 SW detailed design + implementation (SWE.3) | 0 | 120 | 20 | 15 | 5 | 160 |
+| WP6 SW verification (SWE.4–SWE.6) | 0 | 40 | 20 | 90 | 15 | 165 |
 | WP7 System integration + qualification (SYS.4/SYS.5) | 25 | 10 | 5 | 40 | 5 | 85 |
 | WP8 Project, QA, CM (MAN.3, SUP.1/8/9/10) | 0 | 0 | 0 | 0 | 90 | 90 |
-| Connectivity option, BLE (separate) | 10 | 40 | 10 | 25 | 5 | 90 |
-| **Total (without option)** | 110 | 225 | 135 | 160 | 130 | **760** |
+| **Total (without option)** | **150** | **255** | **175** | **165** | **140** | **885** |
+| Connectivity option, BLE (separate) | 40 | 60 | 10 | 25 | 5 | 140 |
+
 
 ## Milestones (B-sample, C-sample)
 
