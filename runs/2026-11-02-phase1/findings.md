@@ -28,7 +28,7 @@ Numbering continues the setup findings (F-001…F-018). Grading is against `kit/
 
 ## F-023: QuotPilot's prefetch calls every read capability without arguments
 
-- Each quotpilot turn starts with `fetch_requirements`, `analyze`, `decide`, `analyze_rfq`, `ask` called at once and failing in ~0.01 ms (`tool_failure`, no error text in the audit). Seen in the setup turn f3f52ac5… (QPMT rest) and in turn 1 (QPMT mock), so not backend-related. Continues F-018.
+- Each quotpilot turn starts with `fetch_requirements`, `analyze`, `decide`, `analyze_rfq`, `ask` called at once (corrected cause, Platform audit: the model's first tool round called them with `{}` because none declared parameters, not the pack prefetch; fixed in RE087) and failing in ~0.01 ms (`tool_failure`, no error text in the audit). Seen in the setup turn f3f52ac5… (QPMT rest) and in turn 1 (QPMT mock), so not backend-related. Continues F-018.
 - **Tier:** live. **Demo-blocker:** no (noise, but hides real failures).
 
 ## F-024: no work packages, although asked

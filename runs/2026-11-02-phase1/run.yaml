@@ -100,6 +100,11 @@ decisions:
     chosen: a colleague writes a blind estimate from rfq.md + fluvoro_crs_v1.reqif only (no repo access), finished before any rerun output
     rules_out: grading against the current estimate as the band; no band
     date: 2026-11-02
+  - id: D-21
+    question: start the Phase 1 rerun tonight on ce3a4d47, or after the colleague's blind estimate
+    chosen: rerun tomorrow, after the blind estimate (D-20); no freeze tonight; re-check the served commit before starting
+    rules_out: rerun tonight (sealed output or without D-20)
+    date: 2026-11-02
   - id: D-15
     question: how to continue after turn 1 (quotpilot asked us for OC-001..003 and "Go")
     chosen: neutral follow-up "What else do you need from the customer?"
@@ -116,7 +121,9 @@ next:                              # after D-19
       - the quotpilot prefetch never calls a capability whose required arguments it lacks; a skipped or failed call says why
       - quotpilot.analyze takes a `collection`; it reads the collection's source files through the governed files door, a ReqIF arrives whole and in order via the RE080 listing reader
       - the review names only the sources it received, with counts
-    status: "announced 2026-11-02, a few hours; deploy + core restart will be announced with the commit"
+    status: "live: RE087 (+ RE086) in ce3a4d47, core restarted 2026-11-02T20:56:19Z; verified served = deployed, current"
+    f023_cause_corrected: "the model's first tool round called the five quotpilot tools with {} because none declared parameters (not the pack prefetch); fixed by declared input schemas"
+    caveat: "Platform audit measured on gpt-oss: 2 of 3 turns call analyze(collection=...), 1 of 3 answers without the tool; the quotpilot pack is selected only when the turn carries a project"
   rerun:
     what: Phase 1 again, same prompt (transcript.md turn 1), same customer rules, new chat
     on: the single commit Platform audit confirms after the cluster A deploy
