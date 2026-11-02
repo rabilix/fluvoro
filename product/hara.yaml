@@ -1,8 +1,9 @@
 # Fluvoro — hazard analysis and risk assessment (ISO 26262-3, clause 6)
 #
-# DRAFT 0.1 (2026-11-02). The ratings S/E/C below are THIS SESSION'S PROPOSAL and
-# must be reviewed and corrected by the maintainer before S1 (maintainer decision
-# 2026-11-01: "I draft, you review"). Until then every ASIL here is provisional.
+# 0.2 (2026-11-02): drafted by this session, REVIEWED by the maintainer, who
+# accepted all five review recommendations (RQ-01..RQ-05, decisions recorded
+# below). The ratings and ASILs are now the reference. The FTTI values remain
+# engineering assumptions until measured (RQ-05).
 #
 # Method: item_definition.md section 5 (tailoring). Hazards are rated WITHOUT the
 # item's own safety mechanisms. The ASIL is taken from ISO 26262-3 Table 4;
@@ -12,8 +13,8 @@
 # derived from it after the review; it is never shown to the system under test.
 schema_version: 1
 document: Fluvoro HARA
-status: draft
-version: 0.1
+status: reviewed
+version: 0.2
 date: 2026-11-02
 item_definition: product/item_definition.md
 
@@ -232,19 +233,24 @@ safety_goals:
   ftti_rationale: Assumption. A properly seated insert does not walk out of the outlet within a few seconds of abnormal running.
 
 # ---------------------------------------------------------------------------
-review_questions:   # for the maintainer, before S1
+review_questions:   # answered by the maintainer 2026-11-02
 - id: RQ-01
   on: HE-01
   question: Is S2 right for hand contact with the rotor (rated without torque limiting)? If the worst credible injury is a single-finger injury (AIS 2, S1), HE-01 becomes QM and SG-01 disappears. My recommendation is to keep S2.
+  decision: Keep S2 (maintainer 2026-11-02).
 - id: RQ-02
   on: HE-02
   question: Is C1 right for a startle on a ladder? With C2 the event becomes ASIL A and needs its own safety goal (no rotor start while a person is near, which the device cannot sense). My recommendation is C1, with maintenance mode as a usability measure.
+  decision: C1, QM; maintenance mode kept as a usability measure (maintainer 2026-11-02).
 - id: RQ-03
   on: HE-03
   question: ASIL C for the battery is the decisive rating; it drives the BMS and the drive cut-off design. The argument for C1 (ASIL B) is a small LiFePO4 pack (≤ 50 Wh), a V-0 enclosure and flames that are visible outside the house. My recommendation is to keep C2 (ASIL C) and let the safety concept decompose it, for example a hardware cell monitor plus a fuse alongside software.
+  decision: Keep C2, ASIL C; decomposition left to the safety concept (maintainer 2026-11-02).
 - id: RQ-04
   on: OS-05
   question: Is duration-based exposure (E2) right for a person below the outlet? Rated by frequency (people pass daily) it would be E4, and HE-04 would become ASIL C.
+  decision: Duration-based E2 (maintainer 2026-11-02).
 - id: RQ-05
   on: SG-01
   question: Is an FTTI of 300 ms plausible for your intended cap design? It sets the requirement for the cap-switch path and for rotor braking.
+  decision: Measure the reach time on the cap design; 300 ms stays an assumption until then (maintainer 2026-11-02).
