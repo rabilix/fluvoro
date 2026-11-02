@@ -1,0 +1,962 @@
+# Fluvoro — clean reference stakeholder requirements (SYS.1 level)
+#
+# This is the CLEAN specification: technically correct and complete as far as the
+# author could make it. It is (a) the real product specification if Fluvoro goes
+# ahead and (b) the source the simulation's customer requirements specification
+# (kit/shown) is DERIVED from, with seeded defects listed only in kit/hidden.
+# Never edit kit/shown by hand to "fix" a seeded defect here, and never copy a
+# seeded defect back into this file.
+#
+# Fields
+#   id            FLV-STK-NNN, stable, never reused
+#   title         short name
+#   text          the requirement ("shall")
+#   variant       common | V1 | V2 | option_ble
+#   category      function | hydraulic | energy | environment | mechanical |
+#                 installation | safety | compliance | interaction | lifecycle |
+#                 quality | project | cybersecurity
+#   verification  test | analysis | inspection | demonstration
+#   basis         regulation | standard | customer_need | engineering_assumption
+#                 (an engineering_assumption value MUST be confirmed by the
+#                 maintainer before it is used for a real product)
+#   rationale     why the requirement exists
+#
+# Definitions used below
+#   outlet              the gutter outlet (German: Rinnenstutzen) per EN 612
+#   reference debris    a mix by wet mass of 70 % deciduous leaves (beech, maple,
+#                       oak), 20 % conifer needles, 10 % twigs <= 5 mm diameter
+#                       and <= 100 mm length, at saturation after 1 h in water
+#   clog condition      water backing up in the outlet above the level defined in
+#                       FLV-STK-006 for longer than the time in FLV-STK-007
+#   shred cycle         one activation of the rotor from start to stop
+#   reference site      Central Europe, horizontal global irradiation 0.7 kWh/m2
+#                       per day (November mean), device in an unshaded gutter
+#                       except as stated
+schema_version: 1
+document: Fluvoro stakeholder requirements
+status: draft
+version: 0.1
+date: 2026-11-02
+
+requirements:
+
+# ---------------------------------------------------------------- function
+- id: FLV-STK-001
+  title: Keep the outlet free
+  text: The device shall prevent the gutter outlet from becoming blocked by leaves, conifer needles and small twigs during rainfall.
+  variant: common
+  category: function
+  verification: test
+  basis: customer_need
+  rationale: The product's purpose.
+
+- id: FLV-STK-002
+  title: Automatic operation
+  text: The device shall detect a clog condition and clear it without any action by a person.
+  variant: common
+  category: function
+  verification: test
+  basis: customer_need
+  rationale: Removing the ladder visit is the value proposition.
+
+- id: FLV-STK-003
+  title: Shredded particle size
+  text: The device shall reduce reference debris to particles whose largest dimension does not exceed 15 mm for at least 95 % of the shredded mass.
+  variant: common
+  category: function
+  verification: test
+  basis: engineering_assumption
+  rationale: Particles must pass the downpipe bends and a DN 87 downpipe without building a new blockage further down.
+
+- id: FLV-STK-004
+  title: Shredding throughput
+  text: The device shall shred reference debris at a rate of at least 60 g wet mass per minute while running.
+  variant: common
+  category: function
+  verification: test
+  basis: engineering_assumption
+  rationale: A heavy autumn day can bring several hundred grams of wet leaves to one outlet; the device must keep up within a few short cycles.
+
+- id: FLV-STK-005
+  title: Restore flow after a clog
+  text: After a clog condition is detected, the device shall restore the outlet's free discharge within 120 s in at least 95 % of clog events caused by reference debris.
+  variant: common
+  category: function
+  verification: test
+  basis: engineering_assumption
+  rationale: Bounds how long water can back up and overflow during heavy rain.
+
+- id: FLV-STK-006
+  title: Clog detection level
+  text: The device shall treat water standing in the outlet neck at or above a level of 30 mm above the rotor plane as a potential clog.
+  variant: common
+  category: function
+  verification: test
+  basis: engineering_assumption
+  rationale: Water that rises into the funnel means the outlet cannot pass the inflow; 30 mm leaves margin before the gutter overflows.
+
+- id: FLV-STK-007
+  title: Distinguish clog from heavy rain
+  text: The device shall start a shred cycle only when the clog level of FLV-STK-006 persists for at least 10 s or rises continuously over that period, so that short surges from heavy rain alone do not start the rotor.
+  variant: common
+  category: function
+  verification: test
+  basis: engineering_assumption
+  rationale: Unneeded cycles waste energy, add wear and noise.
+
+- id: FLV-STK-008
+  title: Start latency
+  text: The device shall start shredding within 30 s after a clog condition has been established.
+  variant: common
+  category: function
+  verification: test
+  basis: engineering_assumption
+  rationale: Together with FLV-STK-005 this bounds the time water backs up.
+
+- id: FLV-STK-009
+  title: Unneeded cycles
+  text: Over a reference autumn season (FLV-STK-030), no more than 10 % of shred cycles shall be started without debris being present.
+  variant: common
+  category: function
+  verification: analysis
+  basis: engineering_assumption
+  rationale: Keeps the energy budget and wear within limits.
+
+- id: FLV-STK-010
+  title: Verify the result of a cycle
+  text: After each shred cycle the device shall check whether the water level has fallen below the clog level and shall start a further cycle or report a persistent clog if it has not.
+  variant: common
+  category: function
+  verification: test
+  basis: customer_need
+  rationale: The device must not assume success; a remaining clog needs a person.
+
+- id: FLV-STK-011
+  title: Persistent clog
+  text: If the clog condition persists after 3 consecutive shred cycles, the device shall stop shredding for that event and signal "service needed" (FLV-STK-061).
+  variant: common
+  category: function
+  verification: test
+  basis: engineering_assumption
+  rationale: Avoids draining the battery on a clog the device cannot clear.
+
+- id: FLV-STK-012
+  title: Non-shreddable objects
+  text: When a non-shreddable object (for example a stone, a ball, a plastic bag) blocks the rotor, the device shall stop the rotor, make at most 3 attempts to clear it by reversing, and then signal "service needed" without damage to the device.
+  variant: common
+  category: function
+  verification: test
+  basis: customer_need
+  rationale: Gutters collect more than leaves; the device must protect itself and say so.
+
+- id: FLV-STK-013
+  title: Operation at night and in rain
+  text: The device shall perform all its functions independently of daylight.
+  variant: common
+  category: function
+  verification: test
+  basis: customer_need
+  rationale: Clogs happen during rain, often at night and with no sun.
+
+- id: FLV-STK-014
+  title: Dry running
+  text: The device shall not run the rotor for longer than 5 s when the level sensor indicates no water and no clog condition, except during the self-test of FLV-STK-016.
+  variant: common
+  category: function
+  verification: test
+  basis: engineering_assumption
+  rationale: Dry running adds wear and noise without benefit.
+
+- id: FLV-STK-015
+  title: Motor speed and torque control
+  text: The device shall control rotor speed and torque so that it can soft-start, limit torque, detect a jam from motor current and speed, and reverse direction.
+  variant: common
+  category: function
+  verification: test
+  basis: customer_need
+  rationale: The motor is PWM-driven (maintainer decision 2026-11-01); controlled torque protects the drive, the rotor and the user.
+
+- id: FLV-STK-016
+  title: Self-test
+  text: The device shall test its level sensor, motor drive and battery at least once every 24 h, run the rotor for no longer than 2 s during that test, and signal "fault" when a test fails.
+  variant: common
+  category: function
+  verification: test
+  basis: customer_need
+  rationale: A failed sensor must be found before the next storm, not during it.
+
+- id: FLV-STK-017
+  title: Quiet hours
+  text: Between 22:00 and 06:00 local time the device shall start a shred cycle only when the water level reaches 50 mm above the rotor plane.
+  variant: common
+  category: function
+  verification: test
+  basis: customer_need
+  rationale: Neighbours; at night only a near-overflow justifies the noise.
+
+- id: FLV-STK-018
+  title: Local time without a network
+  text: The device shall keep local time with an error of no more than 10 min per month without any network connection, and shall keep it through a battery replacement.
+  variant: common
+  category: function
+  verification: test
+  basis: engineering_assumption
+  rationale: Needed by FLV-STK-017 on devices without the BLE option.
+
+# ---------------------------------------------------------------- hydraulic
+- id: FLV-STK-020
+  title: Discharge with the rotor stopped
+  text: With the device installed, a clean grate and the rotor stopped, the outlet shall discharge at least 80 % of the flow the same outlet discharges without the device, measured at the same water head.
+  variant: common
+  category: hydraulic
+  verification: test
+  basis: engineering_assumption
+  rationale: The device must not create the overflow it is meant to prevent.
+
+- id: FLV-STK-021
+  title: Fail-open drainage
+  text: With the grate and rotor completely blocked, or with the device unpowered, the device shall still drain at least 50 % of the flow of the same outlet without the device, through an overflow path that cannot be closed by debris retained by the grate.
+  variant: common
+  category: hydraulic
+  verification: test
+  basis: customer_need
+  rationale: No failure of the device may turn a partly blocked outlet into a fully blocked one; water on the façade is a hazard to the building.
+
+- id: FLV-STK-022
+  title: Design rainfall
+  text: The device shall meet FLV-STK-020 and FLV-STK-021 for the design rainfall intensity of EN 12056-3 for the connected roof area of an NW 333 gutter outlet.
+  variant: common
+  category: hydraulic
+  verification: analysis
+  basis: standard
+  rationale: Ties the hydraulic requirements to the standard used to size roof drainage.
+
+# ---------------------------------------------------------------- energy
+- id: FLV-STK-030
+  title: Reference autumn season
+  text: The device shall operate for a reference autumn season of 1 September to 31 December at the reference site without external charging, performing up to 4 shred cycles per day on up to 20 days and up to 1 shred cycle per day on the other days.
+  variant: common
+  category: energy
+  verification: analysis
+  basis: engineering_assumption
+  rationale: The autumn leaf season is when the product must work; external charging defeats its purpose.
+
+- id: FLV-STK-031
+  title: Autonomy without sun
+  text: Starting from a fully charged battery, the device shall perform at least 30 shred cycles spread over 14 days with no solar input, and keep its monitoring functions running for those 14 days.
+  variant: common
+  category: energy
+  verification: test
+  basis: engineering_assumption
+  rationale: Two weeks of dark, wet weather in November is normal in Central Europe.
+
+- id: FLV-STK-032
+  title: Shading and soiling
+  text: The device shall meet FLV-STK-030 with 50 % of the solar cell area shaded or covered by debris on every day of the season.
+  variant: common
+  category: energy
+  verification: analysis
+  basis: engineering_assumption
+  rationale: The cap sits inside a gutter, under trees, where leaves land on it.
+
+- id: FLV-STK-033
+  title: Energy reserve
+  text: The device shall keep an energy reserve sufficient for at least 5 shred cycles; when only the reserve remains it shall stop non-essential functions, keep clog clearing available, and signal "low battery".
+  variant: common
+  category: energy
+  verification: test
+  basis: customer_need
+  rationale: Clearing clogs is the last function the device should give up.
+
+- id: FLV-STK-034
+  title: Solar charging
+  text: The device shall charge its battery from solar cells integrated in the device and shall need no mains connection and no separate panel.
+  variant: common
+  category: energy
+  verification: inspection
+  basis: customer_need
+  rationale: No cables on the roof; installation by a homeowner (V1).
+
+- id: FLV-STK-035
+  title: Recovery from full discharge
+  text: After its battery has been fully discharged, the device shall resume normal operation automatically once solar charging has restored sufficient energy, without passing through an unsafe state and without user action.
+  variant: common
+  category: energy
+  verification: test
+  basis: customer_need
+  rationale: A device left dark for weeks must come back by itself.
+
+- id: FLV-STK-036
+  title: Battery protection
+  text: The device shall protect its battery against over-voltage, under-voltage, over-current, short circuit and operation outside the battery manufacturer's temperature limits for charging and for discharging.
+  variant: common
+  category: energy
+  verification: test
+  basis: regulation
+  rationale: Battery safety; a damaged lithium battery on a house is a fire hazard.
+
+- id: FLV-STK-037
+  title: No charging below freezing
+  text: The device shall not charge its battery at a cell temperature below 0 °C or above the manufacturer's charging limit.
+  variant: common
+  category: energy
+  verification: test
+  basis: standard
+  rationale: Charging lithium cells below 0 °C causes lithium plating and lasting damage.
+
+- id: FLV-STK-038
+  title: Battery chemistry
+  text: The device shall use a battery chemistry and construction whose thermal stability is at least that of lithium iron phosphate (LiFePO4).
+  variant: common
+  category: energy
+  verification: inspection
+  basis: customer_need
+  rationale: Mounted on a roof edge, unattended, often above wooden structures.
+
+- id: FLV-STK-039
+  title: Battery life
+  text: The battery shall keep at least 70 % of its rated capacity after 5 years of use at the reference site.
+  variant: common
+  category: energy
+  verification: analysis
+  basis: engineering_assumption
+  rationale: Matches the replacement interval a homeowner accepts.
+
+- id: FLV-STK-040
+  title: Battery replaceable by the user
+  text: The battery shall be removable and replaceable by the end user with no tools, or with commercially available tools only, and without damage to the device or the battery.
+  variant: common
+  category: energy
+  verification: demonstration
+  basis: regulation
+  rationale: Battery Regulation (EU) 2023/1542, Article 11 (portable batteries in appliances).
+
+- id: FLV-STK-041
+  title: Standby consumption
+  text: The device's average power consumption while monitoring with no shred cycle shall not exceed 2 mW.
+  variant: common
+  category: energy
+  verification: test
+  basis: engineering_assumption
+  rationale: Standby dominates the energy budget on most days of the year.
+
+- id: FLV-STK-042
+  title: State of charge reporting
+  text: The device shall estimate its battery state of charge with an error of no more than 10 percentage points and report it through its interfaces (FLV-STK-061, FLV-STK-067).
+  variant: common
+  category: energy
+  verification: test
+  basis: engineering_assumption
+  rationale: Needed for the reserve logic and to warn the user before the battery is empty.
+
+- id: FLV-STK-043
+  title: Off-season storage
+  text: The device shall survive 8 months installed without debris, with only solar charging, without damage to the battery from deep discharge or over-charge.
+  variant: common
+  category: energy
+  verification: test
+  basis: customer_need
+  rationale: Spring and summer are mostly idle; the battery must not die from neglect.
+
+# ---------------------------------------------------------------- environment
+- id: FLV-STK-050
+  title: Operating temperature
+  text: The device shall operate at ambient temperatures from -20 °C to +50 °C, and shall withstand -30 °C to +80 °C without operating (surface temperature of a dark cap in summer sun).
+  variant: common
+  category: environment
+  verification: test
+  basis: engineering_assumption
+  rationale: Roof-edge climate in Central Europe, including sun-heated surfaces.
+
+- id: FLV-STK-051
+  title: Ice and frost
+  text: The device shall not be damaged by water freezing inside it, shall not run the rotor while the rotor is held by ice, and shall resume normal operation after thawing without user action.
+  variant: common
+  category: environment
+  verification: test
+  basis: customer_need
+  rationale: Water stands in outlets in winter; trying to shred ice damages the drive and drains the battery.
+
+- id: FLV-STK-052
+  title: Ingress protection of the electronics
+  text: The compartment holding electronics, battery and motor shall meet IP67 to IEC 60529.
+  variant: common
+  category: environment
+  verification: test
+  basis: standard
+  rationale: The compartment can be submerged briefly when the gutter overflows.
+
+- id: FLV-STK-053
+  title: UV resistance
+  text: All external plastic parts shall keep their function and at least 80 % of their tensile strength after artificial weathering equivalent to 10 years of outdoor exposure in Central Europe.
+  variant: common
+  category: environment
+  verification: test
+  basis: engineering_assumption
+  rationale: Permanent sun exposure on the roof edge.
+
+- id: FLV-STK-054
+  title: Gutter materials
+  text: The device shall cause no galvanic or chemical corrosion of titanium zinc, copper, aluminium or coated steel gutters and outlets it is in contact with, and shall not itself corrode in contact with them.
+  variant: common
+  category: environment
+  verification: analysis
+  basis: customer_need
+  rationale: Metal gutters fail quickly at contact points with incompatible metals; copper run-off attacks zinc and aluminium.
+
+- id: FLV-STK-055
+  title: Hail and impact
+  text: The solar cap shall withstand mechanical impact of IK08 to IEC 62262 without loss of function or watertightness.
+  variant: common
+  category: environment
+  verification: test
+  basis: engineering_assumption
+  rationale: Hail and falling branches.
+
+- id: FLV-STK-056
+  title: Snow and walking load
+  text: The device shall withstand a static load of 300 N on the cap without damage.
+  variant: common
+  category: environment
+  verification: test
+  basis: engineering_assumption
+  rationale: Snow load and a person leaning on the gutter during other roof work.
+
+- id: FLV-STK-057
+  title: Service life
+  text: The device, excluding battery and wear parts, shall have a service life of at least 10 years at the reference site.
+  variant: common
+  category: environment
+  verification: analysis
+  basis: engineering_assumption
+  rationale: Expected life of a roof drainage accessory.
+
+# ---------------------------------------------------------------- interaction
+- id: FLV-STK-060
+  title: Status visible from the ground
+  text: The device shall show its state (normal, low battery, service needed, fault, maintenance mode) by a light signal that a person can recognise in daylight from the ground at a distance of 6 m.
+  variant: common
+  category: interaction
+  verification: test
+  basis: customer_need
+  rationale: The user must be able to check the device without a ladder.
+
+- id: FLV-STK-061
+  title: Service needed
+  text: The device shall signal "service needed" for a persistent clog, a non-shreddable object, worn cutting parts or a failed self-test, and keep signalling until the cause is removed.
+  variant: common
+  category: interaction
+  verification: test
+  basis: customer_need
+  rationale: The device must say when it needs a person.
+
+- id: FLV-STK-062
+  title: Signalling energy
+  text: The light signal of FLV-STK-060 shall not use more than 10 % of the standby energy budget of FLV-STK-041.
+  variant: common
+  category: interaction
+  verification: analysis
+  basis: engineering_assumption
+  rationale: Signalling must not drain the battery it reports on.
+
+- id: FLV-STK-063
+  title: Noise during shredding
+  text: The A-weighted sound pressure level during shredding shall not exceed 65 dB(A) at 1 m from the device.
+  variant: common
+  category: interaction
+  verification: test
+  basis: engineering_assumption
+  rationale: Residential area; the device is near windows.
+
+- id: FLV-STK-064
+  title: No noise at rest
+  text: The device shall produce no audible sound while monitoring.
+  variant: common
+  category: interaction
+  verification: test
+  basis: customer_need
+  rationale: Residential area.
+
+- id: FLV-STK-065
+  title: Event log
+  text: The device shall record at least the last 200 events (shred cycles with start, duration and result, jams, faults, low battery, maintenance mode) with their local time, and keep them through a battery replacement.
+  variant: common
+  category: interaction
+  verification: test
+  basis: customer_need
+  rationale: Service diagnosis and evidence of operation.
+
+- id: FLV-STK-066
+  title: Service access to the log
+  text: A service technician shall be able to read the event log, the hardware and software versions and the serial number on site without opening the sealed compartment.
+  variant: common
+  category: interaction
+  verification: demonstration
+  basis: customer_need
+  rationale: Diagnosis without breaking the IP67 seal.
+
+- id: FLV-STK-067
+  title: Smartphone app (option)
+  text: With the connectivity option, the device shall provide its state, state of charge, event log and notifications of "service needed" and "fault" to a smartphone app over Bluetooth Low Energy.
+  variant: option_ble
+  category: interaction
+  verification: demonstration
+  basis: customer_need
+  rationale: Convenience for users who want notifications.
+
+# ---------------------------------------------------------------- safety
+- id: FLV-STK-070
+  title: Functional safety frame
+  text: The supplier shall develop the device in accordance with ISO 26262:2018 Parts 2 to 9, tailored to the item, including an item definition, a hazard analysis and risk assessment that determines the ASIL of each safety goal, a functional and a technical safety concept, and a safety case.
+  variant: common
+  category: safety
+  verification: inspection
+  basis: customer_need
+  rationale: Contractual development frame required by the customer (maintainer decision 2026-11-01). ASILs are to be determined by the supplier, not given here.
+
+- id: FLV-STK-071
+  title: Protection of a person's hand
+  text: The rotor shall not start or run while the cap is removed, while the device is in maintenance mode, or in any other situation in which a person's hand can reach the rotor.
+  variant: common
+  category: safety
+  verification: test
+  basis: customer_need
+  rationale: Gutter cleaning by hand is the most likely contact with the device.
+
+- id: FLV-STK-072
+  title: Inaccessible rotating parts
+  text: When the device is installed and closed, the rotating parts shall not be reachable by the upper limb, using the safety distances of EN ISO 13857.
+  variant: common
+  category: safety
+  verification: inspection
+  basis: standard
+  rationale: Machinery safety for rotating cutting parts.
+
+- id: FLV-STK-073
+  title: Maintenance mode
+  text: A person shall be able to put the device into a maintenance mode that disables the rotor, by a means operable without tools at the device, and the device shall confirm the mode by its light signal before the person reaches into it.
+  variant: common
+  category: safety
+  verification: demonstration
+  basis: customer_need
+  rationale: Safe cleaning of the grate and removal of objects.
+
+- id: FLV-STK-074
+  title: No unintended start after a fault
+  text: After a fault that stopped the rotor for safety reasons, the rotor shall not start again until the fault has been cleared and the device has passed its self-test.
+  variant: common
+  category: safety
+  verification: test
+  basis: customer_need
+  rationale: An unexpected restart is the most dangerous moment for a person removing a blockage.
+
+- id: FLV-STK-075
+  title: Limited force at the rotor
+  text: The force and energy the rotor can exert shall be limited such that contact with the rotating parts while the device runs causes no more than a minor, reversible injury to a finger.
+  variant: common
+  category: safety
+  verification: test
+  basis: customer_need
+  rationale: Defence in depth behind FLV-STK-071 and FLV-STK-072; relies on controlled torque (FLV-STK-015).
+
+- id: FLV-STK-076
+  title: No fire on the building
+  text: No single fault of the device, including a battery cell fault, shall cause flames or molten material to leave the device enclosure.
+  variant: common
+  category: safety
+  verification: test
+  basis: customer_need
+  rationale: The device sits on a roof edge, often above timber.
+
+- id: FLV-STK-077
+  title: Enclosure flammability
+  text: Plastic parts enclosing the battery and electronics shall be rated V-0 to UL 94 / IEC 60695-11-10 at the wall thickness used.
+  variant: common
+  category: safety
+  verification: inspection
+  basis: standard
+  rationale: Containment of an internal fire.
+
+- id: FLV-STK-078
+  title: Safety extra-low voltage
+  text: All accessible circuits shall be safety extra-low voltage, with no voltage above 60 V DC anywhere in the device.
+  variant: common
+  category: safety
+  verification: inspection
+  basis: standard
+  rationale: Electrical safety for a device handled by homeowners on a ladder.
+
+- id: FLV-STK-079
+  title: No overflow caused by the device
+  text: No failure of the device shall reduce the outlet's discharge below the fail-open drainage of FLV-STK-021.
+  variant: common
+  category: safety
+  verification: analysis
+  basis: customer_need
+  rationale: Water overflowing onto the façade damages the building and freezes on walkways.
+
+- id: FLV-STK-080
+  title: Safe state
+  text: On detecting a fault that affects safe operation, the device shall stop the rotor and keep it stopped, keep the fail-open drainage of FLV-STK-021, and signal "fault".
+  variant: common
+  category: safety
+  verification: test
+  basis: customer_need
+  rationale: Stopping the rotor is safe for people; drainage remains through the overflow path.
+
+# ---------------------------------------------------------------- compliance
+- id: FLV-STK-090
+  title: CE marking
+  text: The device shall comply with, and be CE marked under, the Machinery Regulation (EU) 2023/1230, the EMC Directive 2014/30/EU and the RoHS Directive 2011/65/EU.
+  variant: common
+  category: compliance
+  verification: inspection
+  basis: regulation
+  rationale: Legal market access in the EU.
+
+- id: FLV-STK-091
+  title: Machinery risk assessment
+  text: The supplier shall perform and document a risk assessment and risk reduction to EN ISO 12100.
+  variant: common
+  category: compliance
+  verification: inspection
+  basis: standard
+  rationale: Required for the Machinery Regulation conformity assessment; separate from the ISO 26262 HARA.
+
+- id: FLV-STK-092
+  title: Control software safety class
+  text: Software that performs a protective function shall meet the requirements for Class B control functions of IEC 60730-1 Annex H, in addition to FLV-STK-070.
+  variant: common
+  category: compliance
+  verification: inspection
+  basis: standard
+  rationale: Product-compliance view of the protective software functions; kept apart from the functional-safety lifecycle.
+
+- id: FLV-STK-093
+  title: Electromagnetic compatibility
+  text: The device shall meet emission limits of CISPR 14-1 and immunity requirements of CISPR 14-2.
+  variant: common
+  category: compliance
+  verification: test
+  basis: standard
+  rationale: Household appliance EMC standards for a motor-driven device.
+
+- id: FLV-STK-094
+  title: Battery Regulation
+  text: The device and its battery shall comply with the Battery Regulation (EU) 2023/1542, including labelling, information and take-back obligations.
+  variant: common
+  category: compliance
+  verification: inspection
+  basis: regulation
+  rationale: Legal market access for products containing batteries.
+
+- id: FLV-STK-095
+  title: WEEE
+  text: The device shall comply with the WEEE Directive 2012/19/EU, including the crossed-out wheelie bin marking.
+  variant: common
+  category: compliance
+  verification: inspection
+  basis: regulation
+  rationale: End-of-life obligations.
+
+- id: FLV-STK-096
+  title: General product safety
+  text: The device shall comply with the General Product Safety Regulation (EU) 2023/988, including traceability information on the product.
+  variant: common
+  category: compliance
+  verification: inspection
+  basis: regulation
+  rationale: Applies to consumer products placed on the EU market.
+
+- id: FLV-STK-097
+  title: Radio equipment (option)
+  text: With the connectivity option, the device shall comply with the Radio Equipment Directive 2014/53/EU, including the cybersecurity requirements of Delegated Regulation (EU) 2022/30 as given in EN 18031-1, and with the Cyber Resilience Act (EU) 2024/2847 from its date of application.
+  variant: option_ble
+  category: compliance
+  verification: inspection
+  basis: regulation
+  rationale: A radio interface brings radio and cybersecurity law.
+
+- id: FLV-STK-098
+  title: Material marking
+  text: Plastic parts heavier than 10 g shall be marked with their material to ISO 11469.
+  variant: common
+  category: compliance
+  verification: inspection
+  basis: standard
+  rationale: Recycling at end of life.
+
+# ---------------------------------------------------------------- cybersecurity (option)
+- id: FLV-STK-100
+  title: Cybersecurity engineering (option)
+  text: With the connectivity option, the supplier shall perform cybersecurity engineering to ISO/SAE 21434, including a threat analysis and risk assessment of the radio interface and the firmware update path.
+  variant: option_ble
+  category: cybersecurity
+  verification: inspection
+  basis: customer_need
+  rationale: The radio interface is the only remote attack surface; a malicious command could start the rotor.
+
+- id: FLV-STK-101
+  title: No remote rotor start (option)
+  text: No command received over the radio interface shall be able to start the rotor or override a safety function.
+  variant: option_ble
+  category: cybersecurity
+  verification: test
+  basis: customer_need
+  rationale: Keeps every safety function local; the app may observe, not actuate.
+
+- id: FLV-STK-102
+  title: Authenticated firmware (option)
+  text: With the connectivity option, the device shall accept only firmware that is cryptographically signed by the manufacturer, and shall keep running its previous firmware if an update fails.
+  variant: option_ble
+  category: cybersecurity
+  verification: test
+  basis: regulation
+  rationale: EN 18031-1 and the Cyber Resilience Act; a failed update must not brick the device in the middle of a season.
+
+- id: FLV-STK-103
+  title: Pairing (option)
+  text: Pairing with a smartphone shall require physical presence at the device.
+  variant: option_ble
+  category: cybersecurity
+  verification: demonstration
+  basis: customer_need
+  rationale: Prevents a neighbour's or passer-by's phone from taking over the device.
+
+# ---------------------------------------------------------------- mechanical / installation (V1)
+- id: FLV-STK-110
+  title: V1 fit
+  text: The V1 insert shall fit gutter outlets for NW 333 gutters with DN 87 and DN 100 downpipes made to EN 612.
+  variant: V1
+  category: mechanical
+  verification: test
+  basis: customer_need
+  rationale: Most common residential size in Germany (maintainer decision 2026-11-02); other sizes are a later variant.
+
+- id: FLV-STK-111
+  title: V1 installation without tools
+  text: One person on a ladder shall be able to install or remove the V1 insert without tools within 5 min.
+  variant: V1
+  category: installation
+  verification: demonstration
+  basis: customer_need
+  rationale: Retrofit by the homeowner.
+
+- id: FLV-STK-112
+  title: V1 no change to the gutter
+  text: Installing the V1 insert shall require no modification of the gutter, the outlet or the downpipe, and removing it shall leave them in their original state.
+  variant: V1
+  category: installation
+  verification: inspection
+  basis: customer_need
+  rationale: Retrofit, reversible.
+
+- id: FLV-STK-113
+  title: V1 height
+  text: No part of the installed V1 insert shall rise above the gutter's front rim.
+  variant: V1
+  category: mechanical
+  verification: inspection
+  basis: customer_need
+  rationale: A part above the rim would deflect water over the edge and be visible from the street.
+
+- id: FLV-STK-114
+  title: V1 clips and bead free
+  text: The V1 insert shall not rest on or load the outlet's clips or the gutter bead.
+  variant: V1
+  category: mechanical
+  verification: inspection
+  basis: customer_need
+  rationale: Loaded clips loosen and the outlet starts to leak.
+
+- id: FLV-STK-115
+  title: V1 retention
+  text: The installed V1 insert shall stay in place at the maximum design flow, when ice forms around it, and under a lifting force of 50 N.
+  variant: V1
+  category: mechanical
+  verification: test
+  basis: engineering_assumption
+  rationale: It must not float, be pushed out by ice or lifted by wind.
+
+- id: FLV-STK-116
+  title: V1 mass
+  text: The V1 insert shall not weigh more than 1.2 kg including the battery.
+  variant: V1
+  category: mechanical
+  verification: inspection
+  basis: engineering_assumption
+  rationale: Handling on a ladder; load on the gutter brackets.
+
+- id: FLV-STK-117
+  title: V1 structure-borne noise
+  text: Shredding shall not transmit vibration to the gutter that causes audible rattling of the gutter or the downpipe brackets.
+  variant: V1
+  category: mechanical
+  verification: test
+  basis: customer_need
+  rationale: Metal gutters act as resonators.
+
+# ---------------------------------------------------------------- mechanical / installation (V2)
+- id: FLV-STK-120
+  title: V2 fit
+  text: The V2 replacement outlet shall replace an EN 612 outlet for NW 333 gutters, with variants for DN 87 and DN 100 downpipes.
+  variant: V2
+  category: mechanical
+  verification: inspection
+  basis: customer_need
+  rationale: Same first size as V1.
+
+- id: FLV-STK-121
+  title: V2 materials
+  text: The V2 replacement outlet shall be available in titanium zinc, copper and aluminium, matching the gutter material.
+  variant: V2
+  category: mechanical
+  verification: inspection
+  basis: customer_need
+  rationale: Roofers do not mix gutter metals (see FLV-STK-054).
+
+- id: FLV-STK-122
+  title: V2 installation by a roofer
+  text: A roofer shall be able to install the V2 replacement outlet with the joining methods used for standard outlets of the same material (soldering, riveting with sealant, or clip), within 20 min.
+  variant: V2
+  category: installation
+  verification: demonstration
+  basis: customer_need
+  rationale: No new skills or tools for the trade.
+
+- id: FLV-STK-123
+  title: V2 service without removal
+  text: The cap, the battery and the cutting parts of V2 shall be removable for service without removing the outlet from the gutter.
+  variant: V2
+  category: installation
+  verification: demonstration
+  basis: customer_need
+  rationale: The outlet is a fixed part of the roof drainage.
+
+- id: FLV-STK-124
+  title: V2 mass
+  text: The V2 replacement outlet shall not weigh more than 2.0 kg including the battery.
+  variant: V2
+  category: mechanical
+  verification: inspection
+  basis: engineering_assumption
+  rationale: Load on the gutter at the outlet.
+
+# ---------------------------------------------------------------- lifecycle
+- id: FLV-STK-130
+  title: Maintenance
+  text: Apart from replacing the battery and wear parts and cleaning the grate, the device shall need no maintenance during its service life.
+  variant: common
+  category: lifecycle
+  verification: analysis
+  basis: customer_need
+  rationale: The product exists to reduce maintenance.
+
+- id: FLV-STK-131
+  title: Wear parts
+  text: The cutting parts shall last at least 5 autumn seasons at the reference load of FLV-STK-030 and shall be replaceable by the end user without tools.
+  variant: common
+  category: lifecycle
+  verification: test
+  basis: engineering_assumption
+  rationale: Cutting edges wear; the rest of the device should not be scrapped for it.
+
+- id: FLV-STK-132
+  title: Worn cutting parts
+  text: The device shall detect when its cutting performance has fallen below the throughput of FLV-STK-004 and signal "service needed".
+  variant: common
+  category: lifecycle
+  verification: test
+  basis: customer_need
+  rationale: The user cannot see the blades.
+
+- id: FLV-STK-133
+  title: Firmware update
+  text: The device firmware shall be updatable in the field by a service technician without opening the sealed compartment.
+  variant: common
+  category: lifecycle
+  verification: demonstration
+  basis: customer_need
+  rationale: Field fixes without replacing devices.
+
+- id: FLV-STK-134
+  title: Spare parts
+  text: Battery, cap and cutting parts shall be available as spare parts for at least 7 years after the last unit of a variant is placed on the market.
+  variant: common
+  category: lifecycle
+  verification: inspection
+  basis: customer_need
+  rationale: Repairability; customer expectation for a 10-year product.
+
+- id: FLV-STK-135
+  title: Identification
+  text: Each device shall carry a unique serial number readable on the device and through the service interface, and shall report its hardware and software versions.
+  variant: common
+  category: lifecycle
+  verification: inspection
+  basis: regulation
+  rationale: Traceability (GPSR) and field service.
+
+# ---------------------------------------------------------------- quality / project
+- id: FLV-STK-140
+  title: Process capability
+  text: The supplier shall perform the system and software engineering processes to Automotive SPICE 4.0 capability level 2 for SYS.1 to SYS.5, SWE.1 to SWE.6, MAN.3, SUP.1, SUP.8, SUP.9 and SUP.10.
+  variant: common
+  category: project
+  verification: inspection
+  basis: customer_need
+  rationale: Customer's process frame.
+
+- id: FLV-STK-141
+  title: Bidirectional traceability
+  text: The supplier shall maintain bidirectional traceability from each stakeholder requirement to system requirements, software requirements, architecture elements, code and test cases.
+  variant: common
+  category: project
+  verification: inspection
+  basis: standard
+  rationale: Required by ASPICE and ISO 26262; makes change impact analysable.
+
+- id: FLV-STK-142
+  title: Deliverables
+  text: The supplier shall deliver the system and software requirements, the system and software architecture, the safety work products of FLV-STK-070, the source code, the test specifications and test reports, and the traceability report.
+  variant: common
+  category: project
+  verification: inspection
+  basis: customer_need
+  rationale: Defines what the customer receives.
+
+- id: FLV-STK-143
+  title: Change management
+  text: The supplier shall assess the impact of every change to these requirements on all affected work products before implementing it, and shall record the assessment.
+  variant: common
+  category: project
+  verification: inspection
+  basis: standard
+  rationale: SUP.10; changes during development are expected.
+
+- id: FLV-STK-144
+  title: Product cost
+  text: The bill of materials and assembly cost at 50 000 units per year shall not exceed EUR 45 for V1 and EUR 70 for V2, excluding the connectivity option.
+  variant: common
+  category: project
+  verification: analysis
+  basis: engineering_assumption
+  rationale: Consumer price point for a gutter accessory; to be confirmed by a market check.
+
+- id: FLV-STK-145
+  title: End-of-line test
+  text: Every produced device shall pass an end-of-line test of level sensing, motor drive and rotor direction, battery management and light signal before shipping.
+  variant: common
+  category: quality
+  verification: inspection
+  basis: customer_need
+  rationale: Production quality; supports the safety case.
+
+- id: FLV-STK-146
+  title: User documentation
+  text: The device shall be supplied with installation, operating, safety and battery-replacement instructions in the official languages of the EU member states where it is sold.
+  variant: common
+  category: compliance
+  verification: inspection
+  basis: regulation
+  rationale: Machinery Regulation and GPSR information obligations.
