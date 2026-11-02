@@ -113,6 +113,18 @@ decisions:                     # maintainer, 2026-11-02
     question: how to set up the Fluvoro operator after ADMIN_TENANT_IDS refused tenant fluvoro
     chosen: new user fluvoro-operator in tenant siimplex, dept engineering; key issued by the maintainer
     rules_out: adding fluvoro to ADMIN_TENANT_IDS; reusing rabih/siimplex
+  - id: D-11
+    question: how this session sees the myBrain screen (terminal screen capture needs a Terminal restart)
+    chosen: the maintainer pastes screenshots or answer text; grading moves to this local session, hand-backs are still pushed
+    rules_out: quitting Terminal now; moving the session to VS Code; computer use
+  - id: D-12
+    question: order of Phase 1 and step 6
+    chosen: Phase 1 (RFQ analysis) first, then step 6 as a chat turn that builds the team from FlexCortex's own work packages
+    rules_out: setting up the board before the analysis
+  - id: D-13
+    question: QPMT_BACKEND was rest (production QPMT) against the mock-only rule
+    chosen: set QPMT_BACKEND=mock for the run, core restart (announced); revert to rest after the run
+    rules_out: keeping rest and refusing writes by hand; pausing
   - id: D-10
     question: after F-009 and F-011, carry on or fix first
     chosen: pause the run; ask Platform audit to fix F-009 and F-011 before Phase 1
@@ -143,7 +155,20 @@ mybrain:
 open:
   - confirm from the running process that the autonomous loop is off (no reporting surface found yet)
   - "done: facade started (D-07); operator fluvoro-operator in siimplex instead of tenant fluvoro (D-09); myBrain profile Fluvoro active"
-  - waiting on Platform audit fixes for F-009 and F-011 (D-10); the maintainer decides on its proposal in that session
-  - step 6 (team and board), step 7 (Phase 1 via quotpilot), after the fixes
-  - re-enable AUTONOMOUS_LOOP_ENABLED=true at the end of the run (D-06)
+  - "done: F-009 (RE079) and F-011 (RE080) deployed in 3d67ba1a and passed live (traces a2e43c82, f3f52ac5)"
+  - Phase 1 (RFQ analysis), then step 6 as a chat turn (D-12)
   - live confirmation of F-005 (one oem-1-reqs question as the Fluvoro profile) in Phase 1
+  - check on mock whether the quotpilot read capabilities still fail silently (F-018)
+
+phase1_start:                      # pinned before the first Phase 1 turn
+  served_commit: 3d67ba1a          # core restarted 2026-11-02T15:15:46Z for D-13
+  facade: {pid: 1556, started: "2026-11-02 15:42:05 local", contract: 75}
+  mybrain: 4c73cc9
+  qpmt_backend: mock
+  autonomous_loop: off
+  operator: {user: fluvoro-operator, tenant: siimplex}
+  deploys_seen_during_setup: [eefbbeb8 12:08Z, b13bbb8e 14:19Z (unannounced), 3d67ba1a 14:41Z]
+
+revert_after_run:
+  - {what: "QPMT_BACKEND mock -> rest", where: "~/Sandbox/flexcortex.conf:125", then: "flx runtime restart, announced"}
+  - {what: "AUTONOMOUS_LOOP_ENABLED false -> true", where: "~/Sandbox/flexcortex.conf:94", condition: "not before 7 days after the last Fluvoro turn, else Flywheel Distill (168 h window) mines the run's outcomes; or the maintainer accepts that", then: "rag restart or flx runtime restart"}

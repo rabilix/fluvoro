@@ -80,6 +80,60 @@ Evidence tiers: **live** = observed on the running installation; **source** = re
 - **Cause (Platform audit session, source):** the I161 listing path exists only on `/v1/chat/completions` with a `rag-<collection>` model (`scripts/routers/chat.py:276`); myBrain uses `/api/v2/chat` and never reaches it, so "list all" falls through to top-k retrieval. The listing cap `MAX_ROWS=100` is also below the 101 requirements.
 - **Expected:** an enumeration request is served by a listing path (all 101), or the answer states that it shows a top-k subset.
 - **Tier:** live. **Family:** I161 path (top-k presented as complete). **Demo-blocker:** yes.
+- **Correction:** every listing turn records exactly 124 tokens, including control 2 whose answer is a sentence longer, so the token count is not the answer length and is no evidence of truncation; the 3-of-101 count comes from the maintainer's screenshots (see F-016).
+- **Turns (all show 3 ids):**
+
+  | Local | Trace | Commit | Chat | Scope | History sent | Caveat |
+  |---|---|---|---|---|---|---|
+  | 14:10 | `d8b23ded-c9db-4fbe-933a-a0a1dafc24d7` | eefbbeb8 | 1 | All sources | 0 | no |
+  | 15:08 | `5280e9a0-9c06-425c-a98f-750280ba7bda` | eefbbeb8 | 1 | All sources | 2 | no |
+  | 15:31 control 1 | `edf0db04-b7ea-46ab-8481-2afd315d6342` | b13bbb8e | 1 | fluvoro | 4 | no |
+  | 15:36 control 2 | `a587affe-f0a8-4656-9d67-6f2d074df46c` | b13bbb8e | 2 (new) | fluvoro | 0 | yes ("not included in the supplied context") |
+
+  All four are fresh retrieval + generation (own trace, own `knowledge.retrieve_context`), not replays. Control 2 rules out scope and history: the door alone is the cause.
+- **Fix:** RE080 (`8644e23b`, deployed in `3d67ba1a` at 14:41:54Z). **Live re-check: PASS** — trace `a2e43c82-0295-49d1-a083-87f54cfd7d71` (16:07 local, new chat, picker fluvoro): audit `chat.listing` rows 101, collection fluvoro, no model; the answer lists the exact 101-id set of the ReqIF. Remaining flaws in F-013.
+
+## F-011a: the partial list was presented as complete while earlier answers sat in the history
+
+- In chat 1 the same 3 ids came three times with no caveat; in a fresh chat (control 2) the model stated that the rest was not in its context. The replayed history (2 and 4 messages, verbatim) likely made the model copy its own uncaveated format. The model knew the total (101) from `rfq.md` lines 16 and 64.
+- **Tier:** live. **Family:** F1 (phantom completeness). **Demo-blocker:** fixed with F-011 for this question.
+
+## F-012: holds raised in an RBAC caller's turn do not show on the desktop approval card
+
+- Stated by the Platform audit session as a known gap of RE079: a hold belongs to the caller's tenant, so the myBrain card does not list it; it is decided by a bare yes/no in the chat or with `flx approvals`.
+- **Consequence:** a single "yes" in a chat can approve a gated write without the card's context. **Tier:** reported (not yet observed live). **Demo-blocker:** yes for approval scenes.
+
+## F-013: the fixed listing still misstates what it shows
+
+- Trace `a2e43c82…`: (1) header "Requirements all 101 in `fluvoro`, in document order" vs footer "No row carries a recorded order, so this is id order, not document order" (the collection was ingested before order was stored); (2) asked for "ID with its title", it shows the requirement text cut at ~160 characters with no ellipsis; the `#` column is "–" in every row; (3) the sources line says "evidence unavailable".
+- **Tier:** live (maintainer's paste). **Demo-blocker:** no (header contradiction is visible in a demo).
+
+## F-014: a listing turn leaves no turn record, trace or outcome
+
+- For trace `a2e43c82…` the only record is the `chat.listing` audit line; `turn_records`, `trace_runs` and `outcomes` have nothing, so `flx audit turn`, the trace view and the outcome spine cannot see the turn. Matches "evidence unavailable" in myBrain.
+- **Tier:** live (stores). **Demo-blocker:** no.
+
+## F-015: outcome attribution is still partial after RE079
+
+- Ordinary turn `f3f52ac5-e621-4886-9c5a-92e2aa5fe308`: the audit carries `siimplex` / `fluvoro-operator` on every row (F-009 PASS), but in `outcomes.db` the `chat_turn` row has the tenant and an empty `actor_id`, and the six `capability_call` rows have empty tenant and actor.
+- **Tier:** live. **Demo-blocker:** no.
+
+## F-016: the turn token count is constant
+
+- All four listing turns record exactly 124 tokens although the answers differ in length. The `tokens` field in `outcomes.db` does not reflect the answer.
+- **Tier:** live (store). **Demo-blocker:** no.
+
+## F-017: an unannounced deploy during the test run
+
+- `b13bbb8e` (work-item merge E1–E5, 30 files) was deployed at 14:19:53Z with a restart at 14:20:03Z, without an announcement to this run; controls 1 and 2 therefore ran on `b13bbb8e`, not `eefbbeb8`. It did not contain either fix, so the results stand. Found only through `~/Sandbox/logs/deploy_receipts.ndjson`.
+- **Tier:** live (receipts). **Demo-blocker:** no; mitigated by recording served_commit per phase.
+
+## F-018: QuotPilot was configured against the production QPMT, and its read capabilities fail without an error text
+
+- `~/Sandbox/flexcortex.conf:125` had `QPMT_BACKEND=rest` with `QPMT_URL` set to the production host (code default `mock`), contrary to the run rule "QPMT on the mock backend only".
+- Turn `f3f52ac5…` ("What does the RFQ say about the delivery date?") selected the quotpilot skillpack; `quotpilot.fetch_requirements`, `analyze`, `decide`, `analyze_rfq` and `ask` each failed in ~0.01 ms, `cause: tool_failure`, with no error text in the audit row or in outcomes; the turn ended `partial`. No gated write (`generate`, `finalize_quote`) was called.
+- **Action:** switched to `mock` for the run (D-13), core restarted 15:15:46Z (announced). The silent failures remain to be checked on mock in Phase 1.
+- **Tier:** live (audit, outcomes, config). **Demo-blocker:** yes (the RFQ scene runs through quotpilot).
 
 ## Isolation check (step 3)
 
