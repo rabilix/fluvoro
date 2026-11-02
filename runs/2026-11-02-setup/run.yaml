@@ -1,0 +1,98 @@
+run: 2026-11-02-setup
+date: 2026-11-02
+session: local Claude Code session on the maintainer's Mac (handover from the cloud session)
+repo_branch: claude/sleepy-meitner-rm81pw
+
+runtime:                       # step 1, read-only, before any write
+  core: http://127.0.0.1:8001
+  served_commit: 8fbb1980
+  deployed_commit: 8fbb1980
+  code_current: true
+  provider: ollama
+  chat_model: gpt-oss:20b
+  embed_model: nomic-embed-text
+  persistence: postgres (PG_ENABLED=true, schema fc.* 0008)
+  files_allowed_root: ~/Sandbox
+  config_file: ~/Sandbox/flexcortex.conf
+  config_profile: none          # flx doctor warning
+  facade_8788: not running
+  episodic: {entries: 965, sessions: 245}
+  collections_before: [probe_pdf, oem-1-reqs, oem-3-reqs, oem-2-reqs, compliance]
+  audit_log: ~/Sandbox/logs/flexcortex_audit.log
+  doctor: all checks passed, 2 warnings (no config profile; RE017 66 undeclared effects, incl. quotpilot.*)
+
+learning_loops_at_start:
+  AUTONOMOUS_LOOP_ENABLED: true      # code default false
+  AUTONOMOUS_LOOP_MODE: propose      # code default, not overridden
+  IMPROVEMENT_LOOP_DRY_RUN: false    # code default true
+  LEARNING_OUTCOME_CAPTURE_ENABLED: true
+  LEARNING_JUDGMENT_CAPTURE_ENABLED: true
+  flywheel_keys: none present in conf defaults
+
+isolation:                     # step 3
+  repo_path: ~/Documents/GitHub/fluvoro
+  reachable_by_file_capabilities: false
+  basis:
+    - FILES_ALLOWED_ROOT=~/Sandbox and GIT_EVOLUTION_REPO_ROOT=~/Sandbox
+    - session_workspace_grants table empty
+    - conf mentions no Documents / GitHub / fluvoro path
+  input_copy: ~/Sandbox/knowledge_base/fluvoro  # holds only kit/shown/rfq.md and kit/shown/fluvoro_crs_v1.reqif
+
+writes_to_real_installation:
+  - {what: "department '--help' (accidental, F-001)", where: fc.departments, when: "2026-11-02T11:33:19Z"}
+  - {what: "deleted department '--help' (1 row, 0 references)", where: fc.departments, how: "direct SQL via flexcore.db.pool", approved_by: maintainer}
+  - {what: "department engineering", where: fc.departments, when: "2026-11-02T12:01:18Z"}
+  - {what: "project fluvoro (dept engineering, classification internal)", where: fc.projects, when: "2026-11-02T12:01:18Z"}
+  - {what: "copy of kit/shown (2 files)", where: ~/Sandbox/knowledge_base/fluvoro}
+  - {what: "rag ingest fluvoro --dept engineering --project fluvoro", where: "qdrant + neo4j collection fluvoro", status: "done 13:18 local, new 2, failed 0, graph 6 relationships"}
+  - {what: "AUTONOMOUS_LOOP_ENABLED true -> false (line 94)", where: ~/Sandbox/flexcortex.conf, status: "edited; rag restart done after ingest", revert: "set back to true after the run"}
+  - {what: "rag restart (whole stack)", note: "rag start also launched an all-collections auto-ingest, which finished at once"}
+
+ingest_verification:
+  collection: fluvoro (listed in /health after restart)
+  points: 106                    # 101 from fluvoro_crs_v1.reqif + 5 from rfq.md
+  req_id_distinct: 101           # FLV-STK-001..146, exact set match with the reqif: missing 0, extra 0
+  acl_stamps: {fc_dept_id: engineering, fc_project_id: fluvoro, points: 106}
+  pending: chat check "list all requirements in fluvoro" (needs facade)
+
+runtime_after_restart:
+  served_commit: eefbbeb8        # changed from 8fbb1980; not by this session
+  code_current: true
+  basis: "deploy receipt 2026-11-02T12:08:40Z: eefbbeb8, previous 8fbb1980, 9 files, tests passed, verification stale; restart 12:08:48Z"
+  autonomous_loop: "off per conf; the running process does not report it (/health, server.log), evidence tier: config"
+  amplify: "off as well: AUTONOMOUS_LOOP_ENABLED gates the whole flywheel incl. Amplify notes (flexcore/amplify.py:14, runtime.py:1138); Phase 1 turns run without Amplify"
+
+decisions:                     # maintainer, 2026-11-02
+  - id: D-01
+    question: real installation or a separate core
+    chosen: real installation (new project, own collection and board)
+    rules_out: separate core on a spare port with its own data root
+  - id: D-02
+    question: what to do with the accidental '--help' department
+    chosen: remove it from the store (direct SQL, exactly 1 row, approved statement)
+    rules_out: keeping it as evidence; overrides the cloud session's later advice not to touch the DB
+  - id: D-03
+    question: department for the project
+    chosen: engineering (project fluvoro, display name "Fluvoro gutter-outlet shredder")
+    rules_out: customer-projects, simulation, and the cloud session's fluvoro-dept / "Fluvoro (synthetic project)"
+  - id: D-04
+    question: ingest location and scope
+    chosen: copy into ~/Sandbox/knowledge_base/fluvoro, ingest with --dept engineering --project fluvoro
+    rules_out: ~/fluvoro-input outside FILES_ALLOWED_ROOT; ingest without ACL stamps
+  - id: D-05
+    question: whose plan to follow after the cloud session's message
+    chosen: keep the decisions taken here; treat the cloud session's further items (tenant + API key, facade, myBrain profile) as proposals, each asked before writing
+    rules_out: redoing dept/project to the cloud session's ids
+  - id: D-06
+    question: learning loops during the run
+    chosen: disable the autonomous loop for the run (AUTONOMOUS_LOOP_ENABLED=false + core restart), re-enable afterwards
+    rules_out: IMPROVEMENT_LOOP_DRY_RUN=true (no effect in propose mode, see F-003); leaving it on and cleaning up afterwards
+  - id: D-07
+    question: which of the remaining proposals to prepare next
+    chosen: facade + myBrain profile "Fluvoro"; tenant "fluvoro" + API key
+    rules_out: step 6 (team and board) for now
+
+open:
+  - confirm from the running process that the autonomous loop is off (no reporting surface found yet)
+  - approved to prepare (D-07): tenant "fluvoro" + API key, flx start (facade :8788), myBrain profile "Fluvoro"; each asked before writing
+  - step 6 (team and board), step 7 (Phase 1 via quotpilot)
