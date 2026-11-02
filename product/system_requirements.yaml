@@ -1,0 +1,1031 @@
+# Fluvoro — reference system requirements (SYS.2; includes the technical safety
+# requirements at system level)
+#
+# DRAFT 0.1 (2026-11-02). Derived from product/stakeholder_requirements.yaml 0.1 and
+# product/functional_safety_concept.yaml 0.1. Clean reference: never shown to a
+# simulation run; the answer key for SYS.2 is derived from it.
+#
+# Rules (checked by tools/check_sys.py):
+#   - every requirement derives from >= 1 stakeholder requirement or FSR;
+#   - a requirement deriving from FSRs carries exactly their ASIL (decomposed
+#     notation kept, e.g. B(C)); one deriving from no FSR is QM;
+#   - every FSR is refined by >= 1 system requirement;
+#   - every stakeholder requirement is refined, or listed in not_refined with a reason.
+#
+# Values marked "(assumption)" follow the stakeholder spec's engineering
+# assumptions or the FSC's open points and must be confirmed before a real build.
+schema_version: 1
+document: Fluvoro system requirements
+status: draft
+version: 0.1
+date: 2026-11-02
+
+not_refined:
+- {id: FLV-STK-070, reason: "Process requirement (ISO 26262 lifecycle); fulfilled by the safety plan and work products, not by system behaviour."}
+- {id: FLV-STK-140, reason: "Process capability (ASPICE); project level."}
+- {id: FLV-STK-141, reason: "Traceability obligation; fulfilled by the traceability of these documents."}
+- {id: FLV-STK-142, reason: "Deliverables list; project level."}
+- {id: FLV-STK-143, reason: "Change-management process; project level."}
+- {id: FLV-STK-144, reason: "Cost target; tracked in the quote and the bill of materials, not a system behaviour."}
+
+requirements:
+
+# ===================================================== clog detection and cycle (F1, F2)
+- id: FLV-SYS-001
+  title: Level measurement
+  text: The system shall measure the water level in the outlet neck from 0 mm to 80 mm above the rotor plane with a resolution of 2 mm or better and an error of no more than ±3 mm, in water from 0 °C to 40 °C carrying debris.
+  variant: common
+  asil: QM
+  derived_from: [FLV-STK-006]
+  verification: test
+- id: FLV-SYS-002
+  title: Level sampling
+  text: In monitoring mode the system shall sample the level at least every 2 s while the level is at or above 10 mm, and at least every 30 s otherwise.
+  variant: common
+  asil: QM
+  derived_from: [FLV-STK-008, FLV-STK-041]
+  verification: test
+- id: FLV-SYS-003
+  title: Clog threshold
+  text: The system shall treat a level at or above 30 mm as a potential clog; the threshold shall be settable between 20 mm and 40 mm at production only.
+  variant: common
+  asil: QM
+  derived_from: [FLV-STK-006]
+  verification: test
+- id: FLV-SYS-004
+  title: Clog confirmation
+  text: The system shall confirm a clog condition when the level stays at or above the clog threshold for 10 s, or rises by at least 1 mm/s on average over 10 s while at or above the threshold.
+  variant: common
+  asil: QM
+  derived_from: [FLV-STK-007]
+  verification: test
+- id: FLV-SYS-005
+  title: Start latency
+  text: The system shall start a shred cycle within 5 s after a clog condition has been confirmed, provided the start conditions of FLV-SYS-309 hold.
+  variant: common
+  asil: QM
+  derived_from: [FLV-STK-008]
+  verification: test
+- id: FLV-SYS-006
+  title: Quiet-hours threshold
+  text: Between 22:00 and 06:00 local time the system shall use a clog threshold of 50 mm instead of the threshold of FLV-SYS-003.
+  variant: common
+  asil: QM
+  derived_from: [FLV-STK-017]
+  verification: test
+- id: FLV-SYS-007
+  title: Wet debris on the sensor
+  text: The level measurement shall not indicate 30 mm or more when the sensor is covered by wet leaves without standing water.
+  variant: common
+  asil: QM
+  derived_from: [FLV-STK-007, FLV-STK-009]
+  verification: test
+- id: FLV-SYS-008
+  title: Level sensor diagnosis
+  text: The system shall detect an open, shorted or stuck level sensor within 24 h and signal "fault".
+  variant: common
+  asil: QM
+  derived_from: [FLV-STK-016]
+  verification: test
+- id: FLV-SYS-009
+  title: Shred cycle
+  text: A shred cycle shall consist of a soft start, a run phase of nominally 20 s, extended in 10 s steps up to 45 s while the level is still falling, and a braked stop.
+  variant: common
+  asil: QM
+  derived_from: [FLV-STK-004, FLV-STK-005, FLV-STK-015]
+  verification: test
+- id: FLV-SYS-010
+  title: Cycle result check
+  text: 15 s after the end of a shred cycle the system shall compare the level with the clog threshold and start a further cycle if the level is still at or above it.
+  variant: common
+  asil: QM
+  derived_from: [FLV-STK-010]
+  verification: test
+- id: FLV-SYS-011
+  title: Persistent clog
+  text: After 3 consecutive shred cycles that did not bring the level below the clog threshold, the system shall stop shredding for that event and signal "service needed".
+  variant: common
+  asil: QM
+  derived_from: [FLV-STK-011, FLV-STK-061]
+  verification: test
+- id: FLV-SYS-012
+  title: End of a persistent clog
+  text: The system shall clear a persistent-clog indication when the level has stayed below 10 mm for 60 s, or after maintenance mode has been entered and left.
+  variant: common
+  asil: QM
+  derived_from: [FLV-STK-011, FLV-STK-061]
+  verification: test
+- id: FLV-SYS-013
+  title: Dry running
+  text: The system shall stop the rotor within 5 s when the level has been below 10 mm during a shred cycle, except during the self-test rotor run.
+  variant: common
+  asil: QM
+  derived_from: [FLV-STK-014]
+  verification: test
+- id: FLV-SYS-014
+  title: Unneeded cycles
+  text: In a simulation of the reference autumn season with the plant model, no more than 10 % of the shred cycles shall start without debris present.
+  variant: common
+  asil: QM
+  derived_from: [FLV-STK-009]
+  verification: analysis
+- id: FLV-SYS-015
+  title: Throughput
+  text: At nominal speed the system shall shred reference debris at 60 g wet mass per minute or more.
+  variant: common
+  asil: QM
+  derived_from: [FLV-STK-004]
+  verification: test
+- id: FLV-SYS-016
+  title: Particle size
+  text: At least 95 % of the shredded mass of reference debris shall consist of particles whose largest dimension is 15 mm or less.
+  variant: common
+  asil: QM
+  derived_from: [FLV-STK-003]
+  verification: test
+- id: FLV-SYS-017
+  title: Clearing time
+  text: In at least 95 % of clog events with reference debris, the system shall bring the level below the clog threshold within 120 s of the clog condition being confirmed.
+  variant: common
+  asil: QM
+  derived_from: [FLV-STK-001, FLV-STK-002, FLV-STK-005]
+  verification: test
+- id: FLV-SYS-018
+  title: Darkness
+  text: All functions of the system shall work at an illuminance of 0 lx.
+  variant: common
+  asil: QM
+  derived_from: [FLV-STK-013]
+  verification: test
+- id: FLV-SYS-019
+  title: Self-test rotor run
+  text: The daily self-test shall run the rotor for no more than 2 s, only when the level is below 10 mm and outside quiet hours.
+  variant: common
+  asil: QM
+  derived_from: [FLV-STK-016, FLV-STK-017, FLV-STK-064]
+  verification: test
+
+# ===================================================== motor control (F2)
+- id: FLV-SYS-101
+  title: Motor drive
+  text: The system shall drive a three-phase BLDC motor through PWM at a switching frequency of 20 kHz or higher.
+  variant: common
+  asil: QM
+  derived_from: [FLV-STK-015, FLV-STK-064]
+  verification: test
+- id: FLV-SYS-102
+  title: Soft start
+  text: The system shall ramp the rotor from standstill to nominal speed in 0.5 s to 1.0 s.
+  variant: common
+  asil: QM
+  derived_from: [FLV-STK-015]
+  verification: test
+- id: FLV-SYS-103
+  title: Nominal speed
+  text: The system shall hold the rotor at 2 500 rpm ±10 % under reference load (assumption).
+  variant: common
+  asil: QM
+  derived_from: [FLV-STK-004, FLV-STK-015]
+  verification: test
+- id: FLV-SYS-104
+  title: Current limit
+  text: The system shall limit the motor phase current to 8 A peak (assumption).
+  variant: common
+  asil: QM
+  derived_from: [FLV-STK-015, FLV-STK-075]
+  verification: test
+- id: FLV-SYS-105
+  title: Jam detection
+  text: The system shall detect a jam when the phase current has been at the current limit with the rotor speed below 300 rpm for 300 ms.
+  variant: common
+  asil: QM
+  derived_from: [FLV-STK-012, FLV-STK-015]
+  verification: test
+- id: FLV-SYS-106
+  title: Jam clearing
+  text: On a jam the system shall stop the rotor, reverse it for 1 s at no more than 50 % of the current limit, and resume forward rotation; it shall make no more than 3 such attempts per jam.
+  variant: common
+  asil: QM
+  derived_from: [FLV-STK-012, FLV-STK-015]
+  verification: test
+- id: FLV-SYS-107
+  title: Non-shreddable object
+  text: When 3 attempts have not cleared a jam, the system shall stop the rotor, signal "service needed", and not start the rotor again until maintenance mode has been entered and left.
+  variant: common
+  asil: QM
+  derived_from: [FLV-STK-012, FLV-STK-061]
+  verification: test
+- id: FLV-SYS-108
+  title: Direction check
+  text: The system shall verify the rotor direction from the Hall-sensor sequence within 200 ms of each start and stop the rotor if it is wrong.
+  variant: common
+  asil: QM
+  derived_from: [FLV-STK-015, FLV-STK-145]
+  verification: test
+- id: FLV-SYS-109
+  title: Stalled drive
+  text: The system shall de-energise the motor drive when the rotor has been stalled for 2 s with the drive energised.
+  variant: common
+  asil: B(C)
+  derived_from: [FSR-16, FLV-STK-051]
+  verification: test
+- id: FLV-SYS-110
+  title: Drive over-temperature
+  text: The system shall measure the power-stage temperature and de-energise the motor drive when it exceeds 100 °C.
+  variant: common
+  asil: B(C)
+  derived_from: [FSR-16]
+  verification: test
+- id: FLV-SYS-111
+  title: Thermal cut-off
+  text: A thermal cut-off, separate from the gate driver, shall open the drive's supply path when the power-stage temperature exceeds 130 °C.
+  variant: common
+  asil: A(C)
+  derived_from: [FSR-17]
+  verification: test
+- id: FLV-SYS-112
+  title: Overspeed
+  text: The system shall enter SS-1 within 500 ms when the rotor speed exceeds 3 300 rpm.
+  variant: common
+  asil: A
+  derived_from: [FSR-22]
+  verification: test
+- id: FLV-SYS-113
+  title: Drive plausibility
+  text: The system shall enter SS-1 within 500 ms when, for 300 ms, the measured speed is below 20 % of the speed expected for the commanded PWM duty while the current is below 10 % of the expected current, or the speed is above 120 % of the expected speed.
+  variant: common
+  asil: A
+  derived_from: [FSR-22]
+  verification: test
+- id: FLV-SYS-114
+  title: Run-time limits
+  text: The system shall limit rotation to 60 s per shred cycle and to 10 min in any 60 min, and shall enter SS-1 when a limit is reached.
+  variant: common
+  asil: A
+  derived_from: [FSR-21]
+  verification: test
+- id: FLV-SYS-115
+  title: Braking
+  text: After entering SS-1 from 2 500 rpm, the system shall bring the rotor to standstill within 200 ms by actively braking through the motor windings.
+  variant: common
+  asil: A
+  derived_from: [FSR-06]
+  verification: test
+- id: FLV-SYS-116
+  title: Frozen rotor
+  text: When the rotor does not move within 500 ms at the current limit and the device temperature is 2 °C or lower, the system shall treat the rotor as frozen and make no further start attempts until the temperature has been above 3 °C for 2 h.
+  variant: common
+  asil: QM
+  derived_from: [FLV-STK-051]
+  verification: test
+- id: FLV-SYS-117
+  title: Energy per cycle
+  text: A nominal 20 s shred cycle shall take no more than 0.35 Wh from the battery (assumption).
+  variant: common
+  asil: QM
+  derived_from: [FLV-STK-030, FLV-STK-031]
+  verification: test
+- id: FLV-SYS-118
+  title: Worn cutting parts
+  text: The system shall signal "service needed" when the median clearing time of the last 5 clog events exceeds the time expected at a throughput of 60 g/min.
+  variant: common
+  asil: QM
+  derived_from: [FLV-STK-132]
+  verification: test
+- id: FLV-SYS-119
+  title: Rotor balance
+  text: The rotor assembly shall be balanced to grade G 6.3 of ISO 21940-11.
+  variant: common
+  asil: QM
+  derived_from: [FLV-STK-117, FLV-STK-063]
+  verification: inspection
+
+# ===================================================== energy management (F3)
+- id: FLV-SYS-201
+  title: Battery pack
+  text: The battery shall be a 4-cell series LiFePO4 pack with 12.8 V nominal voltage and at least 3.0 Ah rated capacity.
+  variant: common
+  asil: QM
+  derived_from: [FLV-STK-030, FLV-STK-031, FLV-STK-038]
+  verification: inspection
+  note: "Sizing: 30 cycles at 0.35 Wh plus 14 days of 2 mW standby is about 11 Wh. A 38 Wh pack at 70 % ageing and 70 % cold capacity still gives about 18 Wh."
+- id: FLV-SYS-202
+  title: Cell voltage window (software channel)
+  text: The system shall measure each cell voltage at least every 100 ms and open the main battery switches within 1 s when any cell is below 2.50 V or above 3.65 V.
+  variant: common
+  asil: B(C)
+  derived_from: [FSR-10, FLV-STK-036]
+  verification: test
+- id: FLV-SYS-203
+  title: Cell voltage window (independent channel)
+  text: An independent protector with its own reference shall open the secondary battery switch within 2 s when any cell is above 3.80 V or below 2.20 V.
+  variant: common
+  asil: A(C)
+  derived_from: [FSR-11, FLV-STK-036]
+  verification: test
+- id: FLV-SYS-204
+  title: Cell temperature (software channel)
+  text: Using sensor NTC1, the system shall block charging below 0 °C and above 45 °C cell temperature, and open the main battery switches above 60 °C.
+  variant: common
+  asil: B(C)
+  derived_from: [FSR-12, FLV-STK-036, FLV-STK-037]
+  verification: test
+- id: FLV-SYS-205
+  title: Cell temperature (independent channel)
+  text: Using sensor NTC2, the independent protector shall open the secondary battery switch when the cell temperature is below -2 °C while charging, or above 65 °C at any time.
+  variant: common
+  asil: A(C)
+  derived_from: [FSR-13, FLV-STK-037]
+  verification: test
+- id: FLV-SYS-206
+  title: Short circuit and over-current
+  text: The system shall open the main battery switches within 1 ms at a discharge current above 40 A, and within 1 s at a discharge current above 10 A.
+  variant: common
+  asil: B(C)
+  derived_from: [FSR-14, FLV-STK-036]
+  verification: test
+- id: FLV-SYS-207
+  title: Pack fuse
+  text: The battery path shall contain a fuse that clears the pack's prospective short-circuit current within 100 ms and does not open at 10 A continuous.
+  variant: common
+  asil: A(C)
+  derived_from: [FSR-15]
+  verification: test
+- id: FLV-SYS-208
+  title: Charge enable
+  text: The solar charger shall charge only while its enable input is driven both by the main controller and by the external watchdog.
+  variant: common
+  asil: B(C)
+  derived_from: [FSR-18]
+  verification: test
+- id: FLV-SYS-209
+  title: Deep-discharge lockout
+  text: When any cell has fallen below 2.00 V, the system shall permanently block charging and signal "service needed" until the battery is replaced. When the lowest cell is between 2.00 V and 2.80 V, it shall charge at no more than 0.05 C.
+  variant: common
+  asil: B(C)
+  derived_from: [FSR-19, FLV-STK-035]
+  verification: test
+- id: FLV-SYS-210
+  title: Independence of the protection channels
+  text: "The software and independent protection channels shall share no voltage reference, temperature sensor, switching element, clock or software. The independent channel comprises the protector, NTC2, the secondary switch, the fuse and the thermal cut-off."
+  variant: common
+  asil: C
+  derived_from: [FSR-20]
+  verification: analysis
+- id: FLV-SYS-211
+  title: Maximum power point tracking
+  text: The charger shall harvest at least 85 % of the PV module's available power at irradiances from 5 % to 100 % of 1 000 W/m².
+  variant: common
+  asil: QM
+  derived_from: [FLV-STK-030, FLV-STK-034]
+  verification: test
+- id: FLV-SYS-212
+  title: PV power
+  text: The integrated PV module shall deliver at least 2.0 W under standard test conditions (assumption; limited by the V1 cap area).
+  variant: common
+  asil: QM
+  derived_from: [FLV-STK-030, FLV-STK-032, FLV-STK-034]
+  verification: test
+- id: FLV-SYS-213
+  title: Charge voltage
+  text: The system shall end charging at 3.55 V per cell.
+  variant: common
+  asil: QM
+  derived_from: [FLV-STK-036, FLV-STK-039]
+  verification: test
+- id: FLV-SYS-214
+  title: Charge current
+  text: The system shall charge at no more than 0.5 C.
+  variant: common
+  asil: QM
+  derived_from: [FLV-STK-039]
+  verification: test
+- id: FLV-SYS-215
+  title: Cell balancing
+  text: The system shall balance the cells so that their voltage spread at the end of charging is 30 mV or less.
+  variant: common
+  asil: QM
+  derived_from: [FLV-STK-039, FLV-STK-042]
+  verification: test
+- id: FLV-SYS-216
+  title: State of charge
+  text: The system shall estimate the state of charge by coulomb counting, recalibrated at rest against the open-circuit voltage, with an error of no more than 10 percentage points.
+  variant: common
+  asil: QM
+  derived_from: [FLV-STK-042]
+  verification: test
+- id: FLV-SYS-217
+  title: Energy reserve
+  text: The system shall reserve the energy for 5 nominal shred cycles plus 72 h of monitoring. When only the reserve remains, it shall stop the self-test rotor run and BLE advertising, reduce the status light to the "low battery" signal, keep clog clearing, and signal "low battery".
+  variant: common
+  asil: QM
+  derived_from: [FLV-STK-033, FLV-STK-060]
+  verification: test
+- id: FLV-SYS-218
+  title: Deep sleep and recovery
+  text: The system shall enter deep sleep, with only the protector and the charger's wake-up active, when the pack voltage falls to 10.4 V. It shall resume monitoring without user action once the pack voltage has risen above 12.4 V, subject to FLV-SYS-209.
+  variant: common
+  asil: QM
+  derived_from: [FLV-STK-035, FLV-STK-043]
+  verification: test
+- id: FLV-SYS-219
+  title: Standby power
+  text: The average power drawn while monitoring with no shred cycle, including status signalling and the BLE option, shall not exceed 2 mW.
+  variant: common
+  asil: QM
+  derived_from: [FLV-STK-041, FLV-STK-062]
+  verification: test
+- id: FLV-SYS-220
+  title: Season energy balance
+  text: Simulated over the reference autumn season with the plant model, at 50 % shading of the PV area every day, the state of charge shall never fall below the reserve of FLV-SYS-217.
+  variant: common
+  asil: QM
+  derived_from: [FLV-STK-030, FLV-STK-032]
+  verification: analysis
+  note: "Tight by design. November gives about 0.56 Wh per day at 50 % shading; four cycles a day cost about 1.45 Wh. The 20 heavy days are carried by the battery and by the September and October surplus."
+- id: FLV-SYS-221
+  title: Autonomy without sun
+  text: From full charge and with no solar input, the system shall perform 30 nominal shred cycles over 14 days and keep monitoring throughout.
+  variant: common
+  asil: QM
+  derived_from: [FLV-STK-031]
+  verification: test
+- id: FLV-SYS-222
+  title: Storage charge limit
+  text: When no shred cycle has occurred for 30 days, the system shall end charging at 3.40 V per cell, until the next clog condition.
+  variant: common
+  asil: QM
+  derived_from: [FLV-STK-039, FLV-STK-043]
+  verification: test
+- id: FLV-SYS-223
+  title: Battery module
+  text: The battery shall be a sealed IP67 module with its own connector, removable and insertable without tools and without opening the electronics compartment.
+  variant: common
+  asil: QM
+  derived_from: [FLV-STK-040, FLV-STK-052]
+  verification: demonstration
+- id: FLV-SYS-224
+  title: Battery replacement detection
+  text: The system shall detect a battery replacement, reset its state-of-charge model, and keep the time and the event log through the replacement.
+  variant: common
+  asil: QM
+  derived_from: [FLV-STK-018, FLV-STK-040, FLV-STK-065]
+  verification: test
+- id: FLV-SYS-225
+  title: Battery chemistry
+  text: The cells shall be LiFePO4 cells that meet IEC 62619 or UL 1642 (assumption on the certification route).
+  variant: common
+  asil: QM
+  derived_from: [FLV-STK-038]
+  verification: inspection
+
+# ===================================================== access protection and fault handling (F4, F5)
+- id: FLV-SYS-301
+  title: Cap sensor
+  text: "The cap shall be sensed by two contacts: contact A read by the main controller, and contact B in the hardware enable chain. Both shall open when the cap is lifted by 3 mm or more."
+  variant: common
+  asil: A
+  derived_from: [FSR-01, FSR-05]
+  verification: test
+- id: FLV-SYS-302
+  title: Cap removal reaction
+  text: The system shall reach SS-1 within 100 ms after the cap is lifted by 3 mm.
+  variant: common
+  asil: A
+  derived_from: [FSR-01, FLV-STK-071]
+  verification: test
+- id: FLV-SYS-303
+  title: Hardware enable chain
+  text: Opening the cap contact B, the seat contact B or the watchdog output shall disable the gate driver within 10 ms, without involving software or the PWM generator.
+  variant: common
+  asil: A
+  derived_from: [FSR-05, FSR-09]
+  verification: test
+- id: FLV-SYS-304
+  title: Seat sensor
+  text: The V1 insert shall sense its seated position in the outlet by two contacts (A to the controller, B in the enable chain); both shall open when the insert is lifted by 5 mm or more.
+  variant: V1
+  asil: A
+  derived_from: [FSR-02]
+  verification: test
+- id: FLV-SYS-305
+  title: Unseated reaction
+  text: The V1 insert shall not energise the drive while not seated, and shall reach SS-1 within 100 ms after being lifted by 5 mm.
+  variant: V1
+  asil: A
+  derived_from: [FSR-02, FLV-STK-071]
+  verification: test
+- id: FLV-SYS-306
+  title: Maintenance mode
+  text: Maintenance mode shall be entered by pressing the recessed maintenance button for 3 s, or by removing the cap. While it is active the system shall keep SS-1.
+  variant: common
+  asil: A
+  derived_from: [FSR-03, FLV-STK-073]
+  verification: test
+- id: FLV-SYS-307
+  title: Maintenance indication
+  text: The status light shall show "maintenance" only after the drive enable has been read back as disabled and the Hall sensors have shown no transition for 200 ms.
+  variant: common
+  asil: A
+  derived_from: [FSR-03, FLV-STK-073]
+  verification: test
+- id: FLV-SYS-308
+  title: Leaving maintenance mode
+  text: Maintenance mode shall end only after the maintenance button is pressed for 3 s with the cap closed (and, for V1, the insert seated), followed by a passed self-test. It shall not end automatically.
+  variant: common
+  asil: A
+  derived_from: [FSR-03, FSR-07]
+  verification: test
+- id: FLV-SYS-309
+  title: Start conditions
+  text: Immediately before each rotor start the system shall verify that both cap contacts are closed, both seat contacts are closed (V1), maintenance mode is off, no safety fault is latched, and the last self-test passed. If any check fails it shall not start.
+  variant: common
+  asil: A
+  derived_from: [FSR-04, FLV-STK-071]
+  verification: test
+- id: FLV-SYS-310
+  title: Latched safety faults
+  text: After a safety fault has led to SS-1, the system shall keep SS-1 until the fault is no longer detected and a complete self-test has passed.
+  variant: common
+  asil: A
+  derived_from: [FSR-07, FLV-STK-074]
+  verification: test
+- id: FLV-SYS-311
+  title: External watchdog
+  text: A windowed external watchdog with its own clock shall remove the drive enable within 100 ms when the main controller stops serving it correctly.
+  variant: common
+  asil: A
+  derived_from: [FSR-09, FSR-23]
+  verification: test
+- id: FLV-SYS-312
+  title: Daily self-test
+  text: "At least every 24 h the system shall test: the plausibility of the level sensor; agreement of contacts A and B of the cap and seat sensors; that the gate driver is disabled when the controller drops its enable; the Hall sensors; and the watchdog's reaction. It shall signal \"fault\" and latch SS-1 on a failure."
+  variant: common
+  asil: A
+  derived_from: [FSR-05, FSR-09, FLV-STK-016]
+  verification: test
+- id: FLV-SYS-313
+  title: Contact discrepancy
+  text: When contacts A and B of the cap sensor, or of the seat sensor, disagree for more than 200 ms, the system shall latch a safety fault and enter SS-1.
+  variant: common
+  asil: A
+  derived_from: [FSR-01, FSR-05]
+  verification: test
+- id: FLV-SYS-314
+  title: Fault signalling
+  text: On entering SS-1 or SS-2 because of a fault, the system shall signal "fault" and record the fault in the event log.
+  variant: common
+  asil: QM
+  derived_from: [FLV-STK-080, FLV-STK-061]
+  verification: test
+- id: FLV-SYS-315
+  title: Start-up
+  text: After power-up or a reset, the system shall keep SS-1 until a complete self-test has passed.
+  variant: common
+  asil: A
+  derived_from: [FSR-07]
+  verification: test
+- id: FLV-SYS-316
+  title: Radio isolation
+  text: The BLE interface shall offer only status and log read-out, notifications and the firmware-update path; no radio input shall start the rotor, end SS-1 or SS-2, or change a safety parameter.
+  variant: option_ble
+  asil: A
+  derived_from: [FSR-08, FLV-STK-101]
+  verification: test
+
+# ===================================================== signalling, logging, service, time (F6)
+- id: FLV-SYS-401
+  title: Status light states
+  text: The status light shall show at least five distinguishable states (normal, low battery, service needed, fault, maintenance) by colour and blink pattern, with a luminous intensity of 500 mcd or more.
+  variant: common
+  asil: QM
+  derived_from: [FLV-STK-060]
+  verification: test
+- id: FLV-SYS-402
+  title: Signalling energy
+  text: Status signalling shall draw no more than 0.2 mW on average.
+  variant: common
+  asil: QM
+  derived_from: [FLV-STK-062]
+  verification: test
+- id: FLV-SYS-403
+  title: Service-needed causes
+  text: The system shall signal "service needed" for a persistent clog, an object that cannot be cleared, worn cutting parts, a failed self-test, or the deep-discharge lockout, and shall keep the signal until the cause is gone.
+  variant: common
+  asil: QM
+  derived_from: [FLV-STK-061]
+  verification: test
+- id: FLV-SYS-404
+  title: Event log
+  text: The system shall keep the last 200 or more events in non-volatile memory, each with local time, type and result, through power loss and battery replacement.
+  variant: common
+  asil: QM
+  derived_from: [FLV-STK-065]
+  verification: test
+- id: FLV-SYS-405
+  title: Logged events
+  text: The log shall contain at least shred-cycle start, duration and result; jams and clearing attempts; faults with their cause; low battery; deep sleep; maintenance mode on and off; battery replacement; and firmware updates.
+  variant: common
+  asil: QM
+  derived_from: [FLV-STK-065]
+  verification: inspection
+- id: FLV-SYS-406
+  title: Contactless service interface
+  text: The system shall provide an NFC service interface through the closed cap for reading the log, versions and serial number, setting the time, and firmware updates.
+  variant: common
+  asil: QM
+  derived_from: [FLV-STK-066, FLV-STK-133, FLV-STK-135]
+  verification: demonstration
+- id: FLV-SYS-407
+  title: Clock accuracy
+  text: The real-time clock shall drift by no more than 10 min per month from -20 °C to +50 °C.
+  variant: common
+  asil: QM
+  derived_from: [FLV-STK-018]
+  verification: test
+- id: FLV-SYS-408
+  title: Clock backup
+  text: The real-time clock shall keep running for at least 30 min without the battery.
+  variant: common
+  asil: QM
+  derived_from: [FLV-STK-018, FLV-STK-040]
+  verification: test
+- id: FLV-SYS-409
+  title: Local time
+  text: The system shall be set to UTC at production and apply the Central European time zone and its daylight-saving rule. Time and time zone shall be settable through the service interface and the app.
+  variant: common
+  asil: QM
+  derived_from: [FLV-STK-017, FLV-STK-018]
+  verification: test
+- id: FLV-SYS-410
+  title: Firmware update integrity
+  text: The system shall accept only firmware images signed by the manufacturer, keep two firmware slots, and return to the previous image if the new one fails its start-up self-test.
+  variant: common
+  asil: QM
+  derived_from: [FLV-STK-133, FLV-STK-102]
+  verification: test
+- id: FLV-SYS-411
+  title: Identification
+  text: The system shall report its serial number and hardware and software versions through the service interface and the app.
+  variant: common
+  asil: QM
+  derived_from: [FLV-STK-135, FLV-STK-066]
+  verification: test
+- id: FLV-SYS-412
+  title: Silence at rest
+  text: The system shall have no sound source other than the motor, and shall emit no audible sound while monitoring.
+  variant: common
+  asil: QM
+  derived_from: [FLV-STK-064]
+  verification: test
+- id: FLV-SYS-413
+  title: Shredding noise
+  text: The A-weighted sound pressure level at 1 m during a nominal shred cycle shall not exceed 65 dB(A).
+  variant: common
+  asil: QM
+  derived_from: [FLV-STK-063]
+  verification: test
+
+# ===================================================== connectivity option (F7)
+- id: FLV-SYS-501
+  title: BLE radio
+  text: The connectivity option shall use Bluetooth Low Energy 5.0 or later.
+  variant: option_ble
+  asil: QM
+  derived_from: [FLV-STK-067]
+  verification: inspection
+- id: FLV-SYS-502
+  title: App data
+  text: The app interface shall provide the state, the state of charge, the event log, the time and the identification data.
+  variant: option_ble
+  asil: QM
+  derived_from: [FLV-STK-067]
+  verification: demonstration
+- id: FLV-SYS-503
+  title: Notifications
+  text: The system shall notify a bonded phone in range of "service needed" and "fault" within 60 s of the event.
+  variant: option_ble
+  asil: QM
+  derived_from: [FLV-STK-067]
+  verification: test
+- id: FLV-SYS-504
+  title: Pairing by presence
+  text: Pairing shall be possible only within 60 s after the maintenance button has been pressed briefly at the device.
+  variant: option_ble
+  asil: QM
+  derived_from: [FLV-STK-103]
+  verification: test
+- id: FLV-SYS-505
+  title: Link security
+  text: The BLE link shall use LE Secure Connections with authenticated pairing. Unauthenticated ("Just Works") pairing and fixed or default credentials shall not be used.
+  variant: option_ble
+  asil: QM
+  derived_from: [FLV-STK-097, FLV-STK-103]
+  verification: test
+- id: FLV-SYS-506
+  title: Firmware over BLE
+  text: Firmware updates over BLE shall use the signature and two-slot mechanism of FLV-SYS-410.
+  variant: option_ble
+  asil: QM
+  derived_from: [FLV-STK-102]
+  verification: test
+- id: FLV-SYS-507
+  title: Security event logging
+  text: The system shall log failed pairing attempts, rejected firmware images and rejected commands.
+  variant: option_ble
+  asil: QM
+  derived_from: [FLV-STK-097, FLV-STK-100]
+  verification: test
+- id: FLV-SYS-508
+  title: Radio compliance
+  text: The connectivity option shall meet EN 300 328 and EN 18031-1, and the Cyber Resilience Act's essential requirements from its date of application.
+  variant: option_ble
+  asil: QM
+  derived_from: [FLV-STK-097]
+  verification: inspection
+
+# ===================================================== hydraulic, mechanical, environment
+- id: FLV-SYS-601
+  title: Discharge with the rotor stopped
+  text: With a clean grate and the rotor stopped, the installed device shall pass at least 80 % of the discharge of the same outlet without the device, at equal head, up to the EN 12056-3 design flow of an NW 333 outlet.
+  variant: common
+  asil: QM
+  derived_from: [FLV-STK-020, FLV-STK-022]
+  verification: test
+- id: FLV-SYS-602
+  title: Overflow bypass
+  text: The device shall have an overflow bypass whose inlet lies above the grate and whose path does not pass the rotor. With the grate and the rotor fully blocked it shall pass at least 50 % of the open outlet's discharge.
+  variant: common
+  asil: QM
+  derived_from: [FLV-STK-021, FLV-STK-022, FLV-STK-079]
+  verification: test
+- id: FLV-SYS-603
+  title: Bypass cannot be closed by retained debris
+  text: The bypass inlet openings shall be shaped and placed so that debris held back by the grate cannot close them (vertical openings, at least 15 mm above the grate's top edge).
+  variant: common
+  asil: QM
+  derived_from: [FLV-STK-021, FLV-STK-079]
+  verification: test
+- id: FLV-SYS-604
+  title: Grate openings
+  text: The grate openings shall be no wider than 20 mm.
+  variant: common
+  asil: QM
+  derived_from: [FLV-STK-012, FLV-STK-072]
+  verification: inspection
+- id: FLV-SYS-605
+  title: Safety distance to the rotor
+  text: The rotor shall be at least 120 mm from the outer surface of any opening of 12 mm to 20 mm, in line with EN ISO 13857 Table 4.
+  variant: common
+  asil: QM
+  derived_from: [FLV-STK-072]
+  verification: inspection
+- id: FLV-SYS-606
+  title: Ingress protection
+  text: The electronics compartment and the battery module shall each meet IP67.
+  variant: common
+  asil: QM
+  derived_from: [FLV-STK-052]
+  verification: test
+- id: FLV-SYS-607
+  title: Pressure equalisation
+  text: The electronics compartment shall have an IP67-rated pressure-equalisation membrane.
+  variant: common
+  asil: QM
+  derived_from: [FLV-STK-052, FLV-STK-050]
+  verification: test
+  note: Without it, daily temperature cycles pump moist air through the seals.
+- id: FLV-SYS-608
+  title: Temperature ranges
+  text: The device shall operate from -20 °C to +50 °C ambient and withstand -30 °C to +80 °C without operating.
+  variant: common
+  asil: QM
+  derived_from: [FLV-STK-050]
+  verification: test
+- id: FLV-SYS-609
+  title: Freeze resistance
+  text: The device shall withstand 50 freeze–thaw cycles from -20 °C to +10 °C with its chamber full of water, with no damage and no loss of function.
+  variant: common
+  asil: QM
+  derived_from: [FLV-STK-051]
+  verification: test
+- id: FLV-SYS-610
+  title: UV ageing
+  text: External plastic parts shall keep at least 80 % of their tensile strength after 2 000 h of xenon-arc weathering to ISO 4892-2.
+  variant: common
+  asil: QM
+  derived_from: [FLV-STK-053]
+  verification: test
+- id: FLV-SYS-611
+  title: Materials in the water path
+  text: Parts in contact with gutter water or metal shall be plastic or stainless steel 1.4404. Copper and brass shall not be used, and metal parts shall be insulated from the gutter.
+  variant: common
+  asil: QM
+  derived_from: [FLV-STK-054]
+  verification: inspection
+- id: FLV-SYS-612
+  title: Cap impact
+  text: The cap including the PV module shall meet IK08 to IEC 62262 without loss of function or watertightness.
+  variant: common
+  asil: QM
+  derived_from: [FLV-STK-055]
+  verification: test
+- id: FLV-SYS-613
+  title: Static load
+  text: The installed device shall withstand 300 N on the cap without damage.
+  variant: common
+  asil: QM
+  derived_from: [FLV-STK-056]
+  verification: test
+- id: FLV-SYS-614
+  title: Service life
+  text: The device without battery and wear parts shall be designed for 10 years at the reference site, shown by accelerated ageing of the housing, the seals and the PV module.
+  variant: common
+  asil: QM
+  derived_from: [FLV-STK-057]
+  verification: analysis
+- id: FLV-SYS-615
+  title: Flammability
+  text: Plastic parts enclosing the battery and the electronics shall be V-0 to UL 94 at the wall thickness used.
+  variant: common
+  asil: QM
+  derived_from: [FLV-STK-077]
+  verification: inspection
+- id: FLV-SYS-616
+  title: Fire containment
+  text: With one cell forced into thermal runaway, no flame or molten material shall leave the enclosure.
+  variant: common
+  asil: QM
+  derived_from: [FLV-STK-076]
+  verification: test
+  note: External measure; not credited in the HARA rating of HE-03.
+- id: FLV-SYS-617
+  title: Extra-low voltage
+  text: No voltage in the device shall exceed 60 V DC.
+  variant: common
+  asil: QM
+  derived_from: [FLV-STK-078]
+  verification: inspection
+- id: FLV-SYS-618
+  title: V1 geometry
+  text: The V1 insert shall fit EN 612 outlets for NW 333 gutters with DN 87 and DN 100 downpipes, and no part of it shall rise above a level 5 mm below the gutter's front rim.
+  variant: V1
+  asil: QM
+  derived_from: [FLV-STK-110, FLV-STK-113]
+  verification: test
+- id: FLV-SYS-619
+  title: V1 support
+  text: The V1 insert shall be supported by the outlet funnel wall only, without contact with the outlet's clips or the gutter bead, and without any modification of the gutter, the outlet or the downpipe.
+  variant: V1
+  asil: QM
+  derived_from: [FLV-STK-112, FLV-STK-114]
+  verification: inspection
+- id: FLV-SYS-620
+  title: V1 retention
+  text: The seated V1 insert shall withstand a lifting force of 50 N, the EN 12056-3 design flow, and ice forming around it, without leaving its seat.
+  variant: V1
+  asil: QM
+  derived_from: [FLV-STK-115]
+  verification: test
+- id: FLV-SYS-621
+  title: V1 mass
+  text: The V1 insert including the battery shall weigh no more than 1.2 kg.
+  variant: V1
+  asil: QM
+  derived_from: [FLV-STK-116]
+  verification: inspection
+- id: FLV-SYS-622
+  title: V1 installation
+  text: The V1 insert shall be installable and removable by hand in no more than 5 min, using a retention mechanism that needs no tools.
+  variant: V1
+  asil: QM
+  derived_from: [FLV-STK-111]
+  verification: demonstration
+- id: FLV-SYS-623
+  title: V1 vibration decoupling
+  text: The V1 insert shall touch the outlet only through elastomer elements that keep the vibration transmitted to the outlet below the level that makes the gutter rattle.
+  variant: V1
+  asil: QM
+  derived_from: [FLV-STK-117]
+  verification: test
+- id: FLV-SYS-624
+  title: V2 geometry
+  text: The V2 replacement outlet shall have the connection dimensions of an EN 612 outlet for NW 333 gutters, in a DN 87 and a DN 100 version.
+  variant: V2
+  asil: QM
+  derived_from: [FLV-STK-120]
+  verification: inspection
+- id: FLV-SYS-625
+  title: V2 materials and joining
+  text: The V2 body shall be made in titanium zinc, copper and aluminium versions that can be joined to the gutter by soldering (zinc, copper) or by riveting with sealant (aluminium).
+  variant: V2
+  asil: QM
+  derived_from: [FLV-STK-121, FLV-STK-122]
+  verification: demonstration
+- id: FLV-SYS-626
+  title: V2 service in place
+  text: The cap, the battery module and the cutting parts of V2 shall be removable from above with the outlet installed.
+  variant: V2
+  asil: QM
+  derived_from: [FLV-STK-123]
+  verification: demonstration
+- id: FLV-SYS-627
+  title: V2 mass
+  text: The V2 replacement outlet including the battery shall weigh no more than 2.0 kg.
+  variant: V2
+  asil: QM
+  derived_from: [FLV-STK-124]
+  verification: inspection
+- id: FLV-SYS-628
+  title: Wear parts
+  text: The rotor impellers and the grind ring shall form one wear-part kit that the user can replace without tools, with a life of at least 5 reference seasons.
+  variant: common
+  asil: QM
+  derived_from: [FLV-STK-131]
+  verification: test
+- id: FLV-SYS-629
+  title: Maintenance-free design
+  text: The device shall need no lubrication, adjustment or calibration during its service life.
+  variant: common
+  asil: QM
+  derived_from: [FLV-STK-130]
+  verification: analysis
+
+# ===================================================== compliance, production, lifecycle
+- id: FLV-SYS-701
+  title: EMC
+  text: The device shall meet CISPR 14-1 emission limits and CISPR 14-2 immunity requirements, including during shred cycles.
+  variant: common
+  asil: QM
+  derived_from: [FLV-STK-093]
+  verification: test
+- id: FLV-SYS-702
+  title: Protective software class
+  text: Software implementing FLV-SYS-109 to -115, -202, -204, -206, -208, -209 and -301 to -315 shall meet IEC 60730-1 Annex H, Class B.
+  variant: common
+  asil: QM
+  derived_from: [FLV-STK-092]
+  verification: inspection
+- id: FLV-SYS-703
+  title: CE conformity
+  text: The device shall be designed and documented for CE marking under the Machinery Regulation (EU) 2023/1230, the EMC Directive and RoHS, based on an EN ISO 12100 risk assessment that includes the residual risks of this specification.
+  variant: common
+  asil: QM
+  derived_from: [FLV-STK-090, FLV-STK-091]
+  verification: inspection
+- id: FLV-SYS-704
+  title: Battery labelling
+  text: The battery module and the device shall carry the markings and information required by Regulation (EU) 2023/1542.
+  variant: common
+  asil: QM
+  derived_from: [FLV-STK-094]
+  verification: inspection
+- id: FLV-SYS-705
+  title: WEEE marking
+  text: The device shall carry the WEEE crossed-out wheelie bin symbol.
+  variant: common
+  asil: QM
+  derived_from: [FLV-STK-095]
+  verification: inspection
+- id: FLV-SYS-706
+  title: Product traceability
+  text: The device shall carry type, batch or serial number, and the manufacturer's name and address, as required by the GPSR.
+  variant: common
+  asil: QM
+  derived_from: [FLV-STK-096, FLV-STK-135]
+  verification: inspection
+- id: FLV-SYS-707
+  title: Material marking
+  text: Plastic parts heavier than 10 g shall carry ISO 11469 material marking.
+  variant: common
+  asil: QM
+  derived_from: [FLV-STK-098]
+  verification: inspection
+- id: FLV-SYS-708
+  title: End-of-line test mode
+  text: "The system shall provide an end-of-line test mode, entered only through the service interface with a production key, that tests level sensing, motor drive and direction, battery management, both channels of the cap and seat sensors, the enable chain and the status light."
+  variant: common
+  asil: QM
+  derived_from: [FLV-STK-145]
+  verification: test
+- id: FLV-SYS-709
+  title: Test mode keeps the interlocks
+  text: The end-of-line test mode shall not bypass the start conditions of FLV-SYS-309 or the hardware enable chain, and shall end automatically after 10 min or at power-down.
+  variant: common
+  asil: A
+  derived_from: [FSR-04, FSR-05]
+  verification: test
+- id: FLV-SYS-710
+  title: Spare-part modules
+  text: The battery module, the cap and the wear-part kit shall be separate field-replaceable modules with stable interfaces across production changes.
+  variant: common
+  asil: QM
+  derived_from: [FLV-STK-134]
+  verification: inspection
+- id: FLV-SYS-711
+  title: Instructions access
+  text: The device and its packaging shall carry a reference (QR code and URL) to the installation, operating, safety and battery-replacement instructions in all languages of the markets where it is sold. Printed safety instructions shall be included.
+  variant: common
+  asil: QM
+  derived_from: [FLV-STK-146]
+  verification: inspection
