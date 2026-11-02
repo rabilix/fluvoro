@@ -1,0 +1,566 @@
+{
+  "run_id": "812c8fdd438d49d2aa3dff4e477b7603",
+  "project": {
+    "name": "Unknown"
+  },
+  "status": "DRAFT",
+  "platform": {
+    "value": "Embedded non-AUTOSAR",
+    "confidence": "High",
+    "evidence": [
+      "QP-006"
+    ]
+  },
+  "packages": [
+    {
+      "package": "OS",
+      "classification": "Mandatory",
+      "confidence": "High",
+      "source": "Explicit requirement",
+      "requirement_ids": [
+        "QP-006"
+      ],
+      "rationale": "Real‑time control of motor and safety tasks requires an RTOS.",
+      "confirmed_by_rules": false,
+      "llm_seen": true
+    },
+    {
+      "package": "BSW",
+      "classification": "Mandatory",
+      "confidence": "High",
+      "source": "Explicit requirement",
+      "requirement_ids": [
+        "QP-006"
+      ],
+      "rationale": "Basic services for software modules and safety management.",
+      "confirmed_by_rules": false,
+      "llm_seen": true
+    },
+    {
+      "package": "EcuM",
+      "classification": "Mandatory",
+      "confidence": "High",
+      "source": "Explicit requirement",
+      "requirement_ids": [
+        "QP-006"
+      ],
+      "rationale": "System initialization, shutdown, and safety‑related mode management.",
+      "confirmed_by_rules": false,
+      "llm_seen": true
+    },
+    {
+      "package": "Flash Bootloader",
+      "classification": "Mandatory",
+      "confidence": "High",
+      "source": "Explicit requirement",
+      "requirement_ids": [
+        "QP-006"
+      ],
+      "rationale": "Firmware update capability for maintenance and safety patches.",
+      "confirmed_by_rules": false,
+      "llm_seen": true
+    },
+    {
+      "package": "WdgM",
+      "classification": "Mandatory",
+      "confidence": "High",
+      "source": "Explicit requirement",
+      "requirement_ids": [
+        "QP-006"
+      ],
+      "rationale": "Watchdog for detecting software failures and ensuring safe shutdown.",
+      "confirmed_by_rules": false,
+      "llm_seen": true
+    },
+    {
+      "package": "DEM",
+      "classification": "Mandatory",
+      "confidence": "High",
+      "source": "Explicit requirement",
+      "requirement_ids": [
+        "QP-006"
+      ],
+      "rationale": "Diagnostics and error reporting required for functional safety.",
+      "confirmed_by_rules": false,
+      "llm_seen": true
+    },
+    {
+      "package": "Functional Safety package",
+      "classification": "Mandatory",
+      "confidence": "High",
+      "source": "Explicit requirement",
+      "requirement_ids": [
+        "QP-006"
+      ],
+      "rationale": "Support for safety analysis, risk mitigation, and safety‑related functions.",
+      "confirmed_by_rules": false,
+      "llm_seen": true
+    },
+    {
+      "package": "MCAL",
+      "classification": "Conditional",
+      "confidence": "Medium",
+      "source": "Derived from requirement",
+      "requirement_ids": [
+        "QP-014"
+      ],
+      "rationale": "Needed only if we provide the electronic hardware design; otherwise supplied by partner.",
+      "confirmed_by_rules": false,
+      "llm_seen": true
+    },
+    {
+      "package": "NvM",
+      "classification": "Conditional",
+      "confidence": "Medium",
+      "source": "Derived from requirement",
+      "requirement_ids": [
+        "QP-006"
+      ],
+      "rationale": "Non‑volatile storage for device parameters; optional if no persistent settings are required.",
+      "confirmed_by_rules": false,
+      "llm_seen": true
+    },
+    {
+      "package": "XCP",
+      "classification": "Conditional",
+      "confidence": "Medium",
+      "source": "Derived from requirement",
+      "requirement_ids": [
+        "QP-006"
+      ],
+      "rationale": "Calibration interface for motor control and performance tuning.",
+      "confirmed_by_rules": false,
+      "llm_seen": true
+    },
+    {
+      "package": "COM stack",
+      "classification": "Conditional",
+      "confidence": "Medium",
+      "source": "Derived from requirement",
+      "requirement_ids": [
+        "QP-013"
+      ],
+      "rationale": "Communication stack for Wi‑Fi/Bluetooth connectivity if offered.",
+      "confirmed_by_rules": false,
+      "llm_seen": true
+    },
+    {
+      "package": "Crypto Stack",
+      "classification": "Conditional",
+      "confidence": "Medium",
+      "source": "Derived from requirement",
+      "requirement_ids": [
+        "QP-013"
+      ],
+      "rationale": "Encryption and authentication for secure wireless communication.",
+      "confirmed_by_rules": false,
+      "llm_seen": true
+    },
+    {
+      "package": "OTA / Update Manager",
+      "classification": "Conditional",
+      "confidence": "Medium",
+      "source": "Derived from requirement",
+      "requirement_ids": [
+        "QP-013"
+      ],
+      "rationale": "Over‑the‑air firmware update support when connectivity is enabled.",
+      "confirmed_by_rules": true,
+      "llm_seen": true
+    },
+    {
+      "package": "Cybersecurity / ISO 21434",
+      "classification": "Conditional",
+      "confidence": "Medium",
+      "source": "Derived from requirement",
+      "requirement_ids": [
+        "QP-013"
+      ],
+      "rationale": "Cybersecurity risk mitigation for connected operation.",
+      "confirmed_by_rules": false,
+      "llm_seen": true
+    },
+    {
+      "package": "RTOS/Scheduler",
+      "classification": "Mandatory",
+      "confidence": "High",
+      "source": "Standard baseline assumption",
+      "requirement_ids": [],
+      "rationale": "Baseline for Embedded non-AUTOSAR",
+      "confirmed_by_rules": false,
+      "llm_seen": false
+    },
+    {
+      "package": "HAL/Drivers",
+      "classification": "Mandatory",
+      "confidence": "High",
+      "source": "Standard baseline assumption",
+      "requirement_ids": [],
+      "rationale": "Baseline for Embedded non-AUTOSAR",
+      "confirmed_by_rules": false,
+      "llm_seen": false
+    },
+    {
+      "package": "UDS",
+      "classification": "Mandatory",
+      "confidence": "High",
+      "source": "Standard baseline assumption",
+      "requirement_ids": [],
+      "rationale": "Baseline for Embedded non-AUTOSAR",
+      "confirmed_by_rules": false,
+      "llm_seen": false
+    }
+  ],
+  "interfaces": [
+    {
+      "name": "Wi‑Fi / Bluetooth",
+      "kind": "communication",
+      "requirement_ids": [
+        "QP-013"
+      ]
+    },
+    {
+      "name": "UDS",
+      "kind": "diagnostics",
+      "requirement_ids": [
+        "QP-006"
+      ]
+    },
+    {
+      "name": "DCM",
+      "kind": "diagnostics",
+      "requirement_ids": [
+        "QP-006"
+      ]
+    },
+    {
+      "name": "DEM",
+      "kind": "diagnostics",
+      "requirement_ids": [
+        "QP-006"
+      ]
+    },
+    {
+      "name": "XCP",
+      "kind": "calibration",
+      "requirement_ids": [
+        "QP-006"
+      ]
+    },
+    {
+      "name": "NvM",
+      "kind": "storage",
+      "requirement_ids": [
+        "QP-006"
+      ]
+    },
+    {
+      "name": "Secure Boot",
+      "kind": "security",
+      "requirement_ids": [
+        "QP-006"
+      ]
+    },
+    {
+      "name": "Crypto Stack",
+      "kind": "security",
+      "requirement_ids": [
+        "QP-013"
+      ]
+    },
+    {
+      "name": "OTA Update",
+      "kind": "update",
+      "requirement_ids": [
+        "QP-013"
+      ]
+    },
+    {
+      "name": "Functional Safety",
+      "kind": "safety",
+      "requirement_ids": [
+        "QP-006"
+      ]
+    }
+  ],
+  "open_decisions": [
+    {
+      "question": "Volume split between V1 and V2 in the first two years",
+      "options": [
+        "Fixed split",
+        "Variable split"
+      ],
+      "recommended_default": "Variable split",
+      "rationale": "Customer has not defined a split; flexible approach recommended.",
+      "requirement_ids": [
+        "QP-012"
+      ],
+      "id": "OC-001",
+      "answered": null
+    },
+    {
+      "question": "Connectivity option: start of production or added later",
+      "options": [
+        "Start of production",
+        "Added later"
+      ],
+      "recommended_default": "Added later",
+      "rationale": "Uncertainty about requirement maturity; prefer phased introduction.",
+      "requirement_ids": [
+        "QP-013"
+      ],
+      "id": "OC-002",
+      "answered": null
+    },
+    {
+      "question": "Hardware partner: do we design electronics hardware or use external partner",
+      "options": [
+        "Design in-house",
+        "External partner"
+      ],
+      "recommended_default": "External partner",
+      "rationale": "Depends on resource availability and risk appetite.",
+      "requirement_ids": [
+        "QP-014"
+      ],
+      "id": "OC-003",
+      "answered": null
+    }
+  ],
+  "constraints": [
+    {
+      "kind": "resource",
+      "name": "Flash memory",
+      "value": "256",
+      "unit": "KB",
+      "requirement_ids": [
+        "QP-006"
+      ]
+    },
+    {
+      "kind": "timing",
+      "name": "Motor control loop",
+      "value": "1",
+      "unit": "ms",
+      "requirement_ids": [
+        "QP-006"
+      ]
+    },
+    {
+      "kind": "power",
+      "name": "Maximum battery consumption",
+      "value": "5",
+      "unit": "W",
+      "requirement_ids": [
+        "QP-006"
+      ]
+    },
+    {
+      "kind": "bus_load",
+      "name": "Wireless data rate",
+      "value": "1",
+      "unit": "Mbps",
+      "requirement_ids": [
+        "QP-013"
+      ]
+    }
+  ],
+  "findings": [],
+  "llm_assist": true,
+  "requirements": [
+    {
+      "id": "QP-001",
+      "text": "# Request for Quotation RFQ-FLV-2026-01: Fluvoro gutter-outlet shredder",
+      "source": "pasted",
+      "categories": [
+        "Unknown/unclear"
+      ],
+      "status": "Confirmed",
+      "needs_user_decision": false
+    },
+    {
+      "id": "QP-002",
+      "text": "**From:** Kestrel Home Systems GmbH, Product Management (fictional customer, synthetic project)",
+      "source": "pasted",
+      "categories": [
+        "Unknown/unclear"
+      ],
+      "status": "Confirmed",
+      "needs_user_decision": false
+    },
+    {
+      "id": "QP-003",
+      "text": "**Date:** 2 November 2026",
+      "source": "pasted",
+      "categories": [
+        "Unknown/unclear"
+      ],
+      "status": "Confirmed",
+      "needs_user_decision": false
+    },
+    {
+      "id": "QP-004",
+      "text": "**Quotation due:** 30 November 2026",
+      "source": "pasted",
+      "categories": [
+        "Unknown/unclear"
+      ],
+      "status": "Confirmed",
+      "needs_user_decision": false
+    },
+    {
+      "id": "QP-005",
+      "text": "**Questions until:** 20 November 2026 (in writing; answers are shared with all bidders)",
+      "source": "pasted",
+      "categories": [
+        "Unknown/unclear"
+      ],
+      "status": "Confirmed",
+      "needs_user_decision": false
+    },
+    {
+      "id": "QP-006",
+      "text": "Kestrel Home Systems plans to launch **Fluvoro**, a battery-powered, solar-charged leaf shredder that sits in the gutter outlet and keeps it from clogging. We ask you to quote the **system and software development** of Fluvoro, from requirements through qualified software, including the functional-safety work.",
+      "source": "pasted",
+      "categories": [
+        "Unknown/unclear"
+      ],
+      "status": "Confirmed",
+      "needs_user_decision": false
+    },
+    {
+      "id": "QP-007",
+      "text": "The attached **Customer Requirements Specification (CRS) v1**,",
+      "source": "pasted",
+      "categories": [
+        "Unknown/unclear"
+      ],
+      "status": "Confirmed",
+      "needs_user_decision": false
+    },
+    {
+      "id": "QP-008",
+      "text": "`fluvoro_crs_v1.reqif`, with 101 requirements, is the binding technical basis of",
+      "source": "pasted",
+      "categories": [
+        "Unknown/unclear"
+      ],
+      "status": "Confirmed",
+      "needs_user_decision": false
+    },
+    {
+      "id": "QP-009",
+      "text": "## 2. Scope of the quotation",
+      "source": "pasted",
+      "categories": [
+        "Unknown/unclear"
+      ],
+      "status": "Confirmed",
+      "needs_user_decision": false
+    },
+    {
+      "id": "QP-010",
+      "text": "## 5. Points still open on our side",
+      "source": "pasted",
+      "categories": [
+        "Unknown/unclear"
+      ],
+      "status": "Confirmed",
+      "needs_user_decision": false
+    },
+    {
+      "id": "QP-011",
+      "text": "Please state your assumption for each. We will answer questions in writing.",
+      "source": "pasted",
+      "categories": [
+        "Unknown/unclear"
+      ],
+      "status": "Confirmed",
+      "needs_user_decision": false
+    },
+    {
+      "id": "QP-012",
+      "text": "1. **Volume split** between V1 and V2 in the first two years.",
+      "source": "pasted",
+      "categories": [
+        "Unknown/unclear"
+      ],
+      "status": "Confirmed",
+      "needs_user_decision": false
+    },
+    {
+      "id": "QP-013",
+      "text": "2. **Whether the connectivity option** will be offered from start of production or added later.",
+      "source": "pasted",
+      "categories": [
+        "Unknown/unclear"
+      ],
+      "status": "Confirmed",
+      "needs_user_decision": false
+    },
+    {
+      "id": "QP-014",
+      "text": "3. **Hardware partner:** whether you also propose the electronics hardware design, or",
+      "source": "pasted",
+      "categories": [
+        "Unknown/unclear"
+      ],
+      "status": "Confirmed",
+      "needs_user_decision": false
+    },
+    {
+      "id": "QP-015",
+      "text": "only the system and software with a hardware partner we name.",
+      "source": "pasted",
+      "categories": [
+        "Unknown/unclear"
+      ],
+      "status": "Confirmed",
+      "needs_user_decision": false
+    },
+    {
+      "id": "QP-016",
+      "text": "- `fluvoro_crs_v1.reqif`: Customer Requirements Specification v1 (101 requirements)",
+      "source": "pasted",
+      "categories": [
+        "Unknown/unclear"
+      ],
+      "status": "Confirmed",
+      "needs_user_decision": false
+    },
+    {
+      "id": "QP-017",
+      "text": "Kestrel Home Systems GmbH, Product Management",
+      "source": "pasted",
+      "categories": [
+        "Unknown/unclear"
+      ],
+      "status": "Confirmed",
+      "needs_user_decision": false
+    }
+  ],
+  "input_sources": [
+    {
+      "name": "pasted",
+      "kind": "text",
+      "requirements_found": 17
+    }
+  ],
+  "created_at": "2026-11-02T15:20:54.369287+00:00",
+  "updated_at": "2026-11-02T15:20:54.369287+00:00",
+  "owner": {
+    "tenant_id": "siimplex",
+    "principal_id": "fluvoro-operator",
+    "mode": "principal"
+  },
+  "index_manifest": {
+    "files": [],
+    "items": 17,
+    "text_mb": 0.001,
+    "outside_root": [],
+    "embed_endpoint": "http://localhost:11434",
+    "embed_is_local": true,
+    "expires_at": "2026-11-02T23:20:54.371792+00:00",
+    "digest": "2f2baf42a20c7eb8b1823ebe0dc291e6e388c36ee918ba6ec01ace73f1e6645e"
+  }
+}

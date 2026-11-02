@@ -1,0 +1,59 @@
+run: 2026-11-02-phase1
+phase: 1 (RFQ analysis)
+status: paused after turn 2, waiting for the maintainer's blind quote estimate before the customer reply (D-14)
+start: "2026-11-02T15:19:32Z"   # turn 1 request.start
+surface: myBrain dev 4c73cc9, profile Fluvoro, new chat, knowledge picker "All knowledge sources", Auto, Decisions default (off)
+
+pinned_at_start:
+  served_commit: 3d67ba1a        # core restarted 15:15:46Z for D-13 (QPMT mock)
+  facade: {pid: 1556, contract: 75}
+  mybrain: 4c73cc9
+  provider_model: ollama / gpt-oss:20b   # myBrain shows "backend default"
+  qpmt_backend: mock
+  autonomous_loop: off
+  principal: {user: fluvoro-operator, tenant: siimplex}
+  project: fluvoro (dept engineering)
+  collection: fluvoro (101 CRS requirements + 5 RFQ chunks)
+pinned_at_end: pending             # fill when the phase ends; differing commits make the phase infra-mixed
+commit_changes_during_phase:       # infra-mixed from turn 3 on
+  - {ts: "2026-11-02T15:48:21Z", what: "files-only deploy 393f5968 (probe script, db migrate fix)", served: 3d67ba1a}
+  - {ts: "2026-11-02T16:01:54Z", what: "deploy + restart 58600ee2 (work-item E6, FlexCortex session)", served: 58600ee2}
+  - {ts: "2026-11-02T16:14:05Z", what: "deploy + restart 07072708 (RE081 listing header, RE082 listing records + outcome attribution)", served: 07072708}
+  - note: "chat path diff 3d67ba1a..07072708: runtime.py +4, flexrag/retrieval/enumerate.py, scripts/routers/chat.py; quotpilot, prompt composer and facade unchanged"
+
+turns:
+  - n: 1
+    local: "16:19–16:21"
+    trace_id: 2e5aef9f-c488-46df-b5bb-b18550c8a8f4
+    status: partial
+    duration_s: 100.5
+    skillpack: quotpilot
+    quotpilot_run: 812c8fdd438d49d2aa3dff4e477b7603   # draft copied to work_products/
+  - n: 2
+    local: "16:25–16:26"
+    trace_id: f7baba90-6e91-4dce-9481-e98b93daec47
+    status: success
+    duration_s: 18.2
+    skillpack: none (knowledge.retrieve_context + model)
+    history_sent: 2 messages
+
+customer_questions_asked: 15      # turn 2; turn 1 asked the customer nothing (it asked us for 3 decisions)
+customer_answers_given: none yet  # D-14
+
+decisions:
+  - id: D-14
+    question: the customer reply contains answer-book answers; is the blind quote estimate written?
+    chosen: the maintainer writes the blind estimate first (runs/2026-11-02-phase1/blind_estimate.md, by the maintainer), then the reply is sent
+    rules_out: replying now; skipping the blind estimate
+    date: 2026-11-02
+  - id: D-16
+    question: content of the pre-reply estimate
+    chosen: adopt Claude's worked example as the estimate (blind_estimate.md), labelled NOT BLIND
+    rules_out: a maintainer-written blind estimate for this run
+    note: two assumptions in the example match hidden answers CA-02 and CA-03 (Claude had read the answer book); the quote phase is graded with that caveat or without a blind estimate
+    date: 2026-11-02
+  - id: D-15
+    question: how to continue after turn 1 (quotpilot asked us for OC-001..003 and "Go")
+    chosen: neutral follow-up "What else do you need from the customer?"
+    rules_out: answering the three decisions + Go; ending Phase 1 after turn 1
+    date: 2026-11-02
