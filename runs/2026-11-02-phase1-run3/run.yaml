@@ -1,0 +1,68 @@
+run: 2026-11-02-phase1-run3
+phase: 1, third run (RFQ analysis) after the catalogue fix RE090 (F-033/F-034/F-035)
+status: ended after turn 1 attempts (D-24); the conversational layer broke before the protocol could continue
+surface: myBrain dev 4c73cc9, profile Fluvoro, new chats, picker "All knowledge sources"
+protocol: same prompt as Phase 1 turn 1; minimal neutral reply to a question FlexCortex asked us (D-25)
+
+pinned_at_start:
+  served_commit: 28dc2f98          # RE090 deployed + core restart 2026-11-02T22:16:07Z; extra restart 22:40:33Z on the maintainer's request (same commit)
+  facade: {pid: 3213, contract: 75}
+  mybrain: 4c73cc9
+  provider_model: ollama / gpt-oss:20b
+  qpmt_backend: mock
+  autonomous_loop: off
+  nl_schedule_autodetect: off
+  principal: {user: fluvoro-operator, tenant: siimplex}
+pinned_at_end:
+  served_commit: 28dc2f98          # verified 2026-11-02T22:55:30Z; no deploy receipt during the run
+  verdict: single-commit, but attempt 1 under memory contention (see infrastructure)
+
+freeze:
+  on: "~2026-11-02T22:18Z"         # acknowledged by Platform audit
+  off: "2026-11-02T22:56Z"         # "freeze lifted" sent after the hand-back
+
+attempts:
+  - id: A1
+    trace_id: dc366b0e-cd1c-4649-b98c-457152046002
+    session: session-8gRfHaGs0uIzBEh4YMJfZknO
+    utc: "22:41:22–22:44:29"
+    status: halted (myBrain 180 s budget); no request.complete, no chat_turn outcome
+    quotpilot_run: 2cb1c1ba1f3d4603b8dcf591d41a89ec   # draft in work_products/
+    note: qwen2.5:72b (58 GB) loaded by Platform audit's full test tier at the same time; analyze 60 s, "Deterministic only"
+    graded: review content only (deterministic, unaffected by the timeout)
+  - id: A2
+    trace_id: a8273268 (prefix)
+    session: session-zWtF0j42pri9AX41iM_r80
+    utc: "22:48:42–22:50:38"
+    status: stopped by the user (turn.stop_requested x2); a resend after the timeout
+    graded: no
+  - id: A3
+    trace_id: 9b56c39c-55a4-40e2-8cb1-68278e0f96d1
+    session: session-G5G_lGXEeWmROhh-PFKyJkHR
+    utc: "22:53:27–22:53:37"
+    status: partial, 10.0 s; five empty quotpilot calls refused with reasons, then the model asked the user for a project name
+    graded: yes
+  - id: A3b
+    trace_id: 3c060178-9b08-456e-85ce-b05809dc8f4f
+    session: session-G5G_lGXEeWmROhh-PFKyJkHR
+    utc: "22:54:46–22:54:51"
+    prompt: "Fluvoro"
+    status: success, 5.8 s; no skillpack selected, retrieval only; "I don't have the RFQ … in the data you supplied"
+    graded: yes
+
+decisions:
+  - id: D-24
+    question: the third run's conversation broke after RE090's analysis looked right — continue or end?
+    chosen: end the run and hand back; RE090 confirmed on the deterministic review, the conversational layer (cluster C) is the blocker; ask Platform audit about cluster C
+    rules_out: a neutral nudge; starting over a fourth time
+    date: 2026-11-02
+  - id: D-25
+    question: FlexCortex asked "What would you like the project to be called?" — how to answer?
+    chosen: minimal answer "Fluvoro"
+    rules_out: starting over again; counting the ask-back as the result
+    date: 2026-11-02
+  - id: D-26
+    question: the maintainer restarted the attempt after A1's timeout
+    chosen: start over in a new chat (A3); A1 graded on its review only, A2 not graded
+    rules_out: continuing in A1's chat
+    date: 2026-11-02
