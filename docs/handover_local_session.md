@@ -72,3 +72,29 @@ of reach. Only `kit/shown/` may ever go into a collection the team can query.
 - Verify the **running** process (`/health.served_commit`, the audit log), not the source.
 - Never write under the deployed roots from a test. A run on the real installation is real use, so say clearly which root it writes to.
 - No commits to `main` or `develop`. In this repository, work on `claude/sleepy-meitner-rm81pw`.
+
+## 6. Hand back after every phase (the cloud session grades)
+
+The cloud session cannot reach the Mac. It takes over **from the repository**: it
+grades against `product/` and `kit/hidden/`, writes the findings and prepares the
+next phase. After each phase (and whenever the maintainer says "hand back"),
+commit and push to `claude/sleepy-meitner-rm81pw`:
+
+```
+runs/<YYYY-MM-DD>-<phase>/
+  run.yaml          # phase, start/end time, served_commit, provider + model, tenant,
+                    # project, collection, myBrain profile, what was written where
+  questions.md      # every question FlexCortex asked the customer, verbatim,
+                    # and which answer-book entry (CA-xx) was given
+  work_products/    # what the team produced, exported as files (analysis, quote,
+                    # HARA, requirements, architecture, code, tests, reports)
+  transcript.md     # the user-visible chat turns (prompt + answer), trimmed
+  evidence.md       # per turn: trace id, `flx audit turn <trace>` output, holds
+                    # raised and how they were decided, errors
+  findings.md       # anything that broke, misled or needed a workaround:
+                    # what the person saw / what the record says / trace id / tier
+```
+
+Rules: no secrets, API keys or tokens in any file (redact them). `kit/hidden/` and
+`product/` stay untouched. Never paste anything from them into a FlexCortex chat.
+Then tell the maintainer: "Phase <n> handed back: runs/<dir>".
