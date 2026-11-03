@@ -72,3 +72,8 @@ decisions:
     chosen: end run 4 after turn 1, record it, lift the freeze, request a fix from Platform audit; run 5 on that fix
     rules_out: continuing the protocol without quotpilot; pausing with the freeze on
     date: 2026-11-03
+  - id: D-30
+    question: F-045 is live (d9b657c0) but the fluvoro project has no record, so the fallback fills nothing (F-046) — how to close it?
+    chosen: Platform audit decides which project store is authoritative and fixes it (record created the supported way or the check accepts the RBAC project); run 5 after that
+    rules_out: creating the project record ourselves in the live data root
+    date: 2026-11-03

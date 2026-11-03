@@ -18,6 +18,13 @@ Numbering continues after F-043.
 - RE093 (tool defaults, carry, collection holdings) was therefore not exercised.
 - **Tier:** live. **Family:** cluster C (turn context). **Demo-blocker:** yes.
 
+## F-046: the operator's one project exists only in RBAC, so F-045 fills nothing
+
+- Found while preparing run 5, after "F-045 deployed d9b657c0" (2026-11-03): FlexCortex's own lookup on the deployed code, read-only, for fluvoro-operator: `get_user_projects` → `['fluvoro']`; `get_project("fluvoro")` → no record (records dir `~/.flexcortex/projects` holds only `sdfasfas.yaml`); `membership_project` → `(None, "unrecorded")`.
+- `fluvoro` exists in Postgres (the membership row passed its FK in setup) but has no project record; `flexcore/projects.py:283` requires a record, so the turn gets no project and quotpilot stays out of scope (F-045).
+- Two project stores that can disagree; a project created the way setup did is invisible to the F-045 fallback.
+- **Tier:** live. **Family:** cluster C (turn context) / setup. **Demo-blocker:** yes.
+
 ## Turn 1 answer without quotpilot (graded against kit/shown)
 
 - Correct: RFQ §5's three open points are asked; ISO 26262 is read from the RFQ (rfq.md line 27); two variants V1/V2 and the BLE option are named.
