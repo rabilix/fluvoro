@@ -1,6 +1,38 @@
 run: 2026-11-03-phase1-run4
 phase: 1, fourth run (RFQ analysis) after cluster C fix RE093 (F-039/F-040)
-status: not started; held for F-044 (D-27)
+status: ended after turn 1 (D-29); quotpilot was never selected (F-045), RE093 untested
+
+pinned_at_start:
+  utc: "2026-11-03T16:33:27Z"
+  served_commit: 1f7e602c          # deploys after F-044: 131b176f 15:11Z, 1f7e602c 15:33:05Z (not announced to us)
+  facade: {pid: 52988, contract: 77}   # restarted by the maintainer 16:32:26Z; the old 35500 showed "backend stale"
+  mybrain: b3346c7
+  qpmt_backend: mock
+  autonomous_loop: off
+  nl_schedule_autodetect: off
+  ollama_loaded: []
+
+freeze:
+  on: "2026-11-03T16:34Z"          # announced to Platform audit; covers deploys, restarts, confs, test tiers, probes, model loads
+  acknowledged: true               # Platform audit; held: develop fa1d0ec0 (RE033) until the lift; its gates run in scratch roots behind the RE092 guard
+  unannounced_deploys_before_run: {131b176f: RE027, 1f7e602c: RE062}
+  off: "2026-11-03T16:38Z"         # "freeze lifted" sent after D-29
+
+pinned_at_end:
+  utc: "2026-11-03T16:38:11Z"
+  served_commit: 1f7e602c          # no deploy receipt during the run
+  verdict: single-commit
+
+turns:
+  - id: T1
+    trace_id: 77666c5f-505e-4e91-af0e-1c288302ac52
+    utc: "16:34:06–16:34:36"
+    prompt: Phase 1 turn 1 prompt, verbatim, but sent with a leading "▎ " (a quote bar copied from the instructions; deviation, not the cause)
+    audit: {project: null, project_refused: path_shaped, collection: null, intent: search, skillpack: software_dev}
+    capabilities: [knowledge.retrieve_context (624 ms), skillpack.apply software_dev]
+    quotpilot: not selected, no tool call, no draft
+    answer: transcript.md
+    graded: yes (see findings.md F-045)
 surface: myBrain dev b3346c7 (contract v77), profile Fluvoro, new chat, picker "All knowledge sources"
 protocol: same prompt and protocol as Phase 1 turn 1 (see ../2026-11-02-phase1/transcript.md)
 
@@ -35,3 +67,8 @@ decisions:
     rules_out: building f353eb9 (v76) now and rebuilding again later
     date: 2026-11-03
     note: done by Platform audit and the maintainer by 08:20 local; facade now v77
+  - id: D-29
+    question: turn 1 never selected quotpilot (F-045: the F-044 fix empties the project, quotpilot is project-scoped) — how to proceed?
+    chosen: end run 4 after turn 1, record it, lift the freeze, request a fix from Platform audit; run 5 on that fix
+    rules_out: continuing the protocol without quotpilot; pausing with the freeze on
+    date: 2026-11-03
