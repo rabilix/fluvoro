@@ -1,0 +1,37 @@
+run: 2026-11-03-phase1-run4
+phase: 1, fourth run (RFQ analysis) after cluster C fix RE093 (F-039/F-040)
+status: not started; held for F-044 (D-27)
+surface: myBrain dev b3346c7 (contract v77), profile Fluvoro, new chat, picker "All knowledge sources"
+protocol: same prompt and protocol as Phase 1 turn 1 (see ../2026-11-02-phase1/transcript.md)
+
+state_checked:
+  utc: "2026-11-03T12:31:44Z"
+  served_commit: ac8487d0          # deploy + core restart 12:28:52Z; newer than the 8f572506 Platform audit announced
+  facade: {pid: 35500, contract: 77}
+  mybrain: b3346c7
+  qpmt_backend: mock
+  autonomous_loop: off
+  nl_schedule_autodetect: off
+  ollama_loaded: []
+  freeze: not announced yet
+
+changed_variables_since_run3:
+  - RE093 cluster C (tool defaults from the turn; refusal never asks the person; pack carried on a short reply to the assistant's question; collection holdings in the prompt)
+  - RE091 (dead key said once; failed turn names the asked model), contract v76
+  - I178 (M365 Copilot provider on the picker), contract v77
+  - RE092 (unit tier never reaches the live Ollama)
+  - d3 System One decision model is the default DECISION_MODEL
+  - RE060, RE089 and later commits up to ac8487d0
+
+decisions:
+  - id: D-27
+    question: F-044 (myBrain sends its workspace folder as the turn's project) — how to handle it before run 4?
+    chosen: Platform fix first; F-044 recorded and sent to Platform audit; run 4 waits for the fix
+    rules_out: running run 4 with the path as project; changing myBrain's workspace setting by hand for the run
+    date: 2026-11-03
+  - id: D-28
+    question: which myBrain build does run 4 use?
+    chosen: wait for the I178 deploy (v77), then myBrain at develop HEAD (b3346c7) with the facade restarted at v77
+    rules_out: building f353eb9 (v76) now and rebuilding again later
+    date: 2026-11-03
+    note: done by Platform audit and the maintainer by 08:20 local; facade now v77
