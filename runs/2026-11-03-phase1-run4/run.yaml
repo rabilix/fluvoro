@@ -77,3 +77,19 @@ decisions:
     chosen: Platform audit decides which project store is authoritative and fixes it (record created the supported way or the check accepts the RBAC project); run 5 after that
     rules_out: creating the project record ourselves in the live data root
     date: 2026-11-03
+    outcome: F-046 fix deployed f46267c0; Platform audit ran `flx project create fluvoro engineering "Fluvoro gutter-outlet shredder"` (wrote ~/.flexcortex/projects/fluvoro.yaml, kept the RBAC row); verified read-only membership_project("fluvoro-operator") = ('fluvoro', '')
+  - id: D-31
+    question: run 5 was ready (facade restarted 21:04:34Z, freeze about to start) when dbc0ca56 was deployed — go on tonight or later?
+    chosen: lift the freeze (~21:10Z) and run 5 tomorrow (2026-11-04)
+    rules_out: running run 5 on 2026-11-03
+    date: 2026-11-03
+    consequence: deploys between run 4 and run 5 change the system; run 5 must record them as changed variables
+
+between_run4_and_run5:
+  - {commit: fa1d0ec0, items: [RE033 one scheduler]}
+  - {commit: d9b657c0, items: [F-045 turn project from session or the one RBAC membership, RE034 one ReqIF parser/builder]}
+  - {commit: f46267c0, items: [F-046 project create writes RBAC and record]}
+  - {commit: dbc0ca56, items: [RE038 15 meta packs folded into platform_introspection (53 -> 39), RE040 one skill-usage reader]}
+  - {commit: 3566067a, items: [RE037 memory consolidation (episodic recall on, read at call time), RE043 one model transport incl. decision model; prompt hashes on request.start]}
+  facade: PID 8149 restarted 21:04:34Z, stale against dbc0ca56 and 3566067a
+  to_check_before_run5: [served commit, switches, Ollama, membership_project, facade restart, whether episodic recall can bring run 3/4 content into a new chat]
