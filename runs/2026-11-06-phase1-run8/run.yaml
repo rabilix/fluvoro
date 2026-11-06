@@ -1,0 +1,111 @@
+run: 2026-11-06-phase1-run8
+phase: 1, eighth run (RFQ analysis) on the RE108 build (FlexCortex 36bb0478, QuotPilot c81d142); same three turns as run 7
+status: ended after turn 3 (D-50); F-051 (stated), F-052, F-056, F-057 closed on live evidence; F-060 review paraphrased, ids shortened; F-061 plan re-applies the decision with a narrowed value; F-062 held generate carries no run_id (demo-blocker); freeze lifted, run 9 on the fixes
+
+pinned_at_start:
+  utc: "2026-11-06T16:22Z"
+  served_commit: 36bb0478              # /health code_current true; core pid 38544 (restarted 16:12:50Z)
+  deploy_receipts:
+    - {kind: deploy, previous: c7bb3adf, commit: 36bb0478, ts: "2026-11-06T16:12:44Z", tests: passed}
+    - {kind: restart, ts: "2026-11-06T16:12:50Z"}
+  manager: {pid: 90099}                # untouched since 11:02Z
+  facade: {pid: 38562, contract: 78}   # restarted with the deploy (scripts/facade/turns.py changed)
+  mybrain: 74e8268
+  chat_model: gpt-oss:20b              # Ollama holds nomic-embed-text only (probe embeddings); chat model not loaded
+  quotpilot: "develop c81d142 (F-051 assist outcome visible, F-052 review for the person); sticky true; enabled, guard ok"
+  qpmt_backend: mock
+  autonomous_loop: off
+  nl_schedule_autodetect: off
+  episodic_enabled: false              # flexcortex.conf line 140 (D-39); memory_isolation kernel probe NOT MEASURED because of it
+  membership_project_fluvoro_operator: ["fluvoro", ""]
+  fluvoro_collection_points: 106
+  machine: not rebooted (uptime 6 days)
+  deviation: "load average 19 at start (flexcli bun process, macOS AddressBookSourceSync, one python process); not the core (D-49)"
+  run7_hold_4bb5382a5909: "expired 2026-11-06T15:20:16Z at a core restart, never run; the repaired Deny (F-057) is first measured live in this run's T3"
+
+freeze:
+  on: "2026-11-06T16:22Z"
+  acknowledged: "Platform audit yes (holds deploys, restarts, conf edits, live probes, spare-port cores, model loads, gate runs; records only); FlexCortex session yes, no work running; the bun process is another session's flexcli test run (pid 43155, 0 % at 16:24Z), the CPU is macOS contactsdonationagent"
+
+changed_variables_since_run7:
+  - commit: 7fb9964a
+    items: [RE107 FlexRag evidence probes, test guard store ports; no chat/agent/facade path]
+  - commit: 382bfdc6
+    items: [RE107 follow-up (demo_data for the retrieval baseline probe; memory-isolation probe NOT MEASURED while episodic is off)]
+  - commit: c7bb3adf
+    by: FlexCortex session
+    items: [RE108 AGENTS.md review rules, S189 unproven learned skills are drafts never offered; skill catalogue and Amplify hint also omit stale/archived packs (none today; all 39 deployed packs active)]
+  - commit: 36bb0478
+    utc: "2026-11-06T16:12Z"
+    items:
+      - RE108 §1 probe_person_path_quotpilot (25/25 on the deployed tree, attestation 16:16Z)
+      - F-057 the desktop lists and decides approvals as the caller
+      - F-056 the agent path continues the session's open run, a decision applied in chat is reused
+      - F-058 step values name the field; a halted plan withdraws its holds with a reason
+      - RE108 §3 every failed or refused step is said to the person
+  - quotpilot: 32a392e -> c81d142
+    items: [F-051 assist outcome on the draft and in the answer, F-052 operator block out of the review and "verbatim" out of the prompt]
+  - facade: restarted (pid 90116 -> 38562)
+
+probes_before_run: [probe_person_path_quotpilot PASS 25/25, flx probe kernel 5 PASS + memory_isolation NOT MEASURED (episodic off)]
+
+to_check_in_t1_trace:
+  - project fluvoro via membership; skillpack quotpilot; no empty pre-fetch
+  - analyze once with final; assist outcome said in the answer and on the draft (F-051)
+  - answer without "say Go", tool syntax or a fenced verbatim review (F-052); RFQ §5 points asked or not
+  - request.complete and chat saved
+to_check_in_t2_trace:
+  - skillpack.carried sticky (F-053); quotpilot.decide with the T1 run id; draft OC-PLATFORM answered
+to_check_in_t3_trace:
+  - agent path continues run of T1/T2, no new analyze, no repeated decide (F-056)
+  - every run id a 32-char hex string; generate held with a valid run_id (F-058)
+  - the maintainer denies the card from the desktop and the record reads denied (F-057)
+  - no invented effort (F-054); every failed step said (RE108 §3)
+
+turns:
+  - id: T1
+    trace_id: 0fc9d29b-2e09-4d2e-8919-0a888a942c90
+    utc: "19:45:05 – 19:46:47"      # 3 h 23 min after the freeze; no deploy in between
+    audit: {project: fluvoro, project_source: membership, intent: search, skillpack: quotpilot, skillpack_prompt: 40cfbcbfe142}
+    capabilities: [knowledge.retrieve_context 621 ms, quotpilot.analyze 60.4 s (a20dd9d7, deterministic; assist no_answer said in the answer and on the draft)]
+    answer: "yes, 1 min 41 s; review rendered, no fence, no say-Go or tool syntax (F-052 closed); assist reason said (F-051 stated)"
+    saved: yes (session-GpQYMAb8EWdlU8UQqbESDd0P)
+    questions_asked: [OC-PLATFORM]   # RFQ §5 points still not asked
+    graded: yes (findings.md)
+  - id: T2
+    trace_id: 57a9bdb2-90ec-45de-9e36-1cfbffe2e9a2
+    utc: "19:49:02 – 19:49:27"
+    audit: {skillpack: quotpilot, carried: "sticky workflow within the carry window", intent: action}
+    capabilities: [knowledge.retrieve_context 83 ms, quotpilot.decide 1.2 ms (OC-PLATFORM = RTOS, run a20dd9d7)]
+    answer: "yes, 24 s; review paraphrased, evidence ids shortened to '…' (F-060)"
+    draft_after: {platform: RTOS (FreeRTOS/Zephyr), packages: 16, open_decisions: 0}
+    graded: yes (findings.md)
+  - id: T3
+    utc: "19:51:42 – 19:52:16"
+    prompt: operator turn "Proceed with RTOS and generate the work packages."
+    path: agent (2 steps; quotpilot carried sticky; agent.workflow_state handed run a20dd9d7 to analyze/decide)
+    capabilities:
+      - "quotpilot.decide 1.9 ms (re-applied, platform now FreeRTOS, F-061)"
+      - "quotpilot.generate held 2c79ce2fbf28 with empty kwargs (F-062)"
+    deny: "maintainer Deny button 19:53:03Z -> record denied (F-057 closed live); no audit row for the denial"
+    graded: yes (findings.md)
+
+decisions:
+  - id: D-49
+    question: fix build 36bb0478 / QuotPilot c81d142 verified, load 19 (not the core) - start run 8 now?
+    chosen: start now; the load is pinned as a deviation; same three turns as run 7; the maintainer denies the T3 card from the desktop to measure F-057 live
+    rules_out: waiting for the load to drop; approving generate in this run
+    date: 2026-11-06
+  - id: D-50
+    question: run 8 closed F-051 (stated), F-052, F-056, F-057 and found F-060..F-062 - how to go on?
+    chosen: end run 8 after T3, commit, lift the freeze, hand F-060..F-062 and the RFQ section 5 gap to Platform audit; run 9 tests approving generate end to end once F-062 is fixed
+    rules_out: approving the argument-less generate; keeping the freeze
+    date: 2026-11-06
+
+pinned_at_end:
+  utc: "2026-11-06T19:56Z"
+  served_commit: 36bb0478          # no deploy receipt during the run
+  verdict: single-commit
+  leftovers: [quotpilot run a20dd9d7 (DRAFT, platform FreeRTOS after T3, 16 packages), pending action 2c79ce2fbf28 denied]
+
+freeze_off: "2026-11-06T19:57Z"
