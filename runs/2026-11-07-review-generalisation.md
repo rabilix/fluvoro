@@ -51,6 +51,8 @@ Held 2026-11-07 with the maintainer after Phase 1 run 9. Trigger, in the maintai
 
 - **D-59** (2026-11-07). Question (Platform audit's design for F-065): when is an answer held until complete so that a note on unsourced figures can open it? Chosen: hold every answer; any unsourced effort, cost or percentage figure is named in the first line. Rules out: holding only turns where a call did not run (Platform audit's recommendation, keeps streaming); keeping the note at the end. Accepted cost: no live streaming on any turn. Also agreed: figures are never deleted from the model's text; refused or unknown tools tell the model not to supply what the tool would produce.
 
+- **D-60** (2026-11-07). Question: deploy Platform audit's general fix list (near-miss names, runtime statement first, refusal wording, approval audit row, F-066, F-067, F-063 open-items list, D-59 held answers) and what runs first? Chosen: deploy, then the first run of the second case; the maintainer updates myBrain for the held-answer status. Rules out: a Fluvoro check run first; holding the deploy until the case files are reviewed. F-064 and F-060 stay held.
+
 ### Second test case: required shape
 
 | Dimension | Required |
