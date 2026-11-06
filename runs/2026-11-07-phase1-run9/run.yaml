@@ -1,0 +1,111 @@
+run: 2026-11-07-phase1-run9
+phase: 1, ninth run (RFQ analysis) on FlexCortex 9fff709f and QuotPilot 829362d; same three turns, T3 card APPROVED this time (first approve-path test), T4 asks for the work packages if generate produced them
+status: ended after turn 4 (D-52); F-055, F-061, F-062 closed live, RFQ open points asked, approve path end to end for the first time; F-060 worse (ids rewritten), F-063 AP answers not recorded, F-064 generated workbook generic and effort-less, F-065 invented effort with invented provenance (demo-blockers); freeze lifted
+
+pinned_at_start:
+  utc: "2026-11-06T23:03Z"
+  served_commit: 9fff709f              # /health code_current true; core pid 59152 (restarted 22:41:10Z)
+  deploy_receipts:
+    - {kind: deploy, previous: 36bb0478, commit: 9fff709f, ts: "2026-11-06T22:40:55Z", tests: passed}
+    - {kind: restart, ts: "2026-11-06T22:41:10Z"}
+  manager: {pid: 90099}                # untouched since 2026-11-06 11:02Z
+  facade: {pid: 59179, contract: 78}   # restarted with the deploy
+  mybrain: 6c8a6c0                     # changed by the maintainer since run 8 (74e8268 -> 6c8a6c0, feature/i189-team-copy)
+  chat_model: gpt-oss:20b              # Ollama empty before the run
+  quotpilot: "develop 829362d (F-061 decide guard, F-062 generate/close declare run_id, RFQ open points as AP assumptions); enabled, guard ok"
+  qpmt_backend: mock
+  autonomous_loop: off
+  nl_schedule_autodetect: off
+  episodic_enabled: false
+  membership_project_fluvoro_operator: ["fluvoro", ""]
+  fluvoro_collection_points: 106
+  machine: "not rebooted (uptime 7 days); load 4.4"
+  generate_writes: "quotpilot.generate writes deliverables only under ~/.flexcortex/quotpilot/runs/<run_id> (generate_v2 on _RUNS_BASE); no QPMT, no external target - approving it is within the run rules"
+
+freeze:
+  on: "2026-11-06T23:04Z"
+  acknowledged: "FlexCortex session yes (I196 /health off the event loop + parallel facade handshake reads waits for the lift and the maintainer's word); Platform audit yes 23:04Z (holds everything; confirms F-060 is not addressed in this build)"
+
+changed_variables_since_run8:
+  - commit: 9fff709f
+    utc: "2026-11-06T22:40Z"
+    items:
+      - F-062 a held call carries its declared run_id; filled from the workflow state only when every in-scope call agrees on one value, else the planner asks
+      - F-061 decide keeps an answered decision and says so; an open decision takes only one of its options; unknown ids refused
+      - F-055 the answer text carries no raw tool result; calls travel as typed toolCalls only (facade turns.py)
+      - a card denial writes a pending_action.denied audit row
+      - RE071 Phase 2b batch 1 (rag start/stop/restart/status on flexcli; no chat path)
+  - quotpilot: c81d142 -> 829362d
+    items: [F-061 decide guard, F-062 run_id declared on generate/close, RFQ listed open points as AP-… assumptions asked in the review, stated in both emails and an Assumptions sheet, never blocking generate]
+  - mybrain: 74e8268 -> 6c8a6c0 (maintainer; feature/i189-team-copy)
+  - not mentioned by Platform audit: F-060 (requirement ids shortened on follow-up turns) - checked in this run
+
+probes_before_run: [probe_person_path_quotpilot PASS 26/26 on the deployed tree (stub no longer supplies run_id itself), probe_stack_arms PASS 8/8; CodeRabbit final pass not run (quota used up), Codex blind + three steered rounds]
+
+to_check_in_t1_trace:
+  - no raw tool line in the answer text; tool call shown collapsed or not at all (F-055)
+  - RFQ open points asked as AP assumptions (volume split, connectivity timing, hardware partner)
+  - review rendered, ids full (F-060), assist reason said
+to_check_in_t2_trace:
+  - sticky carry; decide on the T1 run; ids full in the answer (F-060)
+to_check_in_t3_trace:
+  - agent path; decide NOT re-applied or, if called, the answered value kept and said (F-061)
+  - generate held with run_id = the T1 run (F-062); the maintainer approves; generate runs ok on the mock backend
+  - deliverables written under the run folder; no invented effort; every failed step said
+to_check_in_t4_trace:
+  - the work packages and effort come from QuotPilot's generated deliverables, not the model
+
+turns:
+  - id: T1
+    trace_id: fd629012-5422-4c8d-b4a5-6224b16ee3ed
+    utc: "23:10:33 – 23:12:12"
+    audit: {project: fluvoro, project_source: membership, intent: search, skillpack: quotpilot, skillpack_prompt: c0b6981b6b1d}
+    capabilities: ["knowledge.retrieve_context 614 ms", "quotpilot.analyze 60.4 s (5654fe3c, assist no_answer)"]
+    answer: "yes, 1 min 38 s; no tool line (F-055 closed); asks OC-PLATFORM and AP-01..AP-03; ids shortened and rewritten (F-060 worse)"
+    saved: yes (session-RELA6cZkg79dhHPqj_nwXn_d)
+    questions_asked: [OC-PLATFORM, AP-01 volume split, AP-02 connectivity timing, AP-03 hardware partner]
+    graded: yes (findings.md)
+  - id: T2
+    trace_id: 3519e274-89ff-4dbb-a866-c000ecd29439
+    utc: "23:14:30 – 23:14:57"
+    prompt: "customer answers to all four asked questions, verbatim: fallback (platform), CA-01, CA-02, CA-03"
+    audit: {skillpack: quotpilot, carried: sticky, intent: action}
+    capabilities: ["quotpilot.decide 2.9 ms with OC-PLATFORM only (overwrite true); AP-01..AP-03 not recorded (F-063)"]
+    draft_after: {platform: RTOS (FreeRTOS/Zephyr), packages: 16, open_decisions: 0, ap_assumed: none}
+    graded: yes (findings.md)
+  - id: T3
+    utc: "23:16:30 – 23:17:10"
+    prompt: operator turn "Proceed with RTOS and generate the work packages."
+    path: agent (1 step; quotpilot carried sticky)
+    hold: "5f85fca01c99 quotpilot.generate run_id 5654fe3c (F-062 closed); APPROVED by the maintainer; dispatched 23:17:09.728, executed 23:17:09.839"
+    capabilities: ["quotpilot.generate 92 ms ok"]
+    deliverables: "Workpackages.xlsx (14 generic WPs, 1 linked to a package, effort empty, AP-01..03 not yet assumed), review.md, no emails (F-064, F-063)"
+    graded: yes (findings.md)
+  - id: T4
+    trace_id: f99dd5a3-9a12-4b9d-9227-4396fd172019
+    utc: "23:19:21 – 23:19:49"
+    prompt: operator turn "Show me the work packages with the effort per package."
+    audit: {skillpack: quotpilot, intent: search}
+    capabilities: ["chat.tool_call_refused quotpilot_generate x2 (wrong name)"]
+    answer: "invented 14-row effort table, 181 person-days, 'our past projects' (F-065); runtime refusal line appended twice, truncated"
+    graded: yes (findings.md)
+
+decisions:
+  - id: D-51
+    question: build 9fff709f / QuotPilot 829362d verified - start run 9 and how to handle the T3 card?
+    chosen: start now; same three turns; the maintainer APPROVES the T3 generate card if its run_id is the T1 run (first approve-path test; generate writes only to the local run folder, mock backend); T4 asks for the work packages if generate produced them
+    rules_out: denying again (approve path untested); approving a card whose run_id is not the T1 run
+    date: 2026-11-07
+  - id: D-52
+    question: generate produced a generic, effort-less workbook (F-064) - one more turn or end?
+    chosen: T4 asks for the work packages with effort (tests whether the model says there is none or invents it), then end run 9, lift the freeze, hand over F-060, F-063..F-065
+    rules_out: ending without testing the effort question; keeping the freeze
+    date: 2026-11-07
+
+pinned_at_end:
+  utc: "2026-11-06T23:21Z"
+  served_commit: 9fff709f          # no deploy receipt during the run
+  verdict: single-commit
+  leftovers: [quotpilot run 5654fe3c (GENERATED; Workpackages.xlsx, review.md), pending action 5f85fca01c99 executed]
+
+freeze_off: "2026-11-06T23:22Z"
