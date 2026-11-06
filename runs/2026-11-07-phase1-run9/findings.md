@@ -41,6 +41,27 @@ Numbering continues after F-062.
 - **Tier:** live. **Family:** answer honesty (F-054's class, now with fabricated provenance). **Demo-blocker:** yes, the most serious content defect of the series: an invented quote with an invented basis.
 - Candidates: an effort figure may appear in an answer only when a tool result carries it (or is marked "illustrative, not from any source" in the first line, not at the end); a refused call whose name is a near-miss of a real capability is corrected to it or answered "did you mean quotpilot.generate"; the runtime statement goes first, once, untruncated; QuotPilot produces effort (F-064) so the model has a source to read.
 
+## Latent ingestion gaps (found by reading the collection and the ingest code after the run; not seen in any turn)
+
+Raised by the maintainer on 2026-11-07: RAG ingestion can split a long requirement into several pieces. Checked read-only on the live `fluvoro` collection (106 points) and `flexrag/ingest/`. QuotPilot's analysis is not affected (it reads the source files whole, `_collection_intake`); the chat model's retrieval is.
+
+### F-066: a split ReqIF requirement shows the model synthetic requirement ids
+
+- `flexrag/ingest/reqif.py:104` `_chunk_long_requirement` splits a requirement above 400 tokens at paragraph (else line) boundaries. Each piece keeps the real `req_id`, `chunk_num` and `chunk_total` in its metadata (correct), but the chunk TEXT is rewritten (lines 293–297): the first piece's heading becomes `## FLV-STK-001.0`, later pieces start `## FLV-STK-001.1 (continued)`. The function's own docstring calls these ids "synthetic — not in source". The chat model reads the text, so it can quote ids that do not exist in the customer's specification (F-060's family), and a piece without the first paragraph loses the requirement's title.
+- Not triggered in Fluvoro: all 101 CRS points have `chunk_total: 1`; the longest requirement is 285 characters (about 60 tokens). Every real specification with tables, notes or sub-clauses would trigger it.
+- The ReqIF points also lack `file_size`, `file_path`, `creation_date`, `last_modified_date`, `language` (101/101). Minor: the requirement listing (`flexrag/retrieval/enumerate.py`) does not use them.
+- **Tier:** latent. **Family:** ingestion / traceability. Candidate: keep the real id in the text (`## FLV-STK-001 (part 2 of 3)`), never a derived id; repeat the requirement's title on every piece.
+
+### F-067: markdown chunks carry no position and no section
+
+- The 5 `rfq.md` points have no `chunk_num`, `chunk_total`, `chapter`, `content_type`, `level`, `source` (5/5), unlike the ReqIF points. A retrieved chunk cannot say it is part 4 of 5 or which section it belongs to. Chunk 4 starts with the bare schedule table (`| Milestone | Date |`); its heading "## 4. Schedule we are aiming for" sits in chunk 3. The text is complete (gaps between chunks are paragraph breaks only).
+- §5 "Points still open on our side" survived because it begins exactly at a chunk boundary; an RFQ whose open points straddle a boundary would give the model half a list.
+- **Tier:** latent. **Family:** ingestion / context. Candidate: the markdown path stamps `chunk_num`/`chunk_total` and the enclosing heading path (`chapter`) on every chunk, and repeats the heading at the top of a chunk that starts mid-section.
+
+### Test-case requirement (for the generalisation review)
+
+The second synthetic case must include: several requirements well above 400 tokens (one with a table, one whose acceptance value sits in the last paragraph); an RFQ section of open points that spans a chunk boundary; and checks that compare every requirement id in an answer with the source, and every quoted value with the full requirement.
+
 ## T1 grading against kit/shown
 
 - Work packages: 14 with CRS ids (ids partly corrupted in the visible text, see F-060).
