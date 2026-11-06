@@ -1,0 +1,66 @@
+run: 2026-11-06-phase1-run6
+phase: 1, sixth run (RFQ analysis) on the F-047/F-048/F-049 fixes (fe5ea4a5); same T1 prompt and protocol as run 5
+status: freeze on; T1 answered (first answer with QuotPilot content in the series; F-050..F-052), T2 (customer answer) pending
+
+pinned_at_start:
+  utc: "2026-11-06T10:31Z"
+  served_commit: fe5ea4a5              # /health code_current true; core pid 90092 (started 10:02:22Z)
+  deploy_receipts: [{kind: deploy, previous: ab6dc722, commit: fe5ea4a5, ts: "2026-11-06T10:02:06Z", tests: passed, files_changed: 1768}, {kind: restart, ts: "2026-11-06T10:02:25Z"}]
+  manager: {pid: 90099}
+  facade: {pid: 90116, contract: 78, client_chat_budget_s: 180}   # restarted with the deploy; footer to be read at T1
+  mybrain: fb0b2b6                     # local checkout (v78 + RE070), unchanged since run 5
+  chat_model: gpt-oss:20b              # Ollama empty before the run
+  quotpilot: enabled, guard ok, digest c415df0b799b99bd; core imports QuotPilot develop f089874 (Platform audit)
+  qpmt_backend: mock
+  autonomous_loop: off
+  nl_schedule_autodetect: off
+  episodic_enabled: false              # flexcortex.conf line 140 (D-39), unchanged
+  membership_project_fluvoro_operator: ["fluvoro", ""]   # read-only, 10:30Z
+  fluvoro_collection_points: 106
+  machine: not rebooted (uptime 6 days); load 1.7
+  deviation: a second manager.py (pid 66513, since 2026-10-31, port 18092, cwd GitHub/wt-re006) runs outside the Sandbox tree; predates every run, not on the Sandbox ports
+
+freeze:
+  on: "2026-11-06T10:32Z"              # sent to Platform audit
+  acknowledged: true                   # Platform audit: no deploy, restart, conf edit, live probe, spare-port core or model load; its work stays in worktrees/unit tests (RE106 on feature/re106 from fe5ea4a5), RE092 guard keeps the unit tier off Ollama
+
+changed_variables_since_run5:
+  - commit: fe5ea4a5
+    utc: "2026-11-06T10:02Z"
+    items:
+      - F-047 pre-fetch never fires a capability that requires an argument (I192)
+      - F-048 tool rounds bounded by the client's 180 s budget (refusal cause budget under 45 s left; replayed next turn)
+      - F-048 quotpilot.analyze final=true after one completed run; assist budgeted or skipped
+      - F-049 orphaned awaiting_approval cards moved to blocked by the sweep
+      - RE105 auth-failure metering before the credential check
+      - RE093 probe test fixed (7979654b)
+
+probes_before_run: [probe_settings_do_what_they_say green (RE105 arm 401/401/429), probe_tool_context_across_turns green (analyze once per turn; pre-fetch fired nothing with required args)]
+extra_core_restart: one, during the deploy (stale flexcore/roadmap leftovers removed); conf untouched
+
+to_check_in_t1_trace: [prompt hash on request.start, project fluvoro via membership, skillpack quotpilot, no empty quotpilot tool_failures before the first model token, analyze exactly once with final=true, no "budget" refusal or (if any) the model answers from what it has, request.complete present and answer saved in the facade sessions.json, retrieval field (RE104), no cache hit, no episodic recall, no 403, local model only]
+
+turns:
+  - id: T1
+    trace_id: b894dca7-3f96-45d3-8c01-9f28dc2184af
+    utc: "11:12:42 – 11:14:41"
+    prompt: Phase 1 turn 1 prompt, verbatim, from a code block
+    audit: {project: fluvoro, project_source: membership, project_refused: path_shaped, collection: null, intent: search, skillpack: quotpilot, skillpack_prompt: 89dac9be73c3}
+    capabilities: [knowledge.retrieve_context 646 ms, quotpilot.analyze pre-fetch tool_failure 0.01 ms (F-050), quotpilot.analyze 60.4 s (e40ef4b0, deterministic only - assist timed out F-051), skillpack.apply quotpilot]
+    answer: yes, 1 min 59 s; transcript.md
+    saved: yes (facade sessions.json session-XRTai5JsXLswqRTll-g6qOH0; in myBrain's list)
+    drafts: [e40ef4b0685b4195a27a5e27d2608d99]   # ~/.flexcortex/quotpilot/runs, DRAFT, llm_assist false
+    questions_asked: [OC-PLATFORM target software platform]   # none of RFQ §5's three open points
+    graded: yes (findings.md)
+
+decisions:
+  - id: D-44
+    question: fe5ea4a5 served and both live probes green - when does run 6 start?
+    chosen: commit the F-047 correction (d2c4eda), create run 6 and freeze now, T1 on this build
+    rules_out: preparing run 6 before the probe results; holding without a run
+    date: 2026-11-06
+  - id: D-45
+    question: T1 asked only the target software platform (OC-PLATFORM), which the answer book does not cover - how does the customer reply?
+    chosen: T2 in the same chat with the answer book's fallback sentence, verbatim, and nothing else; run 6 continues
+    rules_out: answering the RFQ §5 points unasked; ending run 6 after T1 (F-050..F-052 go to Platform audit after the run)
+    date: 2026-11-06
