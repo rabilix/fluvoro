@@ -43,6 +43,12 @@ Numbering continues after F-049.
 - The person sees "1 call · 1 not ok" and a complete, confident quote basis. Nothing in the answer says that the generate step was refused and that the numbers are not the tool's.
 - **Tier:** live. **Family:** answer honesty after a refused action (same shape as RE104 for retrieval: a failed step must be said). **Demo-blocker:** yes. Candidates: a refused write on the chat path is said in the answer ("not run: …"), and a pack that owns the quote basis (quotpilot) is the only one allowed to state effort; the chat model does not fill a refused tool's output from its own knowledge.
 
+## F-055: myBrain shows every tool call as a raw line above the answer
+
+- Each tool the model called is printed in the chat as a "›" line with the call, the model's argument strings and the first ~150 characters of the raw JSON result (T1: `quotpilot.analyze(collection='fluvoro', files='[]', project="{'name': 'fluvoro'}", requirements='[]') → {"run_id": …, "review": "\n## Executive Summary…`), with a "Did 1 call · 1 not ok" footer. The person reads raw JSON and stringified arguments before the answer and asked why it is there.
+- Request from the maintainer (2026-11-06): show the calls collapsed, one short line per call with its name and status (ok, refused, not run), opened on click to the arguments and the raw result, so the answer stays clean and the detail stays available for debugging. The footer could be the toggle.
+- **Tier:** live, desktop presentation. **Family:** myBrain chat rendering. **Demo-blocker:** no. Priority after F-053/F-054; related to F-052 (the answer text itself carries operator instructions).
+
 ## Noted, not a finding
 
 - `server.log` has 112 lines today (00:15Z … 11:23:49Z, the last one during the run) `[neo4j] no driver (ClientError): Neo.ClientError.Security.AuthenticationRateLimit … graph retrieval will return nothing and answers will silently degrade`. `ragstack.conf` carries NEO4J_PASS as an unresolved secrets reference. Vector retrieval worked (T1 646 ms, T2 330 ms); the graph hop contributed nothing to any run. Deviation for Platform audit after the lift; not a run 6 cause.
