@@ -53,6 +53,10 @@ Held 2026-11-07 with the maintainer after Phase 1 run 9. Trigger, in the maintai
 
 - **D-60** (2026-11-07). Question: deploy Platform audit's general fix list (near-miss names, runtime statement first, refusal wording, approval audit row, F-066, F-067, F-063 open-items list, D-59 held answers) and what runs first? Chosen: deploy, then the first run of the second case; the maintainer updates myBrain for the held-answer status. Rules out: a Fluvoro check run first; holding the deploy until the case files are reviewed. F-064 and F-060 stay held.
 
+- **D-61** (2026-11-07). Question: the second case needs a project; F-045 fills a turn's project only from a person's ONE membership, so adding it to fluvoro-operator gives `ambiguous:2` and no project-scoped pack. How? Chosen: a separate operator `case2-operator` with only the `case2` membership and its own myBrain profile and key (issued by the maintainer). Rules out: moving fluvoro-operator's membership and restoring it; keeping two memberships (known failure).
+- **D-62** (2026-11-07). Question: authorise the live writes for the case? Chosen: project `case2` (department engineering), principal and membership now; knowledge_base folder and ingestion only at run start under a freeze, after the maintainer's review of the files. Rules out: ingesting before the review; holding all writes.
+- **Generalisation note (from D-61):** F-045's one-membership fallback fails for any person in two projects, the normal real-world case; the desktop does not name a project, so project-scoped packs drop out. Mixed fix per D-53; handed to Platform audit to rework as a general rule.
+
 ### Second test case: required shape
 
 | Dimension | Required |
