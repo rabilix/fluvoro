@@ -1,6 +1,6 @@
 run: 2026-11-06-phase1-run5
 phase: 1, fifth run (RFQ analysis) after F-044/F-045/F-046 fixes; first run where quotpilot should be selectable from myBrain
-status: paused after turn 1 (D-41); quotpilot selected and ran for the first time since run 3, but the turn was cancelled before an answer (F-047, F-048); freeze stays on
+status: ended after turn 1 (D-41, D-43); quotpilot selected and ran for the first time since run 3, but the turn was cancelled by myBrain's 180 s budget before an answer (F-047, F-048); freeze lifted, run 6 on the fix
 
 turns:
   - id: T1
@@ -137,6 +137,13 @@ decisions:
     chosen: Platform audit closes them the supported way and fixes the gap
     rules_out: this session writing to the live work_items.db (system transition); clearing the other 14 "t" backlog items and project p1 now
     date: 2026-11-06
+  - id: D-43
+    question: T1 cannot finish on this build (three tool rounds + thinking exceed myBrain's 180 s CHAT_TIMEOUT_MS) - how to go on?
+    chosen: lift the freeze; Platform audit reproduces F-047 and fixes F-047/F-048 (pack finality after analyze, tool rounds bound to the client budget, assist budget); run 6 on the fixed build; the four run switches stay until the series ends
+    rules_out: raising myBrain's timeout and resending T1 now; keeping the freeze and waiting
+    date: 2026-11-06
+
+freeze_off: "2026-11-06T09:05Z"   # "freeze lifted" sent after D-43
 
 revert_after_series:
   conf_backup: scratchpad flexcortex.conf.before-run5 (session-local)
