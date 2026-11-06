@@ -1,0 +1,117 @@
+run: 2026-11-06-phase1-run7
+phase: 1, seventh run (RFQ analysis) on the F-050/F-053/F-054 build (74da9f8c) and QuotPilot 32a392e; same T1 prompt and protocol as runs 5 and 6
+status: ended after turn 3 (D-48); F-050, F-053, F-054 closed on live evidence, F-051 partial, F-052 open with exact cause; agent path lost the decision and left an undecidable held write (F-056..F-058, demo-blockers), raw approval card and slow desktop (F-059); freeze lifted, run 8 on the fixes
+
+pinned_at_start:
+  utc: "2026-11-06T12:58Z"
+  served_commit: 74da9f8c              # /health code_current true; core pid 8411 (restarted 12:52:35Z)
+  deploy_receipts: [{kind: deploy, previous: 243f3662, commit: 74da9f8c, ts: "2026-11-06T12:52:28Z", tests: passed}, {kind: restart, ts: "2026-11-06T12:52:35Z"}]
+  manager: {pid: 90099}                # untouched since 11:02Z
+  facade: {pid: 90116, contract: 78, client_chat_budget_s: 180}   # untouched since 11:02Z; footer shows "backend stale" (two core-only deploys since; no facade file changed) - maintainer chose not to restart; deviation, not a cause
+  mybrain: 74e8268                     # dev build restarted 13:15 local (fix/markdown-table-cells, fix/chat-context-menu)
+  chat_model: gpt-oss:20b              # Ollama empty before the run
+  quotpilot: "develop 32a392e (sticky true, analyze anyOf, assist outcome on the draft, pack speaks to the person); enabled, guard ok"
+  qpmt_backend: mock
+  autonomous_loop: off
+  nl_schedule_autodetect: off
+  episodic_enabled: false              # flexcortex.conf line 140 (D-39), unchanged
+  membership_project_fluvoro_operator: ["fluvoro", ""]   # read-only, 12:55Z
+  fluvoro_collection_points: 106
+  machine: not rebooted (uptime 6 days)
+  deviation: load average 48 on 16 cores at start (macOS mediaanalysisd at 310 % CPU since 2026-11-04, swapouts high); not FlexCortex; may slow Ollama and the QuotPilot assist (F-051) - D-47
+
+freeze:
+  on: "2026-11-06T12:58Z"
+  acknowledged: true                   # Platform audit 12:59Z: no deploy, restart, conf edit, live probe, spare-port core, model load, and no full gate run (CI venv CPU) until the lift; FlexCortex session 13:00Z: same holds, worktree-only work
+
+changed_variables_since_run6:
+  - commit: 243f3662
+    utc: "2026-11-06T11:49Z"
+    items: [RE106 one retrieval pipeline (store unreachable is said), B391 Distill learns only from successful turns]
+  - commit: 74da9f8c
+    utc: "2026-11-06T12:52Z"
+    items:
+      - F-053 sticky pack keeps the session for the carry window unless another pack is a clear switch (3 own hits and 3 more than the sticky pack; slash command or collection change always wins); audit skillpack.carried reason "sticky workflow within the carry window"
+      - F-054 a write the model asks for on the chat path is said to the person ("[runtime] ... did not run on this path") and the model is told not to produce the artifact
+      - F-054 a go-ahead followed by an action verb ("Proceed with ... and generate ...") routes to the agent path; quotpilot.generate held for approval there
+      - F-050 the pre-fetch no longer fires quotpilot.analyze empty (anyOf declared)
+  - quotpilot: f089874 -> 32a392e
+    items: [sticky true, analyze inputs as anyOf, draft carries assist outcome (answered | no_answer within budget | skipped | disabled), pack never relays operator rules or tool syntax to the person (F-052)]
+  - mybrain: fb0b2b6 -> 74e8268 (table cells, context menu; maintainer)
+
+probes_before_run: [probe_tool_context_across_turns PASS (RE093 + F-047), probe_one_retrieval_pipeline PASS 10/10; no live probe yet for the sticky carry and the refused-write statement - run 7 is their first live measurement (Platform audit)]
+
+to_check_in_t1_trace:
+  - prompt hash on request.start; project fluvoro via membership; skillpack quotpilot
+  - no empty quotpilot tool_failure before the first model token (F-050)
+  - analyze once with final; draft.assist value (F-051)
+  - answer without "say Go" or tool syntax (F-052); RFQ §5 points asked or not
+  - request.complete and chat saved; no cache hit; no episodic recall; local model only
+to_check_in_t2_trace:
+  - skillpack.carried with reason "sticky workflow within the carry window" (F-053)
+  - quotpilot.decide called with the run_id; draft OC-PLATFORM answered
+to_check_in_t3_trace:
+  - agent path; quotpilot.generate held for approval, or a "[runtime] ... did not run on this path" line in the answer
+  - no invented effort (F-054)
+turns:
+  - id: T1
+    trace_id: c16a1f04-ee89-49a1-bf84-26dab47d985d
+    utc: "12:58:02 – 13:00:03"
+    prompt: Phase 1 turn 1 prompt, verbatim, from a code block
+    audit: {project: fluvoro, project_source: membership, project_refused: path_shaped, collection: null, intent: search, skillpack: quotpilot, skillpack_prompt: 0bccde844023}
+    capabilities: [knowledge.retrieve_context 611 ms, quotpilot.analyze 60.4 s (32d75bca, deterministic only - assist no_answer F-051), skillpack.apply quotpilot]
+    pre_fetch_failures: 0              # F-050 closed
+    answer: "yes, 2 min 0 s; review fenced verbatim incl. the say-Go/tool-syntax block (F-052 open); transcript.md"
+    saved: yes (session-BSUx4HYijHSCFH4apnIYNu3_)
+    drafts: [32d75bcacd9840a5b4e35c9fb942343c]   # DRAFT, llm_assist false, no assist field on the file
+    questions_asked: [OC-PLATFORM target software platform]   # none of RFQ §5's three open points
+    load_at_end: "6.2 (1 min) / 13.7 (5 min)"
+    graded: yes (findings.md)
+  - id: T2
+    trace_id: ea11fa25-19af-47b4-9465-8943a1280f99
+    utc: "13:03:20 – 13:03:54"
+    prompt: customer answer to the platform question = answer book fallback sentence, verbatim (D-45)
+    audit: {project: fluvoro, project_source: membership, intent: action, skillpack: quotpilot, carried: "sticky workflow within the carry window", skillpack_prompt: 0bccde844023}
+    capabilities: [knowledge.retrieve_context 315 ms, quotpilot.decide 1.4 ms (OC-PLATFORM = RTOS, run 32d75bca), skillpack.apply quotpilot]
+    quotpilot: carried (F-053 closed); draft updated 13:03:30Z - platform RTOS High, 16 packages, 0 open decisions
+    answer: "yes, 34 s; updated review relayed verbatim (F-052 open)"
+    saved: yes
+    graded: yes (findings.md)
+  - id: T2-repeat
+    trace_id: f7c3f369-93f9-4f39-90e2-8d4902638e51
+    utc: "13:07:30 – 13:07:57"
+    prompt: the T2 sentence sent a second time by the maintainer (deviation, accidental)
+    audit: {skillpack: quotpilot, carried: "sticky workflow within the carry window", intent: action}
+    capabilities: [knowledge.retrieve_context 91 ms, skillpack.apply quotpilot]
+    quotpilot: carried; no tool call; draft unchanged (idempotent)
+    answer: "yes, 27 s; updated review re-pasted verbatim with the say-Go block; closing sentence states the RTOS assumption"
+    graded: deviation only
+  - id: T3
+    trace_id: 37e2ae25-a2ab-4ec5-90f2-4d78332430a8
+    utc: "13:11:37 – 13:14:00"
+    prompt: operator turn "Proceed with RTOS and generate the work packages."
+    path: agent (plan of 3 steps; quotpilot carried sticky, candidate agent 0 hits)
+    capabilities: [quotpilot.analyze 60.4 s (new run a8e167a3, project Unknown), quotpilot.decide x3 failed (whole step-1 dict as run_id; TypeError, then run_id must be a 32-char hex token), quotpilot.generate held for approval 4bb5382a5909]
+    outcome: "delivery gate halted on step 2; approval pending; F-054 holds (no invented effort)"
+    deny_attempt: "Deny button ~13:16Z -> 'no pending action to deny'; card gone after reload; record still pending under tenant siimplex, facade decides under tenant operator (F-057)"
+    graded: yes (findings.md F-056..F-059)
+
+decisions:
+  - id: D-47
+    question: build 74da9f8c verified but the load average is 48 (macOS mediaanalysisd, not FlexCortex) - start run 7 now or wait?
+    chosen: start now; the load is pinned as a deviation; an assist timeout (F-051) under this load is graded with that caveat
+    rules_out: waiting for the load to settle; killing the system daemon from this session
+    date: 2026-11-06
+  - id: D-48
+    question: T3 left a held write nobody can decide (F-057) and the agent path discarded the T2 decision (F-056) - how to go on?
+    chosen: end run 7 after T3, commit, lift the freeze, hand F-056..F-059 (and F-051/F-052 still open) to Platform audit; the stuck pending action 4bb5382a5909 is withdrawn by Platform audit the supported way; run 8 on the fixes
+    rules_out: approving the broken generate call; this session touching the pending-action store; keeping the freeze
+    date: 2026-11-06
+
+pinned_at_end:
+  utc: "2026-11-06T13:18Z"
+  served_commit: 74da9f8c          # no deploy receipt during the run
+  verdict: single-commit
+  leftovers: [pending action 4bb5382a5909 (quotpilot.generate, tenant siimplex, status pending, broken run_id argument), quotpilot runs 32d75bca (T1/T2 draft with RTOS applied) and a8e167a3 (agent-path re-analysis, project Unknown)]
+
+freeze_off: "2026-11-06T13:25Z"   # "freeze lifted" sent after T3 and the record
