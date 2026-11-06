@@ -42,8 +42,24 @@ Held 2026-11-07 with the maintainer after Phase 1 run 9. Trigger, in the maintai
 - **D-53** (2026-11-07). Question: the review found several fitted or mixed fixes (RE093 carry, F-053 thresholds, F-054 routing phrase, F-056, F-052 prompt wording, the RFQ open-points reader, the probe) — how to handle them? Chosen: keep them all; test them first on a second synthetic case with paraphrased prompts and repeated runs; Platform audit reworks only those that break, as general rules. Rules out: reworking the fitted ones before a second case exists; reverting them.
 - Earlier in the same review (recorded in the cross-session hand-off, 2026-11-07): Platform audit continues the general fixes and holds the fitted ones; no run-10 deploy until the review is done.
 
-## Open in this review
+- **D-54** (2026-11-07). Question: what is the second test case? Chosen: a new fictional customer and product in another domain, with its own RFQ, specification and answer book. Rules out: a Fluvoro variant only; both with the variant first.
+- **D-55** (2026-11-07). Question: input formats? Chosen: requirements in Excel, RFQ in Word (intake paths Fluvoro never used). Rules out: ReqIF + markdown again; ReqIF + PDF.
+- **D-56** (2026-11-07). Question: may Platform audit and the FlexCortex session see the case? Chosen: blind until graded; they receive only findings after a run. Rules out: sharing the shape; sharing the content.
+- **D-57** (2026-11-07). Question: repeats per build? Chosen: 5 per build (key turns), known answers written before the first run. Rules out: 1 (single samples misled us), 3.
 
-- The shape of the second test case (domain, format, long requirements per F-066/F-067, open points across a chunk boundary, paraphrased requests, customer answers in prose or another order, repeats per build).
+### Second test case: required shape
+
+| Dimension | Required |
+|---|---|
+| Domain | not consumer garden / motor-solar; own product, customer, packages |
+| Requirements | Excel; several requirements well above 400 tokens (one with a table, one with its acceptance value in the last paragraph); ids in another scheme than FLV-STK |
+| RFQ | Word; open points under another heading and phrasing, not "whether A or B"; one section across a chunk boundary |
+| Requests | three paraphrases of the opening request, including a short one and a German one |
+| Customer answers | in prose, out of the asked order, one partial; answer book written before any run |
+| Follow-ups | "go ahead", "make the quote", and one genuine task switch mid-conversation |
+| Grading | known answers (expected packages, expected questions, expected ids) fixed before the first run; 5 repeats per build |
+| Isolation | same rule as Fluvoro: only the shown part is ingested; plus D-56 blindness toward the platform sessions |
+
+## Open in this review
 - Whether quote content (F-064, F-065) is this series' to chase or QuotPilot's own roadmap.
 - What the handover set out to test beyond Phase 1 (step 6, team and board, never started).
