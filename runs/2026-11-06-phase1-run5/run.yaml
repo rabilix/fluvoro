@@ -1,0 +1,147 @@
+run: 2026-11-06-phase1-run5
+phase: 1, fifth run (RFQ analysis) after F-044/F-045/F-046 fixes; first run where quotpilot should be selectable from myBrain
+status: paused after turn 1 (D-41); quotpilot selected and ran for the first time since run 3, but the turn was cancelled before an answer (F-047, F-048); freeze stays on
+
+turns:
+  - id: T1
+    trace_id: 6ef802a3-f540-4424-a8e6-b4d7c9c467af
+    utc: "07:36:53 – cancelled 07:40:11"
+    prompt: Phase 1 turn 1 prompt, verbatim, without the quote bar
+    audit: {project: fluvoro, project_source: membership, project_refused: path_shaped, collection: null, intent: search, skillpack: quotpilot, skillpack_prompt: 89dac9be73c3}
+    capabilities: [knowledge.retrieve_context 627 ms, 5 quotpilot tool_failures with no arguments, quotpilot.analyze 58 s (6a135f31 LLM-assisted), quotpilot.analyze 60 s (f20eedc4 deterministic)]
+    answer: none ("did not answer in time" at 08:38 local; no request.complete)
+    saved: no (core session holds the user row only; facade sessions.json not written, so the chat is not in myBrain's list)
+    drafts: [6a135f31bbf847048981f88da39b7abd, f20eedc461cb45f29c6b65006b725dac]   # ~/.flexcortex/quotpilot/runs, mock backend, DRAFT
+    deviations: [footer "backend stale" (facade not restarted since 2026-11-05 22:28Z), one facade.handshake_refused invalid_key at 07:35:46Z before the RBAC handshake]
+    graded: yes (findings.md)
+
+pinned_at_start:
+  utc: "2026-11-06T07:32:14Z"          # core restart for the episodic switch (D-39)
+  served_commit: ab6dc722              # code_current true; core pid 74757
+  manager: {pid: 16732}                # restarted during RE103, manager.py unchanged since (Platform audit)
+  facade: {pid: 15693, contract: 78}   # up since 2026-11-05 22:28; no facade file changed since (Platform audit); footer to be read at T1
+  mybrain: fb0b2b6                     # local checkout (v78 + RE070); running build to be confirmed by the maintainer
+  chat_model: gpt-oss:20b              # ragstack.conf CHAT_MODEL; Ollama empty before the run
+  qpmt_backend: mock
+  autonomous_loop: off
+  nl_schedule_autodetect: off
+  episodic_enabled: false              # new 4th run switch (D-39), flexcortex.conf line 140
+  membership_project_fluvoro_operator: ["fluvoro", ""]   # read-only on the live tree, 07:32Z
+  quotpilot: installed and selectable (Platform audit; flx agent list digest c415df0b799b99bd)
+  fluvoro_collection_points: 106
+  machine: not rebooted since 2026-10-31 (D-38); no crashes since the 2026-11-04 12:21-12:31 swap event; load 1.4
+
+freeze:
+  on: "2026-11-06T07:35Z"              # sent to Platform audit (also the FlexCortex [ba227a] session; same session)
+  acknowledged: true                   # holds RE105 merge-deploy, restarts, live probes, spare-port cores
+  announced_exception: EPISODIC_ENABLED=false + core-only `flx runtime restart` by this session (D-39), done 07:32Z
+
+contamination_check:
+  episodic: "_episodic_siimplex holds 12 Q&A pairs scope engineering|fluvoro from runs 1-4 (2026-11-02..03), incl. the run 4 T1 prompt and the customer-answer turn; _episodic holds 16 fluvoro mentions (requirement listings 2026-11-02 and 2026-11-04). Recall switched off for the run (D-39); nothing deleted"
+  answer_cache: "_semantic_cache has 2 fluvoro mentions; RE100 drops pre-existing (unstamped) rows on first lookup, so T1 must not be a cache hit - check in the trace"
+  persistent_memory: "~/.flexcortex/memory.db did not exist; an empty one created by this session's check at 08:28 local was removed (D-40)"
+
+to_check_in_t1_trace: [prompt hash on request.start, project and project_source, skillpack (quotpilot expected), retrieval field (RE104), no cache hit, no episodic recall, no 403 (RE101), local model only (RE102)]
+
+changed_variables_since_run4:
+  # all deploys after run 4's 1f7e602c; the first five were listed in run 4's between_run4_and_run5
+  - {commit: fa1d0ec0, items: [RE033]}
+  - {commit: d9b657c0, items: [F-045 project fallback, RE034 ReqIF parser]}
+  - {commit: f46267c0, items: [F-046]}
+  - {commit: dbc0ca56, items: [RE038, RE040]}
+  - {commit: 3566067a, items: [RE037 episodic recall on, RE043 one model transport, prompt hashes]}
+  - {commit: b98a727c, utc: "2026-11-04T11:34Z", items: [RE035, RE036 identity/authority, RE041 part, RE042 part, RE045 roadmap deprecated, RE048 /app off, RE049]}
+  - {commit: 44b36661, utc: "2026-11-04T13:20Z", items: [RE032, RE042 shim, RE044/RE050 8 packs retired, RE046, B6 graph links off, RE047]}
+  - {commit: 3ef0454d, utc: "2026-11-04T15:02Z", items: [RE041 config generator, RE045 roadmap removed, facade contract v77 -> v78]}
+  - {commit: 3426d3a7, utc: "2026-11-04T15:33Z", items: [I179 requirements.scenarios, verification pack]}
+  - {commit: eeaf4253, utc: "2026-11-04T17:14Z", items: [RE051 chat path in stages, RE052, RE053 facade package, RE054]}
+  - {commit: 020474e9, items: [MEMORY_PROVIDER sqlite default, I184, I185, I186]}
+  - {commit: f0cd92c0, items: [RE070 config meaning, protected keys read-only]}
+  - {commit: 51bf0f0d, items: [RE070 setup wizard]}
+  - {commit: 54bcf8ec, items: [RE094 incl. USER_SKILLS_DIR reaches chat, QPMT registry activation]}
+  - {commit: 97abeab0, items: [I179 derivation fix, .reqifz]}
+  - {commit: 8d2735f5, items: [I181 tests.design]}
+  - {commit: c6fec140, items: [I180 TARA check/draft]}
+  - {commit: f8f4dcd7, items: [I180 HARA draft, scenarios honour classification floor]}
+  - {commit: a267464b, items: [I182 aspice.coverage, assessment.analyze no longer scores ASPICE]}
+  - {commit: e0cbbdd3, items: [RE095, RE096 JWT scope from claims]}
+  - {commit: 3269af86, items: [RE097 25 config keys deprecated]}
+  - {commit: 85b9cef7, items: [RE071 2a loopback shutdown route]}
+  - {commit: abe8131b, items: [RE098 test gate, llm_guard touched]}
+  - {commit: 5c67045d, items: [RE071 follow-up]}
+  - {commit: d6faa8cf, items: [RE099]}
+  - {commit: 2c39ae14, items: [RE100 answer cache generation stamp]}
+  - {commit: a960ea6c, items: [RE101 foreign Origin refused 403]}
+  - {commit: d6dacc6f, items: [RE102 confidential collection refused for cloud providers]}
+  - {commit: d3fbd8e5, items: [RE103 rag CLI hygiene, watcher sees .reqif/.xlsx]}
+  - {commit: ab6dc722, utc: "2026-11-06T07:01Z", items: [RE104 retrieval failures said]}
+
+open_questions: [what RE094's QPMT registry activation does (backend still mock in the conf)]
+
+decisions:
+  - id: D-32
+    question: the machine had swap-induced Python crashes (2026-11-04 12:21-12:31) - reboot relative to run 5?
+    chosen: reboot before run 5
+    rules_out: run 5 first, reboot after; postponing run 5 for the reboot
+    date: 2026-11-04
+    note: superseded by D-38
+  - id: D-33
+    question: Platform audit's 44b36661 (8 packs retired, RE032, RE042, RE046, B6, RE047) - deploy before or after run 5?
+    chosen: deploy now, then reboot
+    rules_out: run 5 on b98a727c
+    date: 2026-11-04
+    note: Platform audit deployed before receiving "deploy ok"; agreed afterwards to wait for the explicit word
+  - id: D-34
+    question: the maintainer asked to lift the hold on Platform audit's deploys (RE041, RE045)
+    chosen: 'sent "freeze lifted"; deploys announced before and after'
+    rules_out: holding RE041/RE045 until after run 5
+    date: 2026-11-04
+  - id: D-35
+    question: FlexCortex session's 3426d3a7 (I179 requirements.scenarios) - "deploy ok" or "freeze"?
+    chosen: deploy ok, reboot after its probe and eval
+    rules_out: run 5 without I179
+    date: 2026-11-04
+  - id: D-36
+    question: wave 6 (eeaf4253, RE051-RE054, chat path split) - deploy before run 5?
+    chosen: deploy ok, reboot after
+    rules_out: run 5 on 3426d3a7
+    date: 2026-11-04
+  - id: D-37
+    question: when does run 5 start?
+    chosen: after Platform audit is done, so run 5 tests the final product; the maintainer coordinates the end with the sessions
+    rules_out: starting run 5 between deploy waves
+    date: 2026-11-05
+    consequence: run 5 moved from 2026-11-04 to 2026-11-06; 25 deploys between run 4 and run 5
+  - id: D-38
+    question: no reboot has happened (uptime since 2026-10-31); no crashes since the swap event, load 1.4 - reboot first?
+    chosen: skip the reboot, start now
+    rules_out: rebooting before run 5 (supersedes D-32)
+    date: 2026-11-06
+  - id: D-39
+    question: episodic recall is on and holds 12 engineering|fluvoro Q&A pairs from runs 1-4, incl. customer answers; run 5 T1 repeats the prompt - how to handle it?
+    chosen: EPISODIC_ENABLED=false as a 4th run switch (flexcortex.conf line 140), core restart under the freeze (07:32Z), revert after the series
+    rules_out: Platform audit moving the entries aside; running with recall from earlier runs
+    date: 2026-11-06
+  - id: D-40
+    question: this session's check created an empty ~/.flexcortex/memory.db - keep or remove?
+    chosen: removed (it existed only because of the check)
+    rules_out: leaving an empty store file behind
+    date: 2026-11-06
+  - id: D-41
+    question: T1 was cancelled before an answer (F-047 tools called without arguments, F-048 analyze twice then timeout) - how to proceed?
+    chosen: record T1, pause run 5 with the freeze on, hand F-047 and F-048 to Platform audit; continue on the fix
+    rules_out: resending T1 in a new chat (same failure expected); ending run 5 and lifting the freeze now
+    date: 2026-11-06
+  - id: D-42
+    question: two "t" cards (p1/WI-7, p1/WI-21) stuck in awaiting_approval with no pending action show in myBrain's My tasks - how to remove them? (F-049)
+    chosen: Platform audit closes them the supported way and fixes the gap
+    rules_out: this session writing to the live work_items.db (system transition); clearing the other 14 "t" backlog items and project p1 now
+    date: 2026-11-06
+
+revert_after_series:
+  conf_backup: scratchpad flexcortex.conf.before-run5 (session-local)
+  switches:
+    - {key: AUTONOMOUS_LOOP_ENABLED, line: 94, to: true, when: ">= 7 days after the last Fluvoro turn"}
+    - {key: QPMT_BACKEND, line: 125, to: previous value}
+    - {key: NL_SCHEDULE_AUTODETECT, line: 137, to: true}
+    - {key: EPISODIC_ENABLED, line: 140, to: "remove the line (default true)"}
