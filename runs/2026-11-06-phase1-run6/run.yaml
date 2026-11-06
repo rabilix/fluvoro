@@ -1,6 +1,6 @@
 run: 2026-11-06-phase1-run6
 phase: 1, sixth run (RFQ analysis) on the F-047/F-048/F-049 fixes (fe5ea4a5); same T1 prompt and protocol as run 5
-status: freeze on; T1 answered (first answer with QuotPilot content in the series; F-050..F-052), T2 (customer answer) pending
+status: ended after turn 3 (D-46); T1 answered with QuotPilot content for the first time (F-050..F-052); T2 and T3 routed to other packs, the QuotPilot workflow dropped and the quote invented by the chat model (F-053, F-054, demo-blockers); freeze lifted, run 7 on the fixes
 
 pinned_at_start:
   utc: "2026-11-06T10:31Z"
@@ -52,6 +52,33 @@ turns:
     drafts: [e40ef4b0685b4195a27a5e27d2608d99]   # ~/.flexcortex/quotpilot/runs, DRAFT, llm_assist false
     questions_asked: [OC-PLATFORM target software platform]   # none of RFQ §5's three open points
     graded: yes (findings.md)
+  - id: T2
+    trace_id: 283769a8-ba9f-43d1-8a45-e0176696222d
+    utc: "11:25:04 – 11:25:16"
+    prompt: customer answer to the platform question = answer book fallback sentence, verbatim (D-45)
+    audit: {project: fluvoro, project_source: membership, intent: action, skillpack: planview, skillpack_prompt: b15a7abd97d9}
+    capabilities: [knowledge.retrieve_context 330 ms, skillpack.apply planview]
+    quotpilot: not selected, no decide call, draft e40ef4b0 unchanged (F-053)
+    answer: yes, 12 s; RTOS assumption from the chat model's own text; transcript.md
+    saved: yes
+    graded: yes (findings.md F-053)
+  - id: T3
+    trace_id: dd429a95-bc08-4c78-a41d-02d8bcf31e79
+    utc: "11:29:50 – 11:30:16"
+    prompt: operator turn (D-46) "Proceed with RTOS and generate the work packages."
+    audit: {project: fluvoro, project_source: membership, intent: action, skillpack: feature_breakdown, skillpack_prompt: 2276d8dd91e7}
+    capabilities: [knowledge.retrieve_context 125 ms, chat.tool_call_refused quotpilot.generate (not in the pack's callable set), skillpack.apply feature_breakdown]
+    quotpilot: not selected (feature_breakdown 4 keyword points vs quotpilot 2); generate refused; draft e40ef4b0 unchanged
+    answer: yes, 26 s; 14 work packages with invented person-days, total 149 (F-054); transcript.md
+    saved: yes
+    graded: yes (findings.md F-053, F-054)
+
+pinned_at_end:
+  utc: "2026-11-06T11:31Z"
+  served_commit: fe5ea4a5          # no deploy receipt during the run
+  verdict: single-commit
+
+freeze_off: "2026-11-06T11:35Z"   # "freeze lifted" sent after T3 and the record
 
 decisions:
   - id: D-44
@@ -63,4 +90,9 @@ decisions:
     question: T1 asked only the target software platform (OC-PLATFORM), which the answer book does not cover - how does the customer reply?
     chosen: T2 in the same chat with the answer book's fallback sentence, verbatim, and nothing else; run 6 continues
     rules_out: answering the RFQ §5 points unasked; ending run 6 after T1 (F-050..F-052 go to Platform audit after the run)
+    date: 2026-11-06
+  - id: D-46
+    question: T2 was routed to planview and the QuotPilot workflow dropped (F-053) - how to go on?
+    chosen: one more turn as the operator ("Proceed with RTOS and generate the work packages", carries quotpilot's keyword) to see whether the pack returns and the open run is found; then end run 6, commit, lift the freeze, hand F-050..F-053 to Platform audit
+    rules_out: ending run 6 after T2; continuing the customer protocol on this build
     date: 2026-11-06
