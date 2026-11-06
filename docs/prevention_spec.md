@@ -18,12 +18,12 @@ Probe style follows the existing live probes (`scripts/probe_*.py`): spare-port 
 1. T1 = the Phase 1 turn 1 prompt (verbatim, from `runs/2026-11-02-phase1/transcript.md`).
 2. T2 = the answer-book fallback sentence ("Customer answer to the platform question: This is not specified by us. …", 27 words).
 3. T3 = "Proceed with RTOS and generate the work packages."
-4. D = the desktop's Deny on the card T3 raised, via `POST /api/facade/v1/approvals/<id>/deny` with the facade's own key, as myBrain does.
+4. D = the desktop's Deny on the card T3 raised, via `POST /api/facade/v1/approvals/<id>/deny`, sent to the facade as the caller (the same bearer as T1–T3), as myBrain does. Which key the facade then presents to the core is the thing under test (F-057), never a probe input; the probe asserts only the outcome.
 
 **Known answers (each a named check; the probe fails on the first miss and names it).**
 - K1 T1: `request.start` carries project `fluvoro` via membership and skillpack `quotpilot`; no capability ran with empty kwargs before the first model token (F-047/F-050); `quotpilot.analyze` ran exactly once with `collection=fluvoro` and the turn's project (F-048); `request.complete` present; the facade's session list holds the chat with both rows (F-048); the answer text contains neither "say Go" nor a `quotpilot.` call string (F-052).
 - K2 T2: `skillpack.carried` with reason "sticky workflow within the carry window" before `request.start` (F-053); `quotpilot.decide` ran with the T1 run id; the draft's OC-PLATFORM is answered and the platform set; no second `analyze` (F-048).
-- K3 T3: the turn took the agent path; the pack is the same; the plan's `decide` and `generate` name the T1/T2 run id, not a new one and not a dict (F-056, F-058); `analyze` did not run again; `generate` is held, with `run_id` a 32-char hex string in the recorded kwargs (F-058); no effort number appears in any answer text (F-054).
+- K3 T3: the turn took the agent path; the pack is the same; every plan call that takes a run id names the T1/T2 run id, not a new one and not a dict (F-056, F-058); `analyze` did not run again, and a decision already applied in T2 is reused, not repeated (the probe asserts the run id on the plan's calls, not that `decide` ran); `generate` is held, with `run_id` a 32-char hex string in the recorded kwargs, or withdrawn with a reason if the plan halted (F-058); no effort number appears in any answer text (F-054).
 - K4 D: the deny answers ok; the record's status is `denied`; the facade's approval list for the caller showed the hold before and not after (F-057); a Deny of a hold whose plan was halted is accepted or the hold was already withdrawn with a reason, never "no pending action" (F-058).
 - K5 Always: the audit of every tool failure or refusal in the three turns is mirrored by a sentence in the answer the person received (§3).
 - K6 The deployed confs are unchanged; one write outside scratch (the attestation).
@@ -85,7 +85,9 @@ A review that cannot answer one of these says "not verified" for that item
 rather than approving.
 ```
 
-### 4.2 CodeRabbit — `.coderabbit.yaml` (repo root)
+### 4.2 CodeRabbit — the five path rules, placed where the CLI reads them
+
+Platform audit measured on 2026-11-06 that the CodeRabbit CLI does not read `.coderabbit.yaml` `path_instructions` (the yaml is parked on `feature/coderabbit-path-instructions`). The effective placement is the final-pass prompt the CLI reads: the five `instructions` texts below go there verbatim, each prefixed with its path. The yaml form is kept here only as the structured source of those texts.
 
 ```yaml
 reviews:
