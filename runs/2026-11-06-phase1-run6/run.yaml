@@ -80,6 +80,11 @@ pinned_at_end:
 
 freeze_off: "2026-11-06T11:35Z"   # "freeze lifted" sent after T3 and the record
 
+after_run:
+  - {utc: "2026-11-06T11:49Z", deploy: 243f3662, items: [RE106 one retrieval pipeline, B391 Distill learns only from successful turns], core_restart_only: true, quotpilot: f089874 unchanged}
+  - {utc: "2026-11-06T12:15Z", off_protocol_turn: session-Unjq5oWqX8Vx_LEgY7Lynhg5, build: 243f3662, mybrain: 74e8268, result: "F-050/F-051 reproduced; review fenced by the model; RFQ §5 points listed (transcript.md, findings.md)"}
+  - {mybrain_changed: "fb0b2b6 -> 74e8268 (fix/markdown-table-cells, fix/chat-context-menu, maintainer, 12:27-12:50 local); pin for run 7"}
+
 decisions:
   - id: D-44
     question: fe5ea4a5 served and both live probes green - when does run 6 start?

@@ -97,3 +97,15 @@ Answer "Work-Package List (RTOS – FreeRTOS/Zephyr)": a 14-row table (System Ar
 Turn duration 26 s. Pack selection: "work package" + "work packages" give feature_breakdown 4 points (priority 9); quotpilot scores 2 on "work package" (priority 10) and loses. The model still called `quotpilot.generate` (it knew the name from T1's answer in the history) and was refused. Every number in the table, the total and the "what's included" list are the chat model's own text; the QuotPilot draft e40ef4b0… is unchanged (DRAFT, platform unclear, OC-PLATFORM open) and no run was generated. See findings.md F-053 and F-054.
 
 Run 6 ended after T3 (D-46). Served commit at the end: fe5ea4a5, no deploy receipt during the run.
+
+## Off-protocol turn — 2026-11-06 12:15:41Z (13:15 local), after the run, build 243f3662
+
+Sent by the maintainer in a NEW chat, same T1 prompt, no freeze, served 243f3662 (RE106, B391; QuotPilot f089874 unchanged), myBrain dev build restarted 13:15:30 local on checkout 74e8268. Session session-Unjq5oWqX8Vx_LEgY7Lynhg5.
+
+Trace: request.start 12:15:41.69 (quotpilot, search, fluvoro via membership, skillpack_prompt 89dac9be73c3 as in T1) → retrieve_context 617 ms → `quotpilot.analyze` empty pre-fetch failure 0.01 ms (F-050) → `quotpilot.analyze` 60.4 s, run 6edddc75…, deterministic only, assist "reasoning but no content (15634 chars)" (F-051) → answer 12:17:50, 2 min 9 s, saved.
+
+Differences from run 6 T1 with the same prompt, pack prompt and model:
+
+- The model wrapped the whole QuotPilot review in a plain code fence (the stored answer holds two ``` markers, T1's none), so myBrain rendered it as a code block with a Copy button and the headings, bold markers and package table as raw markdown source; below the fence the model added its own "Open Decision(s)" section.
+- The model listed the RFQ's three §5 points (volume split, connectivity timing, hardware partner) as "Additional Clarifications Requested by the Customer", taken from the retrieved rfq.md. T1 had not.
+- Same 14 packages, same open decision, same constraints.

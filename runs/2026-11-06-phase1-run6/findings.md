@@ -49,6 +49,14 @@ Numbering continues after F-049.
 - Request from the maintainer (2026-11-06): show the calls collapsed, one short line per call with its name and status (ok, refused, not run), opened on click to the arguments and the raw result, so the answer stays clean and the detail stays available for debugging. The footer could be the toggle.
 - **Tier:** live, desktop presentation. **Family:** myBrain chat rendering. **Demo-blocker:** no. Priority after F-053/F-054; related to F-052 (the answer text itself carries operator instructions).
 
+## Off-protocol turn after the run (12:15Z, build 243f3662): same findings, different rendering
+
+- The maintainer repeated the T1 prompt in a new chat after the lift (transcript.md, last section). F-050 and F-051 reproduced exactly (empty pre-fetch analyze; 60.4 s deterministic analyze, assist reasoning-only). The answer arrived in 2 min 9 s.
+- **Why the packages table looked different:** two independent things changed, neither in the core.
+  1. The chat model put the entire QuotPilot review inside a plain code fence this time (T1 had relayed it as text). myBrain therefore showed the review as a code block with a Copy button, and the package table as raw markdown source instead of a rendered table. Same skillpack prompt hash (89dac9be73c3), same model, same pack: this is gpt-oss:20b's turn-to-turn variance in how it relays the tool result, an extension of F-052 (the review is passed through as-is, and how it lands is the model's choice). The fix Platform audit has in review for F-052 (the pack never relays its operator block; the answer is shaped for the person) addresses this.
+  2. myBrain itself was rebuilt eleven seconds before the turn: checkout 74e8268 (run 6 ran on fb0b2b6), with `fix/markdown-table-cells` (a `<br>` inside a cell is a line break, cells wrap at word boundaries; MarkdownContent.tsx) and `fix/chat-context-menu` (right-click copy/paste), merged by the maintainer 12:27–12:50 local. The table fix changes how a rendered table wraps; it did not apply here because the table was inside the fence, but it is a changed variable for run 7 (myBrain pinned at 74e8268).
+- Better than T1: the model also listed the RFQ's three §5 open points as clarifications for the customer, read from the retrieved rfq.md. Same prompt, different turn; the pack does not ask for them, so whether they appear is left to the model (grading note for run 7).
+
 ## Noted, not a finding
 
 - `server.log` has 112 lines today (00:15Z … 11:23:49Z, the last one during the run) `[neo4j] no driver (ClientError): Neo.ClientError.Security.AuthenticationRateLimit … graph retrieval will return nothing and answers will silently degrade`. `ragstack.conf` carries NEO4J_PASS as an unresolved secrets reference. Vector retrieval worked (T1 646 ms, T2 330 ms); the graph hop contributed nothing to any run. Deviation for Platform audit after the lift; not a run 6 cause.
