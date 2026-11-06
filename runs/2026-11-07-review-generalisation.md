@@ -47,6 +47,8 @@ Held 2026-11-07 with the maintainer after Phase 1 run 9. Trigger, in the maintai
 - **D-56** (2026-11-07). Question: may Platform audit and the FlexCortex session see the case? Chosen: blind until graded; they receive only findings after a run. Rules out: sharing the shape; sharing the content.
 - **D-57** (2026-11-07). Question: repeats per build? Chosen: 5 per build (key turns), known answers written before the first run. Rules out: 1 (single samples misled us), 3.
 
+- **D-58** (2026-11-07). Question: where is the blind case built? Chosen: a new local git repository without a remote, outside this repository, until the case is graded; its domain and content are recorded there only. Rules out: a private GitHub repo now; building it under this repo's kit/ (readable on the shared branch). Note: the shape table below was pushed before this decision and is readable by the platform sessions; the content is not.
+
 ### Second test case: required shape
 
 | Dimension | Required |
