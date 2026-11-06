@@ -49,6 +49,8 @@ Held 2026-11-07 with the maintainer after Phase 1 run 9. Trigger, in the maintai
 
 - **D-58** (2026-11-07). Question: where is the blind case built? Chosen: a new local git repository without a remote, outside this repository, until the case is graded; its domain and content are recorded there only. Rules out: a private GitHub repo now; building it under this repo's kit/ (readable on the shared branch). Note: the shape table below was pushed before this decision and is readable by the platform sessions; the content is not.
 
+- **D-59** (2026-11-07). Question (Platform audit's design for F-065): when is an answer held until complete so that a note on unsourced figures can open it? Chosen: hold every answer; any unsourced effort, cost or percentage figure is named in the first line. Rules out: holding only turns where a call did not run (Platform audit's recommendation, keeps streaming); keeping the note at the end. Accepted cost: no live streaming on any turn. Also agreed: figures are never deleted from the model's text; refused or unknown tools tell the model not to supply what the tool would produce.
+
 ### Second test case: required shape
 
 | Dimension | Required |
