@@ -70,6 +70,9 @@ Held 2026-11-07 with the maintainer after Phase 1 run 9. Trigger, in the maintai
 - **D-68** (2026-11-07). Question: when do the multi-project build (D-64/65/66) and held answers (D-59) deploy? Chosen: after the Codex review round passes, with probes and before/after messages; at deploy the collections are assigned (fluvoro, case2), project case2 is created and the maintainer's operator added; no ingestion until run start. Rules out: deploying the multi-project part alone first; waiting longer.
 - Incident note (2026-11-07): Docker Desktop's backend crashed at 08:54Z (Qdrant, Postgres, Neo4j down); the maintainer restarted Docker and the whole stack (`rag restart`, 10:20Z); the new core (pid 74293) logged a clean start and vanished at about 10:21Z without a log line or crash report — either the launching terminal closed or a native crash of the Homebrew Python 3.11.16 (seen segfaulting under load, no faulthandler). The FlexCortex session's deploy 211fc8a6 started the core detached at 10:23Z. Open: whether the live core needs crash tracing and the standalone interpreter.
 
+- Incident note (2026-11-07, later): the maintainer's PC crashed; it was up again at 12:28 local. Docker, core, facade and manager were down afterwards (only Ollama restarted); last deploy 211fc8a6, nothing of the series lost (no run, no freeze). Two Platform audit sessions started after the crash; this session works with the one that wrote first (socket 3567).
+- **D-69** (2026-11-07). Question: after the crash, bring the old 211fc8a6 stack up first, or wait for the approved deploy? Chosen: wait; FlexCortex comes back with the D-59 + D-64/65/66 deploy once Platform audit's gate and reviews pass; the maintainer starts Docker Desktop. Rules out: an extra restart on 211fc8a6; the maintainer starting the stack by hand. Consequence: myBrain is unavailable until the deploy.
+
 ### Second test case: required shape
 
 | Dimension | Required |
