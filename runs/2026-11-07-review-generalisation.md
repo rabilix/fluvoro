@@ -57,6 +57,8 @@ Held 2026-11-07 with the maintainer after Phase 1 run 9. Trigger, in the maintai
 - **D-62** (2026-11-07). Question: authorise the live writes for the case? Chosen: project `case2` (department engineering), principal and membership now; knowledge_base folder and ingestion only at run start under a freeze, after the maintainer's review of the files. Rules out: ingesting before the review; holding all writes.
 - **Generalisation note (from D-61):** F-045's one-membership fallback fails for any person in two projects, the normal real-world case; the desktop does not name a project, so project-scoped packs drop out. Mixed fix per D-53; handed to Platform audit to rework as a general rule.
 
+- **D-63** (2026-11-07). Question (maintainer: "In the future, i will have a dozen of projects running under my profile"): a separate operator per project only works around F-045. How to go on? Chosen: Platform audit first makes one profile work with many projects (the turn's project from the chat or the named collection, retrieval kept inside that project's collections); the second case then runs on the existing operator with both memberships, testing the real setup including cross-project leakage. Supersedes D-61 (no case2-operator; the setup commands given to the maintainer are not needed). Rules out: running the case now on a separate profile; running it on two memberships unfixed. Consequence: the second case starts after this fix.
+
 ### Second test case: required shape
 
 | Dimension | Required |
