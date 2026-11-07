@@ -61,6 +61,8 @@ Held 2026-11-07 with the maintainer after Phase 1 run 9. Trigger, in the maintai
 
 - **D-64** (2026-11-07). Question: Platform audit's design for one operator with many projects (projects own collections; turn project from desktop, session, named collection, single membership, else asked once; retrieval narrowed to the project's collections on every door; desktop project chip) and its open points. Chosen: accepted; unassigned collections fail closed in project turns; the ask-once lists every membership; in addition memory (episodic recall, answer cache, facts store) and QuotPilot runs are project-bound, and a turn naming another project's collection is told to switch. Rules out: memory and runs per person only; unassigned collections readable everywhere.
 
+- **Finding from D-64 (Platform audit, read in code 2026-11-07):** the answer cache and episodic replay are keyed by `principal_scope_key(user, dept, all of the person's projects)` (`scripts/routers/_deps.py`), not by the turn's project; the facts store by tenant only; and the replay lookup runs before project resolution. So one operator in two projects shares one cache and one episodic memory across both today: a latent cross-project leak that a single-project test like Fluvoro cannot show. The D-64 build keys cache, episodic and facts by the turn's resolved project (existing rows become the no-project bucket) and resolves the project before the first memory read.
+
 ### Second test case: required shape
 
 | Dimension | Required |
