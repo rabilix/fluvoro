@@ -59,6 +59,8 @@ Held 2026-11-07 with the maintainer after Phase 1 run 9. Trigger, in the maintai
 
 - **D-63** (2026-11-07). Question (maintainer: "In the future, i will have a dozen of projects running under my profile"): a separate operator per project only works around F-045. How to go on? Chosen: Platform audit first makes one profile work with many projects (the turn's project from the chat or the named collection, retrieval kept inside that project's collections); the second case then runs on the existing operator with both memberships, testing the real setup including cross-project leakage. Supersedes D-61 (no case2-operator; the setup commands given to the maintainer are not needed). Rules out: running the case now on a separate profile; running it on two memberships unfixed. Consequence: the second case starts after this fix.
 
+- **D-64** (2026-11-07). Question: Platform audit's design for one operator with many projects (projects own collections; turn project from desktop, session, named collection, single membership, else asked once; retrieval narrowed to the project's collections on every door; desktop project chip) and its open points. Chosen: accepted; unassigned collections fail closed in project turns; the ask-once lists every membership; in addition memory (episodic recall, answer cache, facts store) and QuotPilot runs are project-bound, and a turn naming another project's collection is told to switch. Rules out: memory and runs per person only; unassigned collections readable everywhere.
+
 ### Second test case: required shape
 
 | Dimension | Required |
