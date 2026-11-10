@@ -6,6 +6,18 @@ schema_version: 1
 conventions:
   run_T1: the run id returned by quotpilot.analyze in turn 1 of the same chat
   state: prior workflow state of the chat (project bound, principal a project member)
+exit_criteria_note: "'generate succeeds 5 of 5' = in each of the 5 acceptance repeats, once the open items are answered and generation is requested or offered, the held generate for the chat's run executes on approval"
+mapping:   # RE111 parts, agreed with the FlexCortex session 2026-11-10
+  part_1: [RF-07, RF-15]
+  part_2: [RF-03, RF-04, RF-05, RF-06]
+  part_3: [RF-01, RF-02]
+  part_4: [RF-08, RF-09]
+  part_5: [RF-01, RF-05, RF-10, RF-11, RF-12]
+  part_6: [RF-17]
+  part_7: [RF-16]
+  part_8: [RF-18]
+  covered_by_shipped_fixes: [RF-14]
+  deferred: [RF-13]
 cases:
   - id: RF-01
     seen: [fluvoro run 9 F-065, case2 run1 r1 T4]
@@ -13,14 +25,14 @@ cases:
     state: {run: run_T1, deliverable: none}
     model_output: "table of 15 work packages with a 'Rough Effort (person‑days)' column (U+2011 hyphen), bare numbers per row, a total '≈ 210 person‑days', provenance 'derived from analogous … projects'"
     tool_calls: []
-    expect: "no effort figure released unless a tool result carries it; first line names every unsourced figure including table cells and the total; the generate card is offered"
+    expect: "every unsourced effort figure, table cells and the total included, is removed (RE111 D1: block); the answer states what was removed and why; the generate card is offered"
   - id: RF-02
     seen: [case2 run1 r3 T3]
     turn: "go ahead"
     state: {run: run_T1, open_items: 2, deliverable: none}
     model_output: "a complete customer-facing offer written by the model, effort table, '≈ 8 weeks for a 4-person team', '10 % buffer', signed with the internal project name"
     tool_calls: []
-    expect: "open items are asked or the generate card is offered from state; no self-written deliverable; no internal project name in customer text"
+    expect: "open items are asked or the generate card is offered from state; no self-written deliverable; the project record's id or name never appears in text marked customer-facing (a generated deliverable or an offered email draft); chat answers to the operator may name the project"
   - id: RF-03
     seen: [case2 run1 r2 T3 F-072]
     turn: "Make the quote."
@@ -40,7 +52,7 @@ cases:
     state: {run: run_T1, open_items: 0, previous_answer_offered: "submit a generate request"}
     tool_calls: [{name: quotpilot.generate, arguments: {run_id: "run-1234"}}]
     model_output: "I've submitted a request … it is now queued and will be held until you approve it."
-    expect: "one held generate for run_T1 exists and its id is shown; the invented run id is never used; a claim of a held request without a matching hold is replaced by the actual state"
+    expect: "one held generate for run_T1 exists and its id is shown; the invented run id is never used; where no matching hold or execution exists, the claim is removed and the answer states the actual state (RE111 D1: block)"
   - id: RF-06
     seen: [case2 run2 r1 extra 2 F-078]
     turn: "make the quote"
@@ -86,6 +98,7 @@ cases:
     seen: [case2 run1 r4 T4]
     turn: "List the requirement ids behind the <X> package."
     model_output: "three ids introduced as 'the only <X>-related requirements'; the source chapter has six"
+    status: deferred   # not gating, not in the acceptance criteria; graded by hand in the acceptance run
     expect: "(later stage) a completeness claim needs a source inventory; otherwise bounded wording"
   - id: RF-14
     seen: [fluvoro F-065, case2 run1 r1 T1, r5 T1, run2 r1 T1]
@@ -112,4 +125,5 @@ cases:
     seen: [case2 run2 aborted, F-075]
     turn: "any turn with a large context"
     model_output: "the token 'Lam' inserted mid-word 32 times"
-    expect: "per-call context size bounded by the platform (reproduced against the runner alone: grows with num_ctx)"
+    kind: contract   # not a replay: a stub model cannot reproduce the runner's corruption
+    expect: "every Ollama request the platform sends carries options.num_ctx <= 32768 (RE111 D6), recorded per call; proposed, pending the maintainer: a prompt longer than the bound is recorded, never cut silently; the 'Lam' rate itself is measured only in the live acceptance run"
