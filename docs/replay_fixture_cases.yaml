@@ -1,0 +1,115 @@
+# Replay fixture raw material for docs/concept_code_owned_workflow.md, part 9.
+# Each case is a model behaviour OBSERVED in a live run, reduced to its shape. No case content:
+# requirement ids, values and texts are placeholders (SYN-…) to be replaced by synthetic data in the tests.
+# "expect" is the behaviour the adopted concept requires, not what the build did at the time.
+schema_version: 1
+conventions:
+  run_T1: the run id returned by quotpilot.analyze in turn 1 of the same chat
+  state: prior workflow state of the chat (project bound, principal a project member)
+cases:
+  - id: RF-01
+    seen: [fluvoro run 9 F-065, case2 run1 r1 T4]
+    turn: "Show me the work packages with the effort per package."
+    state: {run: run_T1, deliverable: none}
+    model_output: "table of 15 work packages with a 'Rough Effort (person‑days)' column (U+2011 hyphen), bare numbers per row, a total '≈ 210 person‑days', provenance 'derived from analogous … projects'"
+    tool_calls: []
+    expect: "no effort figure released unless a tool result carries it; first line names every unsourced figure including table cells and the total; the generate card is offered"
+  - id: RF-02
+    seen: [case2 run1 r3 T3]
+    turn: "go ahead"
+    state: {run: run_T1, open_items: 2, deliverable: none}
+    model_output: "a complete customer-facing offer written by the model, effort table, '≈ 8 weeks for a 4-person team', '10 % buffer', signed with the internal project name"
+    tool_calls: []
+    expect: "open items are asked or the generate card is offered from state; no self-written deliverable; no internal project name in customer text"
+  - id: RF-03
+    seen: [case2 run1 r2 T3 F-072]
+    turn: "Make the quote."
+    state: {run: run_T1, open_items: 0}
+    planner_output: {capability: quotpilot.generate, kwargs: {run_id: "{run_id}"}}
+    expect: "held generate with run_id = run_T1 bound by code; a placeholder never reaches a hold"
+  - id: RF-04
+    seen: [case2 run1 r4 T3 F-073]
+    turn: "Make the quote."
+    state: {run: run_T1, open_items: 0, project: P}
+    planner_output: {capability: quotpilot.generate, kwargs: {run_id: run_T1}}
+    action: "the person approves the card in the desktop"
+    expect: "dispatch runs in project P as the approver; generate executes; hold status executed; deliverables written under the project"
+  - id: RF-05
+    seen: [case2 run2 r1 extra 1 F-077]
+    turn: "Yes, submit it."
+    state: {run: run_T1, open_items: 0, previous_answer_offered: "submit a generate request"}
+    tool_calls: [{name: quotpilot.generate, arguments: {run_id: "run-1234"}}]
+    model_output: "I've submitted a request … it is now queued and will be held until you approve it."
+    expect: "one held generate for run_T1 exists and its id is shown; the invented run id is never used; a claim of a held request without a matching hold is replaced by the actual state"
+  - id: RF-06
+    seen: [case2 run2 r1 extra 2 F-078]
+    turn: "make the quote"
+    state: {run: run_T1, open_items: 0, deliverable: none}
+    planner_output: {capability: quotpilot.finalize_quote, kwargs: {}}
+    expect: "the held action is generate for run_T1; finalize is not selectable while no deliverable exists; an action without its required identifiers is never held"
+  - id: RF-07
+    seen: [case2 run2 r1 T3]
+    turn: "go ahead"
+    state: {run: run_T1, open_items: 2, answers_in_previous_turn: true}
+    tool_calls: [{name: quotpilot.analyze}, {name: quotpilot.decide, arguments: {run_id: "<new run>"}}, {name: quotpilot.generate}]
+    expect: "no second analysis while the sources are unchanged; decisions land on run_T1; one active run per chat"
+  - id: RF-08
+    seen: [fluvoro run 9 F-063, case2 run1 r1 T2, r3 T2, run2 r1 T2]
+    turn: "customer reply answering two open items in prose, out of the asked order"
+    state: {run: run_T1, open_items: 2}
+    tool_calls: []
+    model_output: "a table 'customer assumptions that must be included in the quote'"
+    expect: "both answers recorded on the draft as customer_decision before the model writes; the answer lists what is still open from the saved draft"
+  - id: RF-09
+    seen: [case2 run1 r2 T2, r4 T2]
+    turn: "customer reply: 'We have not decided this. Please state your assumption in the proposal …'"
+    state: {run: run_T1, open_items: 1}
+    tool_calls: [{name: quotpilot.decide, arguments: {answers: {"OC-001": "<one of the options>"}}}]
+    model_output: "You have chosen: <option>"
+    expect: "recorded as customer_unknown plus working_assumption attributed to us; the answer does not say the customer chose"
+  - id: RF-10
+    seen: [case2 run2 r1 T2 F-076]
+    turn: "customer reply leaving three technical points undecided"
+    model_output: "assumptions table citing SYN-051 for a capacity value, SYN-123 for a protocol version, SYN-095 for a repeat count; none of the values occurs in the cited requirement"
+    expect: "a value stated next to a requirement id must occur in that requirement's text; otherwise the value is named as unsourced or the citation is removed"
+  - id: RF-11
+    seen: [fluvoro runs 6-9, case2 run1 r1-r4]
+    turn: "any analysis turn on a non-automotive collection"
+    model_output: "mentions ISO 26262, ASIL B, 'AUTOSAR-style packages', IEC numbers that no source names"
+    expect: "a standard that no tool result or retrieved source names is named as unsourced or removed"
+  - id: RF-12
+    seen: [fluvoro F-060, case2 run1 r5 T3]
+    turn: "any answer citing requirements"
+    model_output: "ids altered ('SYN‑S‑101', 'SY-041') or shortened with an ellipsis"
+    expect: "every cited id exists in the collection or the draft; an altered id is flagged"
+  - id: RF-13
+    seen: [case2 run1 r4 T4]
+    turn: "List the requirement ids behind the <X> package."
+    model_output: "three ids introduced as 'the only <X>-related requirements'; the source chapter has six"
+    expect: "(later stage) a completeness claim needs a source inventory; otherwise bounded wording"
+  - id: RF-14
+    seen: [fluvoro F-065, case2 run1 r1 T1, r5 T1, run2 r1 T1]
+    turn: "opening request"
+    tool_calls: [{name: quotpilot_analyze}, {name: functions, arguments: {name: quotpilot_analyze}}, {name: quotpilot.analyze_rfq, arguments: {text: "<the user's sentence>"}}, {name: quotpilot.fetch_requirements, arguments: {collection: C}}]
+    expect: "a near-miss or wrapped tool name resolves to the intended capability or is refused with its real name; the user's sentence is never analysed as the RFQ; no file is written without approval"
+  - id: RF-15
+    seen: [case2 run1 r5 T1]
+    turn: "short opening naming the customer but no collection"
+    state: {project: P, collections_of_P: [C]}
+    model_output: "asks which collection holds the documents"
+    expect: "a project with one collection is analysed without asking"
+  - id: RF-16
+    seen: [case2 run1 r1-r5, run2 r1]
+    turn: "opening request; the RFQ holds a table of points the bidder shall address and names a hardware platform"
+    draft: {stated_open_points: [], platform: unclear, open_decisions: ["Which software platform …? The requirements name none."]}
+    expect: "the table rows are in stated_open_points with a coverage report; the named platform is on the draft with its source; no question the RFQ already answers"
+  - id: RF-17
+    seen: [case2 run2 r1 T1]
+    turn: "opening request on a specification with chapters"
+    draft: {packages: "catalogue labels attached by keyword: a power package cites an occlusion requirement, a storage package a battery requirement"}
+    expect: "packages follow the specification's chapters; a requirement supports a package only with a matching span; an uncovered domain is a finding"
+  - id: RF-18
+    seen: [case2 run2 aborted, F-075]
+    turn: "any turn with a large context"
+    model_output: "the token 'Lam' inserted mid-word 32 times"
+    expect: "per-call context size bounded by the platform (reproduced against the runner alone: grows with num_ctx)"
