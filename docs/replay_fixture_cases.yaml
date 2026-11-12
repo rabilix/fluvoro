@@ -160,6 +160,34 @@ cases:
     tool_calls: [{name: quotpilot.generate, arguments: {run_id: run_T1}}]
     model_output: "I can produce the full work-package list with effort estimates … waiting for your approval"
     expect: "the record knows the run is generated: the answer shows the existing deliverable's packages and says what its effort column holds; no second generate is held for an unchanged, generated run unless the person asks for a regeneration in words; no promise of content the deliverable does not carry"
+  - id: RF-25
+    seen: [live check on 0ae5a7ad8, 2026-11-12, turn 1, F-084; same class as RF-15]
+    turn: "opening request naming the customer, the RFQ and the collection, asking for work packages and open points"
+    state: {project: P, collections_of_P: [C], run: none}
+    tool_calls: []
+    model_output: "announces it will analyse the collection, then asks which name the quotation effort should get; no analysis runs"
+    expect: "the first step is owned by state like the later ones: with a bound project, one collection and no run, the turn either runs the analysis (read-only on the sources) or ends at the OFFER from the record ('analyse C for project P, say go ahead'); a question the record can answer (project, collection, a label for the effort) is never asked; no phrase list involved"
+  - id: RF-26
+    seen: [live check on 0ae5a7ad8, 2026-11-12, turn 2, F-085]
+    turn: "opening request; the specification is a spreadsheet whose rows carry their chapter in a column"
+    draft: {chapters: [], packages: "catalogue labels attached by keyword", findings: []}
+    expect: "a chapter or section column of a requirements sheet is the customer's structure exactly like a heading path: packages follow it; when no structure is found at all, that is a finding on the draft, never a silent fall-back to the catalogue"
+  - id: RF-27
+    seen: [live check on 0ae5a7ad8, 2026-11-12, turn 2, F-086]
+    turn: "opening request; one row of the RFQ's open-points table is the customer's own platform proposal, described by class, not by product name"
+    draft: {platform: unclear, platform_named: null, open_decisions: ["Which software platform …? The requirements name none."], stated_open_points: ["<platform row>"]}
+    expect: "a stated open point about the platform takes the place of the generic platform decision or is linked to it; the topic is asked once, with what the customer proposed; one answer settles both"
+  - id: RF-28
+    seen: [live check on 0ae5a7ad8, 2026-11-12, turns 3-4, F-087]
+    turn: "customer reply headed 'Answers from <customer>:', one paragraph per open point, each opened by the point's own title; then the operator's message addressing two open items by id"
+    state: {run: run_T1, open_items: 6, workflow: quote}
+    observed: "a keyword count released the workflow ('clear switch' to another pack); no capture, draft unchanged; the next turn, addressing two items by id, was routed to a third pack and refused as a code delegation"
+    expect: "while the chat's record has an active run with open items, the record owns the routing: a turn that addresses those items by id, id word or the stated point's title is captured before any pack is chosen; a keyword count never releases a workflow with open items; leaving needs the person's explicit change of topic, and the record stays resumable; twin on the second workflow"
+  - id: RF-29
+    seen: [live check on 0ae5a7ad8, 2026-11-12, turn 3, claim gate]
+    turn: "any answer after a message of the person that states a duration in words ('about four months')"
+    model_output: "repeats it as '4 months'; writes the RFQ's document id with one digit changed; says a third party 'is already using' named products that only our own option label names"
+    expect: "a figure the conversation states in words backs the same figure in digits (no false removal); a token one edit away from a document id the conversation or the collection's file names state is flagged like an altered requirement id; a product name whose only origin is our own option list is not presented as a fact about the customer"
   - id: RF-24
     seen: [live check of RE111 parts 3-4 on e41a97a89, 2026-11-12, F-082, F-083]
     turn: "any turn in which a chat tool attempt raises a hold"
