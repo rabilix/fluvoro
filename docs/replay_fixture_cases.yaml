@@ -153,3 +153,10 @@ cases:
     state: {run: run_T1, open_items: 2}
     tool_calls: [{name: quotpilot.decide, arguments: {answers: {B: "<an option the model picked>"}, answer_kinds: {B: working_assumption, A: customer_decision}}}]
     expect: "A is recorded as customer_decision from the person's message; B stays open as customer_unknown; a value or kind the model supplies for an item the person's message left undecided is not recorded; the turn asks the operator for our working assumption; no offer is made"
+  - id: RF-23
+    seen: [live check of RE111 parts 3-4 on e41a97a89, 2026-11-12, F-081]
+    turn: "Show me the work packages with the effort per package."
+    state: {run: run_T1, run_status: generated, deliverable: exists, changed_since_generate: false}
+    tool_calls: [{name: quotpilot.generate, arguments: {run_id: run_T1}}]
+    model_output: "I can produce the full work-package list with effort estimates … waiting for your approval"
+    expect: "the record knows the run is generated: the answer shows the existing deliverable's packages and says what its effort column holds; no second generate is held for an unchanged, generated run unless the person asks for a regeneration in words; no promise of content the deliverable does not carry"
