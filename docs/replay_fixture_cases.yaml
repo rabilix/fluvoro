@@ -6,6 +6,9 @@ schema_version: 1
 conventions:
   run_T1: the run id returned by quotpilot.analyze in turn 1 of the same chat
   state: prior workflow state of the chat (project bound, principal a project member)
+content_targets:   # fixed 2026-11-12 before any acceptance run (D-77); reported, not gating
+  case2: {packages_found: ">= 14 of 22 in every repeat", open_points_asked: ">= 4 of 5 in every repeat, no question the RFQ already answers"}
+  fluvoro: {packages_found: ">= 64 % of its known packages in every repeat", open_points_asked: "3 of 3 in every repeat"}
 exit_criteria_note: "'generate succeeds 5 of 5' = in each of the 5 acceptance repeats, once the open items are answered and generation is requested or offered, the held generate for the chat's run executes on approval"
 mapping:   # RE111 parts, agreed with the FlexCortex session 2026-11-10
   part_1: [RF-07, RF-15]
@@ -83,7 +86,7 @@ cases:
     seen: [case2 run2 r1 T2 F-076]
     turn: "customer reply leaving three technical points undecided"
     model_output: "assumptions table citing SYN-051 for a capacity value, SYN-123 for a protocol version, SYN-095 for a repeat count; none of the values occurs in the cited requirement"
-    expect: "a value stated next to a requirement id must occur in that requirement's text; otherwise the value is named as unsourced or the citation is removed"
+    expect: "D1 refined 2026-11-12: where the cited requirement states a DIFFERENT value of the same quantity, the value is removed and the answer says so; where it states no such quantity, the text is kept and named as unsourced in the first line"
   - id: RF-11
     seen: [fluvoro runs 6-9, case2 run1 r1-r4]
     turn: "any analysis turn on a non-automotive collection"
