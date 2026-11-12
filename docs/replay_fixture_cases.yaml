@@ -130,3 +130,9 @@ cases:
     model_output: "the token 'Lam' inserted mid-word 32 times"
     kind: contract   # not a replay: a stub model cannot reproduce the runner's corruption
     expect: "every Ollama request the platform sends carries options.num_ctx <= 32768 (RE111 D6), recorded per call; proposed, pending the maintainer: a prompt longer than the bound is recorded, never cut silently; the 'Lam' rate itself is measured only in the live acceptance run"
+  - id: RF-19
+    seen: [live smoke of RE111 parts 1-2 on 3df48555d, 2026-11-12, F-079]
+    turn: "make the quote"
+    state: {run: run_T1, open_items: 0, deliverable: none, project: P}
+    planner_output: "invalid JSON: a ~800-character plan that breaks mid-object ('Expecting , delimiter'), whose summary also re-applies decisions already recorded"
+    expect: "one held generate for run_T1 raised from the workflow state; the planner's JSON is not needed for the workflow's next action; malformed planner output never surfaces as a raw parser error and never stops the turn without the hold"
