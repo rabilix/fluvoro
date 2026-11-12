@@ -147,3 +147,9 @@ cases:
     turn: "go ahead"
     state: {run: run_T1, offer: expired, other_pending_hold_in_session: H2}
     expect: "the expired offer is said ('has expired … nothing was run'); H2 is NOT approved; a typed yes approves only the offer it answers, never another pending card"
+  - id: RF-22
+    seen: [live check of RE111 parts 3-4 on e41a97a89, 2026-11-12, F-080]
+    turn: "customer reply: item A decided with one of its options; item B 'We have not decided this. Please state your assumption …'"
+    state: {run: run_T1, open_items: 2}
+    tool_calls: [{name: quotpilot.decide, arguments: {answers: {B: "<an option the model picked>"}, answer_kinds: {B: working_assumption, A: customer_decision}}}]
+    expect: "A is recorded as customer_decision from the person's message; B stays open as customer_unknown; a value or kind the model supplies for an item the person's message left undecided is not recorded; the turn asks the operator for our working assumption; no offer is made"
