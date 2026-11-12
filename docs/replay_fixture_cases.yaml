@@ -160,3 +160,11 @@ cases:
     tool_calls: [{name: quotpilot.generate, arguments: {run_id: run_T1}}]
     model_output: "I can produce the full work-package list with effort estimates … waiting for your approval"
     expect: "the record knows the run is generated: the answer shows the existing deliverable's packages and says what its effort column holds; no second generate is held for an unchanged, generated run unless the person asks for a regeneration in words; no promise of content the deliverable does not carry"
+  - id: RF-24
+    seen: [live check of RE111 parts 3-4 on e41a97a89, 2026-11-12, F-082, F-083]
+    turn: "any turn in which a chat tool attempt raises a hold"
+    state: {run: run_T1, project: P, principal: a project member}
+    tool_calls: [{name: quotpilot.generate, arguments: {run_id: run_T1}}]
+    observed: "the answer carried only a text line 'Held for your approval … hold <id>'; no Approve/Deny control in the chat; the hold's origin read 'api'; the hold was not listed in the desktop's approvals panel either, so the person could neither approve nor deny it"
+    kind: contract   # the hold record and the turn payload are checked; the desktop rendering is checked live
+    expect: "the turn's payload carries the hold as an approval card bound to this chat (id, capability, run, project) so the desktop can render Approve and Deny in the chat; the hold's origin names the chat session, not 'api'; every pending hold of the principal is listed in the approvals panel whatever raised it; deny from either place sets the hold to denied"
