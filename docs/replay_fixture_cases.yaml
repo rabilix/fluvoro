@@ -188,6 +188,20 @@ cases:
     turn: "any answer after a message of the person that states a duration in words ('about four months')"
     model_output: "repeats it as '4 months'; writes the RFQ's document id with one digit changed; says a third party 'is already using' named products that only our own option label names"
     expect: "a figure the conversation states in words backs the same figure in digits (no false removal); a token one edit away from a document id the conversation or the collection's file names state is flagged like an altered requirement id; a product name whose only origin is our own option list is not presented as a fact about the customer"
+  # RF-30..RF-34: written by the FlexCortex session from live check 4, turns 2-4 (F-089, F-090, F-091); they live in its tests.
+  - id: RF-35
+    seen: [live check 4 on 2276d29c3, 2026-11-12, turn 6, F-092]
+    turn: "the person gives answers to stated open points by id, each several sentences long"
+    state: {run: run_T1, open_items: 4}
+    observed: "each answer recorded cut to its first clause: a list of things to deliver, a requested option and a condition ('otherwise assume it') are lost; the deliverable's assumptions sheet carries the cut text"
+    expect: "a free-text answer to an item without options is recorded whole, up to the next item's id or the end of the message; if a length bound applies, the cut is said and the full text stays retrievable"
+  - id: RF-36
+    seen: [live check 4 on 2276d29c3, 2026-11-12, turn 8, F-093; second half of RF-23]
+    turn: "Show me the work packages with the effort per package."
+    state: {run: run_T1, run_status: generated, deliverable: {effort_column: empty, rows_with_requirement_ids: "3 of 16"}}
+    tool_calls: [{name: quotpilot.generate, result: {already_generated: true}}]
+    model_output: "the file lists every package, the exact requirement ids of each package and the effort estimate in person-days the tool assigned"
+    expect: "what the answer says about the deliverable comes from the deliverable: the packages are shown from the file, an empty effort column is said to be empty, and a claim about content the file does not carry is removed or named"
   - id: RF-24
     seen: [live check of RE111 parts 3-4 on e41a97a89, 2026-11-12, F-082, F-083]
     turn: "any turn in which a chat tool attempt raises a hold"
