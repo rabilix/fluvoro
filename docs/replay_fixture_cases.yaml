@@ -142,3 +142,8 @@ cases:
     state: {run: run_T1, open_items: 0, deliverable: none, project: P}
     planner_output: "valid JSON, zero steps, reason 'Cannot generate quote until all open decisions are resolved' (false: the draft has none open)"
     expect: "D-79: the turn ends at the OFFER from the workflow record, whatever the wording; the model's reason is never shown; whether points are open is read from the saved draft; the person's yes as the next message raises and approves the hold for run_T1"
+  - id: RF-21
+    seen: [CodeRabbit pass on RE111 parts 3-4, 2026-11-12; not seen live]
+    turn: "go ahead"
+    state: {run: run_T1, offer: expired, other_pending_hold_in_session: H2}
+    expect: "the expired offer is said ('has expired … nothing was run'); H2 is NOT approved; a typed yes approves only the offer it answers, never another pending card"
