@@ -135,10 +135,10 @@ cases:
     turn: "make the quote"
     state: {run: run_T1, open_items: 0, deliverable: none, project: P}
     planner_output: "invalid JSON: a ~800-character plan that breaks mid-object ('Expecting , delimiter'), whose summary also re-applies decisions already recorded"
-    expect: "one held generate for run_T1 raised from the workflow state; the planner's JSON is not needed for the workflow's next action; malformed planner output never surfaces as a raw parser error and never stops the turn without the hold"
+    expect: "D-79: the turn ends at the OFFER from the workflow record (run, project, next action, 'say go ahead'), whatever the wording; the person's yes as the next message raises and approves the hold for run_T1; no parser text; no phrase list involved"
   - id: RF-20
     seen: [live smoke of RE111 parts 1-2 on 3df48555d, 2026-11-12, second attempt, F-079]
     turn: "make the quote"
     state: {run: run_T1, open_items: 0, deliverable: none, project: P}
     planner_output: "valid JSON, zero steps, reason 'Cannot generate quote until all open decisions are resolved' (false: the draft has none open)"
-    expect: "state first: the workflow record decides before the planner is asked; one held generate for run_T1; the answer makes no claim about open decisions; whether points are open is read from the saved draft, never from the model"
+    expect: "D-79: the turn ends at the OFFER from the workflow record, whatever the wording; the model's reason is never shown; whether points are open is read from the saved draft; the person's yes as the next message raises and approves the hold for run_T1"
